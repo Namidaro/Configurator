@@ -1,0 +1,14 @@
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\BEMN.Errors.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\MahApps.Metro.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Microsoft.Practices.ServiceLocation.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Microsoft.Practices.Unity.Configuration.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Microsoft.Practices.Unity.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Microsoft.Practices.Unity.RegistrationByConvention.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Minsk.chm
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\NModbus4.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\PicGSConfig.exe
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Prism.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Prism.Unity.Wpf.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\Prism.Wpf.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug\System.Windows.Interactivity.dll

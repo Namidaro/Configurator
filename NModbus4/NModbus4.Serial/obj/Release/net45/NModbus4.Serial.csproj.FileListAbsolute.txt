@@ -1,0 +1,17 @@
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.Serial.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.Serial.pdb
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.pdb
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.csprojResolveAssemblyReference.cache
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.AssemblyInfo.cs
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.pdb
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.Serial.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.Serial.pdb
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.pdb
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.csprojResolveAssemblyReference.cache
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.csproj.CoreCompileInputs.cache
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.AssemblyInfo.cs
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.pdb

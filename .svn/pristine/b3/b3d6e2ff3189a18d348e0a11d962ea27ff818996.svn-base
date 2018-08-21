@@ -1,0 +1,56 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Name="userControl" x:Class="UniconGS.UI.BitViewer"
+    mc:Ignorable="d" d:DesignWidth="77.333" Height="20">
+    <Grid>
+    	<Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="20.8"/>
+    		<ColumnDefinition/>
+    	</Grid.ColumnDefinitions>
+    	<Rectangle Fill="#FF1E0505" Stroke="#FF454545"/>
+    	<Rectangle x:Name="uiTrue" Margin="1.75" Visibility="Hidden">
+    		<Rectangle.Stroke>
+    			<LinearGradientBrush EndPoint="0.89,0.95" StartPoint="0.068,0.041">
+    				<GradientStop Color="#FF490000" Offset="0"/>
+    				<GradientStop Color="#FF904444" Offset="1"/>
+    			</LinearGradientBrush>
+    		</Rectangle.Stroke>
+    		<Rectangle.Fill>
+    			<LinearGradientBrush EndPoint="0.988,0.989" StartPoint="0.059,0.09">
+    				<GradientStop Color="#FFCB0000" Offset="0"/>
+    				<GradientStop Color="#FF650101" Offset="1"/>
+    			</LinearGradientBrush>
+    		</Rectangle.Fill>
+    	</Rectangle>
+    	<Rectangle x:Name="uiFalse" Margin="1.75" Visibility="Hidden">
+    		<Rectangle.Stroke>
+    			<LinearGradientBrush EndPoint="0.89,0.95" StartPoint="0.068,0.041">
+    				<GradientStop Color="#FF06491A" Offset="0"/>
+    				<GradientStop Color="#FF7DBF7B" Offset="0.988"/>
+    			</LinearGradientBrush>
+    		</Rectangle.Stroke>
+    		<Rectangle.Fill>
+    			<LinearGradientBrush EndPoint="0.988,0.989" StartPoint="0.059,0.09">
+    				<GradientStop Color="#FF89CB00" Offset="0"/>
+    				<GradientStop Color="#FF06491A" Offset="1"/>
+    			</LinearGradientBrush>
+    		</Rectangle.Fill>
+    	</Rectangle>
+    	<Rectangle x:Name="uiNull" Margin="1.75">
+    		<Rectangle.Stroke>
+    			<LinearGradientBrush EndPoint="0.89,0.95" StartPoint="0.068,0.041">
+    				<GradientStop Color="#FF1C1C1C" Offset="0"/>
+    				<GradientStop Color="#FF8C8C8C" Offset="1"/>
+    			</LinearGradientBrush>
+    		</Rectangle.Stroke>
+    		<Rectangle.Fill>
+    			<LinearGradientBrush EndPoint="0.988,0.989" StartPoint="0.059,0.09">
+    				<GradientStop Color="#FF727272" Offset="0"/>
+    				<GradientStop Color="#FF040404" Offset="1"/>
+    			</LinearGradientBrush>
+    		</Rectangle.Fill>
+    	</Rectangle>
+    	<TextBlock Margin="5,0" Text="{Binding Text, ElementName=userControl, Mode=Default}" d:LayoutOverrides="Width, Height" Grid.Column="1" VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

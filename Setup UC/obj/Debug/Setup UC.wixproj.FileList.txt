@@ -1,0 +1,17 @@
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb
+obj\Debug\CustomDialog.wixobj
+obj\Debug\Files.wixobj
+obj\Debug\Product.wixobj
+obj\Debug\Shortcuts.wixobj
+obj\Debug\Setup UC.wixproj.BindContentsFileListru-RU.txt
+obj\Debug\Setup UC.wixproj.BindOutputsFileListru-RU.txt
+obj\Debug\Setup UC.wixproj.BindBuiltOutputsFileListru-RU.txt
+F:\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
+F:\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb
+C:\Users\Юрий\Desktop\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
+C:\Users\Юрий\Desktop\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb
+E:\Янина\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
+E:\Янина\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb
+E:\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
+E:\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb

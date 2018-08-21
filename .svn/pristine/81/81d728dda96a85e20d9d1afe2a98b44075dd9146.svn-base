@@ -1,0 +1,116 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Threading;
+using UniconGS.Source;
+using System.Windows.Media;
+using System.Globalization;
+using UniconGS.UI;
+
+namespace UniconGS.UI
+{
+    /// <summary>
+    /// Interaction logic for SignalGSMLevel.xaml
+    /// </summary>
+    public partial class SignalGSMLevel : UserControl, IQuery
+    {
+        private Slot _query;
+        internal SignalGSMLevel.ShowMessageEventHandler ShowMessage;
+
+        private delegate void ReadComplete(ushort[] res);
+        public SignalGSMLevel()
+        {
+            InitializeComponent();
+        }
+        public ushort[] Value { get; set; }
+        public Slot Querer
+        {
+            get
+            {
+                return this._query;
+            }
+            set
+            {
+                this._query = value;
+            }
+        }
+
+        private void SetGsm(Label uiSignalGSM, ushort[] value, int sourceIndex)
+        {
+            ushort[] tmp = new ushort[16];
+            var SignalValue = value[0];
+            if (SignalValue == 0)
+            {
+                uiSignalGSM.Content = "Нет значения";
+            }
+            if (SignalValue <= 10)
+            {
+                uiSignalGSM.Content = value[0];
+                uiSignalGSM.Background = System.Windows.Media.Brushes.Red;
+            }
+            if (SignalValue >= 11 && SignalValue <= 20)
+            {
+                uiSignalGSM.Content = value[0];
+                uiSignalGSM.Background = System.Windows.Media.Brushes.Yellow;
+            }
+            if (SignalValue >= 21 && SignalValue != 99)
+            {
+                uiSignalGSM.Content = value[0];
+                uiSignalGSM.Background = System.Windows.Media.Brushes.LimeGreen;
+            }
+            if (SignalValue == 99)
+            {
+                uiSignalGSM.Content = "Нет сигнала";
+            }
+
+            /*else
+                {
+                    uiSignalGSM.Content = value[0];
+                }
+                */
+        }
+
+        void SetGsm(ushort[] value)
+        {
+            this.SetGsm(this.UiSignalGSM, value, 1);
+        }
+
+
+
+        void ReadCompleted(ushort[] value)
+        {
+            SetGsm(value);
+            this.SignalLevelMapping.UpdateState(value[0]);
+
+        }
+
+
+
+        public bool WriteContext()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update()
+        {
+            var res = DataTransfer.ReadWords(Querer);
+            this.Dispatcher.BeginInvoke(new ReadComplete(ReadCompleted), DispatcherPriority.SystemIdle, res);
+        }
+
+        internal class ShowMessageEventHandler
+        {
+            private Action<string, string, MessageBoxImage> showMessage;
+
+            public ShowMessageEventHandler(Action<string, string, MessageBoxImage> showMessage)
+            {
+                this.showMessage = showMessage;
+            }
+        }
+
+
+    }
+
+}

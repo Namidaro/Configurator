@@ -1,0 +1,87 @@
+﻿using System;
+using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using UniconGS.Source;
+
+namespace UniconGS.UI
+{
+    /// <summary>
+    /// Interaction logic for KUErrors.xaml
+    /// </summary>
+    public partial class KUErrors : UserControl, IQuery
+    {
+        #region Globals
+        private ushort[] _value;
+        private Slot _query;
+
+        private delegate void ReadComplete(ushort[] res);
+        #endregion
+
+        public KUErrors()
+        {
+            InitializeComponent();
+        }
+
+        private void SetDefault()
+        {
+            this.uiErrors.Children.OfType<BitViewer>().ToList().ForEach((alarm) => { alarm.Value = null; });
+        }
+
+        private void SetErrors(ushort value)
+        {
+            var tmp = Converter.GetBitsFromWord(value).OfType<bool>().ToList();
+            for (int i = 0; i < 5; i++)
+            {
+                (this.uiErrors.Children[i] as BitViewer).Value = tmp[i];
+            }
+        }
+
+        void RunWorkerCompleted(ushort[] value)
+        {
+            this.Value = value;
+        }
+
+        #region IQueryMember
+        public ushort[] Value
+        {
+            get
+            {
+                return this._value;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.SetDefault();
+                }
+                else
+                {
+                    this.SetErrors(value[0]);
+                }
+            }
+        }
+        public Slot Querer
+        {
+            get
+            {
+                return this._query;
+            }
+            set
+            {
+                this._query = value;
+            }
+        }
+        public void Update()
+        {
+            var res = DataTransfer.ReadWords(this._query);
+            this.Dispatcher.BeginInvoke(new ReadComplete(RunWorkerCompleted), DispatcherPriority.SystemIdle,res);
+        }
+        public bool WriteContext()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+}

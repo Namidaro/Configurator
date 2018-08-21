@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using UniconGS.Source;
+
+namespace UniconGS.UI.Journal
+{
+    /// <summary>
+    /// Interaction logic for SystemJournal.xaml
+    /// </summary>
+    public partial class SystemJournal : UserControl, IQuery
+    {
+        #region Events
+        public delegate void ShowMessageEventHandler(string message, string caption, MessageBoxImage image);
+        public event ShowMessageEventHandler ShowMessage;
+
+        public delegate void StartWorkEventHandler();
+        public delegate void StopWorkEventHandler();
+
+        public event StartWorkEventHandler StartWork;
+        public event StopWorkEventHandler StopWork;
+
+        private delegate void ReadComplete(ushort[] res);
+        #endregion
+
+        #region Globals
+        private ObservableCollection<EventJournalItem> _eventJournal = new ObservableCollection<EventJournalItem>();
+        private Slot _querer = null;
+        #endregion
+
+        public void SetAutonomous()
+        {
+            this.uiImport.IsEnabled = false;
+        }
+
+        public void DisableAutonomous()
+        {
+            this.uiImport.IsEnabled = true;
+        }
+
+        public ObservableCollection<EventJournalItem> EventJournal
+        {
+            get
+            {
+                return this._eventJournal;
+            }
+            set
+            {
+                this._eventJournal = value;
+            }
+        }
+
+        public SystemJournal()
+        {
+            InitializeComponent();
+        }
+
+        private void uiImport_Click(object sender, RoutedEventArgs e)
+        {
+            uiImport.IsEnabled = false;
+            DataTransfer.SetTopInQueue(this, Accsess.Read, false);        
+        }
+
+        #region Privtaes
+
+        private void ReadJournalValue()
+        {
+            if (this._querer != null)
+            {
+                var result = DataTransfer.ReadWords(this._querer);
+                if (result != null)
+                {
+                    Dispatcher.BeginInvoke(new ReadComplete(SetJournalValue), DispatcherPriority.SystemIdle,
+                        new object[] {result});
+                }
+                else if (this.ShowMessage != null)
+                {
+                    this.ShowMessage("Во время чтения журнала системы произошла ошибка", "Чтение журнала системы",
+                        MessageBoxImage.Error);
+                }
+            }
+            this.Dispatcher.BeginInvoke(new Action(()=>uiImport.IsEnabled = true));
+        }
+
+        private void SetJournalValue(ushort[] value)
+        {
+            try
+            {
+                this.EventJournal.Clear();
+                var longMessage = Converter.GetStringWithNullsFromWords(value).ToCharArray().ToList();
+                /*Разделить строку на подстроки и составить список*/
+                List<EventJournalItem> tmp = new List<EventJournalItem>();
+                //var str = string.Empty;
+                for (int i = 0; i < 170; i++)
+                {
+                    tmp.Add(new EventJournalItem(new String(longMessage.GetRange(i * 46, 46).ToArray())));
+                }
+                tmp.Sort(delegate(EventJournalItem first, EventJournalItem second)
+                {
+                    if ((double) first.JournalDateTime.Ticks/TimeSpan.TicksPerSecond >
+                        (double) second.JournalDateTime.Ticks/TimeSpan.TicksPerSecond)
+                        return -1;
+                    if ((double) first.JournalDateTime.Ticks/TimeSpan.TicksPerSecond <
+                        (double) second.JournalDateTime.Ticks/TimeSpan.TicksPerSecond)
+                        return 1;
+                    else
+                        return 0;
+                });
+                foreach (var item in tmp)
+                {
+                    this.EventJournal.Add(item);
+                }
+                if (this.ShowMessage != null)
+                {
+                    if (EventJournal.Count != 0)
+                    {
+                        this.ShowMessage("Чтение журнала системы прошло успешно", "Чтение журнала системы",
+                            MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        this.ShowMessage("Журнал системы пуст.", "Чтение журнала системы", MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (this.ShowMessage != null)
+                {
+                    this.ShowMessage("Во время чтения журнала системы произошла ошибка", "Чтение журнала системы",
+                        MessageBoxImage.Error);
+                }
+            }
+        }
+        #endregion
+
+        #region IQueryMember
+        public Slot Querer
+        {
+            get
+            {
+                return this._querer;
+            }
+            set
+            {
+                this._querer = value;
+            }
+        }
+        public ushort[] Value
+        { get; set;}
+        public void Update()
+        {
+            if (this.StartWork != null)
+            {
+                this.Dispatcher.BeginInvoke(DispatcherPriority.SystemIdle, new Action(() =>
+                {
+                    StartWork();
+                    StateTextBlock.Text = "Идет чтение журнала";
+                }));
+            }  
+            this.ReadJournalValue();
+            if (this.StopWork != null)
+            {
+                this.Dispatcher.BeginInvoke(DispatcherPriority.SystemIdle, new Action(() =>
+                {
+                    StopWork();
+                    StateTextBlock.Text = string.Empty;
+                }));
+            }
+        }
+        public bool WriteContext()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+}

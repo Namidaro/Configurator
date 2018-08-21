@@ -1,0 +1,7 @@
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4\bin\Release\netstandard1.3\NModbus4.deps.json
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4\bin\Release\netstandard1.3\NModbus4.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4\bin\Release\netstandard1.3\NModbus4.pdb
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4\obj\Release\netstandard1.3\NModbus4.csprojResolveAssemblyReference.cache
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4\obj\Release\netstandard1.3\NModbus4.AssemblyInfo.cs
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4\obj\Release\netstandard1.3\NModbus4.dll
+C:\Users\Юрий\Desktop\Cfg_Ur\Cfg_Ur\NModbus4\NModbus4\obj\Release\netstandard1.3\NModbus4.pdb
