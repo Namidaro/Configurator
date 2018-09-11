@@ -96,15 +96,15 @@
                 <TextBlock
                     VerticalAlignment="Center"
                     Text="{Binding Title}" />
-                <TextBlock
+                <!--<TextBlock
                     VerticalAlignment="Center"
-                    Text="&quot;" />
-                <TextBlock
+                    Text="&quot;" />-->
+                <!--<TextBlock
                     VerticalAlignment="Center"
-                    Text="{Binding DeviceName}" />
-                <TextBlock
+                    Text="{Binding DeviceName}" />-->
+                <!--<TextBlock
                     VerticalAlignment="Center"
-                    Text="&quot;" />
+                    Text="&quot;" />-->
             </StackPanel>
 
             <UniformGrid
@@ -135,6 +135,7 @@
             VerticalAlignment="Top">
             <GroupBox Header="Месяц" Template="{StaticResource GroupBoxTemplate}">
                 <ListBox
+                    IsEnabled="{Binding IsMonthsEnabled}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
                     ItemsSource="{Binding MonthCollection}"

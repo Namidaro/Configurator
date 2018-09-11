@@ -460,10 +460,15 @@
                     <TabItem   Margin="0"
                               IsEnabled="False" x:Name="uiPicon2ConfigurationViewTab" Header="Конфигурация" Height="27" VerticalAlignment="Top">
                         <picon2:Picon2ConfigurationView x:Name="uiPicon2ConfigurationView"></picon2:Picon2ConfigurationView>
-                      
+
                     </TabItem>
                     <TabItem x:Name="uiLogicConfigTab" Header="Конфигурация" IsEnabled="False">
                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="188*"/>
+                                <ColumnDefinition Width="9*"/>
+                                <ColumnDefinition Width="53*"/>
+                            </Grid.ColumnDefinitions>
                             <configuration:LogicConfig
                                 x:Name="uiLogicConfig"
                                 Margin="0"

@@ -21,6 +21,7 @@ using UniconGS.UI.Journal;
 using UniconGS.UI.Schedule;
 using UniconGS.UI.Settings;
 using UniconGS.UI.Time;
+using UniconGS.Enums;
 using TabControl = System.Windows.Controls.TabControl;
 
 namespace UniconGS.UI.DiscretModules
@@ -38,20 +39,20 @@ namespace UniconGS.UI.DiscretModules
         public AllStates()
         {
             InitializeComponent();
-            if (DeviceSelection.SelectedDevice == 1)
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
             {
                 uiGroupBox3.Visibility = Visibility.Hidden;
                 uiGroupBox4.Visibility = Visibility.Hidden;
                 uiGroupBox2.Visibility = Visibility.Hidden;
                 
             }
-            else if (DeviceSelection.SelectedDevice == 2)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
             {
                 uiGroupBox3.Visibility = Visibility.Visible;
                 uiGroupBox4.Visibility = Visibility.Visible;
                 uiGroupBox2.Visibility = Visibility.Visible;
             }
-            else if (DeviceSelection.SelectedDevice == 3)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 //uiGroupBox3.Visibility = Visibility.Visible;
                 //uiGroupBox4.Visibility = Visibility.Visible;

@@ -2,6 +2,7 @@
 using System.IO.Ports;
 using System.Windows;
 using UniconGS.Source;
+using UniconGS.Enums;
 
 namespace UniconGS
 {
@@ -24,7 +25,7 @@ namespace UniconGS
         private void uiRunoSelection_Click(object sender, RoutedEventArgs e)
         {
           
-            DeviceSelection.SelectedDevice = 1;
+            DeviceSelection.SelectedDevice = (int)DeviceSelectionEnum.DEVICE_RUNO;
             var mainWindow = new MainWindow
             {
                 Title = "БЭМН Конфигуратор Минск ГОРСВЕТ - РУНО 3"
@@ -38,7 +39,7 @@ namespace UniconGS
         private void uiPiconGSSelection_Click(object sender, RoutedEventArgs e)
         {
            
-            DeviceSelection.SelectedDevice = 2;
+            DeviceSelection.SelectedDevice = (int)DeviceSelectionEnum.DEVICE_PICON_GS;
             var mainWindow = new MainWindow
             {
                 Title = "БЭМН Конфигуратор Минск ГОРСВЕТ - ПИКОН ГС 2"
@@ -73,7 +74,7 @@ namespace UniconGS
 
         private void uiPicon2Selection_Click(object sender, RoutedEventArgs e)
         {
-            DeviceSelection.SelectedDevice = 3;
+            DeviceSelection.SelectedDevice = (int)DeviceSelectionEnum.DEVICE_PICON2;
             var mainWindow = new MainWindow
             {
                 Title = "БЭМН Конфигуратор Минск ГОРСВЕТ - ПИКОН2"

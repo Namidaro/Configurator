@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 using NModbus4.Device;
@@ -16,6 +17,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Reflection;
 using System.Windows.Controls.Primitives;
 using UniconGS.UI.Schedule;
+using UniconGS.Enums;
 
 namespace UniconGS.UI.Settings
 {
@@ -39,9 +41,12 @@ namespace UniconGS.UI.Settings
 
         public delegate void SetValueControlsDelegate(Settings settings);
 
+        public delegate void GetPicon2ModuleInfoDelegate();
+
         object x;
         public event GetControlsValueDelegate GetControlsValue;
         public event SetValueControlsDelegate SetControlsValue;
+        public event GetPicon2ModuleInfoDelegate GetPicon2ModuleInfo;
 
         private Settings _settings;
 
@@ -57,26 +62,32 @@ namespace UniconGS.UI.Settings
         #endregion
 
         public bool IsAutonomous { get; set; }
+        public bool IsPicon2 { get; set; }
 
         public Config Config { get; set; }
 
         public ControllerSettings()
         {
             InitializeComponent();
-            if (DeviceSelection.SelectedDevice == 3)
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiPLCReset.IsEnabled = false;
-                uiSignature.IsEnabled = false;
+                uiSignature.Visibility = Visibility.Collapsed;
+                uiPicon2ModuleInfo.Visibility = Visibility.Visible;
                 uiWriteAll.IsEnabled = false;
                 uiReadAll.IsEnabled = false;
+                IsPicon2 = true;
             }
 
             else
             {
                 uiPLCReset.IsEnabled = true;
                 uiSignature.IsEnabled = true;
+                uiSignature.Visibility = Visibility.Visible;
+                uiPicon2ModuleInfo.Visibility = Visibility.Collapsed;
                 uiWriteAll.IsEnabled = true;
                 uiReadAll.IsEnabled = true;
+                IsPicon2 = false;
             }
         }
 
@@ -102,7 +113,7 @@ namespace UniconGS.UI.Settings
             uiSignature.IsEnabled = false;
             try
             {
-                ushort[] res = await RTUConnectionGlobal.GetDataByAddress(1, (ushort) (0x0400), 52);
+                ushort[] res = await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x0400), 52);
                 ReadSignatureComplete(res);
             }
             catch (Exception exception)
@@ -119,10 +130,10 @@ namespace UniconGS.UI.Settings
             ushort[] date = value.GetRange(16, 5).ToArray();
 
             var devName = "Имя устройства: " + Converter.GetStringFromWords(deviceName) + ";\r\n";
-            var v = "Версия:  " + ((byte) (version[1] >> 8)).ToString() + "."
-                    + ((byte) version[1]).ToString() + "."
-                    + ((byte) (version[0] >> 8)).ToString() + "."
-                    + ((byte) version[0]).ToString() + ";\n\r";
+            var v = "Версия:  " + ((byte)(version[1] >> 8)).ToString() + "."
+                    + ((byte)version[1]).ToString() + "."
+                    + ((byte)(version[0] >> 8)).ToString() + "."
+                    + ((byte)version[0]).ToString() + ";\n\r";
             var d = "Дата: " + Converter.GetStringFromWords(date) + ".";
 
             return devName + v + d;
@@ -142,6 +153,7 @@ namespace UniconGS.UI.Settings
             uiSignature.IsEnabled = true;
         }
 
+
         #endregion Signature
 
         #region PLC reset
@@ -151,8 +163,8 @@ namespace UniconGS.UI.Settings
             uiPLCReset.IsEnabled = false;
             try
             {
-                await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort) (0x0302),
-                    new ushort[] {1});
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(0x0302),
+                    new ushort[] { 1 });
                 ShowMessage("Устройство было успешно сброшен.", "Внимание", MessageBoxImage.Information);
             }
             catch (Exception exception)
@@ -307,14 +319,10 @@ namespace UniconGS.UI.Settings
 
         private async void uiReadAll_Click(object sender, RoutedEventArgs e)
         {
-
-
-            if (this.ReadAll != null)
-            {
-                this.ReadAll(this, new EventArgs());
-            }
-
+            this.ReadAll?.Invoke(this, new EventArgs());
         }
+
+
 
         private async void uiWriteAll_Click(object sender, RoutedEventArgs e)
         {
@@ -353,5 +361,12 @@ namespace UniconGS.UI.Settings
 
 
         }
+
+        private void uiPicon2ModuleInfo_Click(object sender, RoutedEventArgs e)
+        {
+            //TryReadPicon2ModuleInfo();
+            GetPicon2ModuleInfo.Invoke();
+        }
+        
     }
 }

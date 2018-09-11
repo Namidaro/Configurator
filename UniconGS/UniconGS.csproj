@@ -130,6 +130,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ConfiguratorSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToVisibilityRevertConverter.cs" />
+    <Compile Include="Enums\DeviceSelectionEnum.cs" />
     <Compile Include="GSMConnection.xaml.cs">
       <DependentUpon>GSMConnection.xaml</DependentUpon>
     </Compile>

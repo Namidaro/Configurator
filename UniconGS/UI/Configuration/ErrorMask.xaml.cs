@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using UniconGS.Enums;
 
 namespace UniconGS.UI.Configuration
 {
@@ -20,17 +21,17 @@ namespace UniconGS.UI.Configuration
             get
                 
             {
-                if (DeviceSelection.SelectedDevice == 1)
+                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
                 {
                     PART_Holder.Height = 39.259;
                     PART_Holder.Width = 275.22;
                 }
-                else if (DeviceSelection.SelectedDevice == 2)
+                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
                 {
                     PART_Holder.Height = 91.259;
                     PART_Holder.Width = 275.22;
                 }
-                else if (DeviceSelection.SelectedDevice == 3)
+                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                 {
                     PART_Holder.Height = 91.259;
                     PART_Holder.Width = 275.22;
@@ -39,17 +40,17 @@ namespace UniconGS.UI.Configuration
             }
             set
             {
-                if (DeviceSelection.SelectedDevice == 1)
+                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
                 {
                     PART_Holder.Height = 39.259;
                     PART_Holder.Width = 275.22;
                 }
-                else if (DeviceSelection.SelectedDevice == 2)
+                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
                 {
                     PART_Holder.Height = 91.259;
                     PART_Holder.Width = 275.22;
                 }
-                else if (DeviceSelection.SelectedDevice == 3)
+                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                 {
                     PART_Holder.Height = 91.259;
                     PART_Holder.Width = 275.22;
@@ -60,7 +61,7 @@ namespace UniconGS.UI.Configuration
 
         public ErrorMask()
         {
-            if (DeviceSelection.SelectedDevice == 1)
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
             {
                
 
@@ -84,7 +85,7 @@ namespace UniconGS.UI.Configuration
                 this.uiBlock3.Visibility = Visibility.Hidden;
             }
 
-            else if (DeviceSelection.SelectedDevice == 2)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
             {
 
                InitializeComponent();
@@ -184,7 +185,7 @@ namespace UniconGS.UI.Configuration
                 this.ui_43.Visibility = Visibility.Visible;
             }
 
-            else if (DeviceSelection.SelectedDevice == 3)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
 
 
@@ -226,7 +227,7 @@ namespace UniconGS.UI.Configuration
 
         public void SetAutonomus()
         {
-            if (DeviceSelection.SelectedDevice == 1)
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
             {
 
                 this.uiBlock1.Visibility = Visibility.Hidden;
@@ -244,7 +245,7 @@ namespace UniconGS.UI.Configuration
                 this.ui_9.Visibility = Visibility.Visible;
                 this.ui_10.Visibility = Visibility.Visible;
             }
-            else if (DeviceSelection.SelectedDevice == 2)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
             {
                
                 this.uiBlock1.Visibility = Visibility.Visible;
@@ -295,7 +296,7 @@ namespace UniconGS.UI.Configuration
                 this.ui_42.Visibility = Visibility.Visible;
                 this.ui_43.Visibility = Visibility.Visible;
             }
-            else if (DeviceSelection.SelectedDevice == 3)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
 
                 this.uiBlock1.Visibility = Visibility.Hidden;

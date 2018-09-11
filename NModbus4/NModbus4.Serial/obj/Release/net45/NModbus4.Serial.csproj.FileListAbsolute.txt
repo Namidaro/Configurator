@@ -15,3 +15,14 @@ C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NMod
 C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.AssemblyInfo.cs
 C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.dll
 C:\Users\Юрий\Desktop\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.pdb
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.Serial.dll
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.Serial.pdb
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.dll
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\bin\Release\net45\NModbus4.pdb
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.csprojResolveAssemblyReference.cache
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.csproj.CoreCompileInputs.cache
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.AssemblyInfoInputs.cache
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.AssemblyInfo.cs
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.csproj.CopyComplete
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.dll
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Release\net45\NModbus4.Serial.pdb

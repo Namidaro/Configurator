@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using UniconGS.Interfaces;
 using UniconGS.Source;
+using UniconGS.Enums;
 
 namespace UniconGS.UI.Journal
 {
@@ -56,7 +57,7 @@ namespace UniconGS.UI.Journal
         public SystemJournal()
         {
             InitializeComponent();
-            if (DeviceSelection.SelectedDevice == 3)
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiImport.IsEnabled = false;
                

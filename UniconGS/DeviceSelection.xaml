@@ -92,7 +92,7 @@
             Grid.Row="2"
             Grid.Column="3"
             Margin="8,8,8,8"
-            ToolTip="ПИКОН ГС-2">
+            ToolTip="ПИКОН2">
         <Image
             Grid.Row="2"
             Grid.Column="3"

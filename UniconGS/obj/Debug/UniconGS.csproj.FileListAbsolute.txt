@@ -574,8 +574,6 @@ D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Prism.Unity.Wpf.dll
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Prism.Wpf.dll
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\System.Windows.Interactivity.dll
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\BEMN.Errors.pdb
-D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
-D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\MahApps.Metro.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\MahApps.Metro.xml
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Microsoft.Practices.ServiceLocation.pdb
@@ -680,3 +678,5 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UniconGS.csproj.CoreCompileInputs.cache
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UniconGS.csproj.CopyComplete
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\PicGSConfig.exe
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\PicGSConfig.pdb
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.pdb
