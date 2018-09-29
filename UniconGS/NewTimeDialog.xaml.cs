@@ -60,15 +60,13 @@ namespace UniconGS
         {
             if(DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                //todo:???????????? check mat'
-                this.uiYear.Text = "2018";
+                this.uiYear.Text = _dt.Year.ToString();
                 this.uiMonth.SelectedIndex = _dt.Month - 1;
                 this.uiDay.SelectedIndex = _dt.Day - 1;
                 this.uiHour.SelectedIndex = _dt.Hour +1;
                 this.uiMinute.SelectedIndex = _dt.Minute;
                 this.uiSecond.SelectedIndex = _dt.Second;
             }
-
             else
             {
                 this.uiYear.Text = _dt.Year.ToString();

@@ -35,3 +35,4 @@ D:\Work\#Git\Cfg_Ur\BEMN.Errors\bin\Debug\BEMN.Errors.pdb
 D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Debug\BEMN.Errors.csproj.CoreCompileInputs.cache
 D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Debug\BEMN.Errors.dll
 D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Debug\BEMN.Errors.pdb
+D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Debug\BEMN.Errors.csprojResolveAssemblyReference.cache

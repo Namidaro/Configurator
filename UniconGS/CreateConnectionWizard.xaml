@@ -13,7 +13,7 @@
     WindowStartupLocation="CenterOwner"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
-    <Grid>
+        <Grid>
 
         <TabControl x:Name="uiMainDialog">
             <TabItem x:Name="uiConnection" Header="Подключение">
@@ -80,7 +80,7 @@
                         Orientation="Horizontal">
                         <StackPanel Margin="5">
                             <Label Content="Скорость" />
-                            <ComboBox x:Name="uiSpeed" SelectedIndex="7">
+                            <ComboBox x:Name="uiSpeed">
                                 <ComboBoxItem Content="1200" />
                                 <ComboBoxItem Content="2400" />
                                 <ComboBoxItem Content="4800" />

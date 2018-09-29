@@ -87,7 +87,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-           
+
 
             <StackPanel
                 Grid.Column="1"
@@ -306,43 +306,55 @@
         </StackPanel>
 
         <!--  Дни  -->
-        <GroupBox
-            Grid.Row="2"
-            Grid.Column="1"
-            Margin="3"
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            Grid.Row="2" 
+            Grid.Column="1" 
+            Margin="3" 
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <GroupBox
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Header="День"
+            
             Template="{StaticResource GroupBoxTemplate}">
-            <ItemsControl
+                <ItemsControl
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 ItemsSource="{Binding CurrentMonthDayCollection}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel></WrapPanel>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <picon2:DaySheduleView  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <!--<ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                            <!--<UniformGrid />-->
+
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <picon2:DaySheduleView  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <!--<ItemsControl.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Focusable" Value="False" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>-->
-            </ItemsControl>
-        </GroupBox>
+                </ItemsControl>
+            </GroupBox>
+        </ScrollViewer>
         <UniformGrid
             Grid.Row="3"
             Grid.Column="1"
             Margin="15,3"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
-            Columns="4"
+            Columns="5"
             Rows="1">
+            <Button
+               Margin="3"
+                Command="{Binding ClearSchedule}"
+                Content="Очистить график" />
             <Button
                Margin="3"
                 Command="{Binding GetSheduleFromFileCommand}"

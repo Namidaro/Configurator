@@ -24,12 +24,12 @@ namespace UniconGS.UI.Journal
         public delegate void StartWorkEventHandler();
         public delegate void StopWorkEventHandler();
 
-             private delegate void ReadComplete(ushort[] res);
+        private delegate void ReadComplete(ushort[] res);
         #endregion
 
         #region Globals
         private ObservableCollection<EventJournalItem> _eventJournal = new ObservableCollection<EventJournalItem>();
-      
+
         #endregion
 
         public void SetAutonomous()
@@ -60,40 +60,52 @@ namespace UniconGS.UI.Journal
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiImport.IsEnabled = false;
-               
+
             }
 
             else
             {
                 uiImport.IsEnabled = true;
-               
+
             }
         }
 
-        private async void uiImport_Click(object sender, RoutedEventArgs e)
+        private void uiImport_Click(object sender, RoutedEventArgs e)
         {
-
-            try
-            {
-                uiImport.IsEnabled = false;
-              var valFromDevice=  await ReadJournalValue();
-                SetJournalValue(valFromDevice);
-            }
-
-
-
-            //var result = RTUConnectionGlobal.ModbusMaster.ReadInputRegistersAsync(1, 0x2001, 3910);
-            catch (SystemException ex)
-            {
-
-            }
-            finally
-            {
-                uiImport.IsEnabled = true;
-            }
-
+            ImportJournal();
         }
-        
+
+        private async void ImportJournal()
+        {
+            if (DeviceSelection.SelectedDevice != (int)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                try
+                {
+                    uiImport.IsEnabled = false;
+                    var valFromDevice = await ReadJournalValue();
+                    SetJournalValue(valFromDevice);
+                }
+
+
+
+                //var result = RTUConnectionGlobal.ModbusMaster.ReadInputRegistersAsync(1, 0x2001, 3910);
+                catch (SystemException ex)
+                {
+
+                }
+                finally
+                {
+                    uiImport.IsEnabled = true;
+                }
+            }
+            else
+            {
+
+
+                //ShowMessage("Функция не реализована!", "Внимание", MessageBoxImage.Information);
+            }
+        }
+
         #region Privtaes
 
         public async Task<ushort[]> ReadJournalValue()
@@ -113,9 +125,9 @@ namespace UniconGS.UI.Journal
             //}
             //this.Dispatcher.BeginInvoke(new Action(() => uiImport.IsEnabled = true));
             List<ushort> ushorts = new List<ushort>();
-            for(ushort i = 0; i < 3900; i += 100)
+            for (ushort i = 0; i < 3900; i += 100)
             {
-                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001+i), 100));
+                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + i), 100));
             }
             ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, 0x2001 + 3900, 10));
 
@@ -136,13 +148,13 @@ namespace UniconGS.UI.Journal
                 {
                     tmp.Add(new EventJournalItem(new String(longMessage.GetRange(i * 46, 46).ToArray())));
                 }
-                tmp.Sort(delegate(EventJournalItem first, EventJournalItem second)
+                tmp.Sort(delegate (EventJournalItem first, EventJournalItem second)
                 {
-                    if ((double) first.JournalDateTime.Ticks/TimeSpan.TicksPerSecond >
-                        (double) second.JournalDateTime.Ticks/TimeSpan.TicksPerSecond)
+                    if ((double)first.JournalDateTime.Ticks / TimeSpan.TicksPerSecond >
+                        (double)second.JournalDateTime.Ticks / TimeSpan.TicksPerSecond)
                         return -1;
-                    if ((double) first.JournalDateTime.Ticks/TimeSpan.TicksPerSecond <
-                        (double) second.JournalDateTime.Ticks/TimeSpan.TicksPerSecond)
+                    if ((double)first.JournalDateTime.Ticks / TimeSpan.TicksPerSecond <
+                        (double)second.JournalDateTime.Ticks / TimeSpan.TicksPerSecond)
                         return 1;
                     else
                         return 0;
@@ -176,19 +188,19 @@ namespace UniconGS.UI.Journal
         #endregion
 
 
-        public ushort[] Value { get ; set;}
+        public ushort[] Value { get; set; }
 
         public async Task Update()
         {
-            
+
             {
                 ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2001, 3910);
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     SetJournalValue(value);
-                    
+
                 });
-            }  
+            }
             this.ReadJournalValue();
             //if (this.StopWork != null)
             //{
@@ -199,6 +211,6 @@ namespace UniconGS.UI.Journal
             //    }));
             //}
         }
-     
+
     }
 }

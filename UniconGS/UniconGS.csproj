@@ -132,6 +132,8 @@
     </Compile>
     <Compile Include="Converters\BooleanToVisibilityRevertConverter.cs" />
     <Compile Include="Enums\DeviceSelectionEnum.cs" />
+    <Compile Include="Enums\LightningScheduleEnum.cs" />
+    <Compile Include="Enums\ModuleSelectionEnum.cs" />
     <Compile Include="GSMConnection.xaml.cs">
       <DependentUpon>GSMConnection.xaml</DependentUpon>
     </Compile>
@@ -152,6 +154,19 @@
       <DependentUpon>DaySheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Picon2\Extensions.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\IModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV960ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV980ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS911ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA961DeviceSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA962ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSD980ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ImageSRCList.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.xaml.cs">
+      <DependentUpon>Picon2ModuleRequestsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleTypeList.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2ModuleRequestsViewModel.cs" />
     <Compile Include="UI\Picon2\PICON2ConfigCheckBoxControlView.xaml.cs">
       <DependentUpon>PICON2ConfigCheckBoxControlView.xaml</DependentUpon>
     </Compile>
@@ -220,6 +235,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Picon2\DaySheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -625,6 +644,28 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\picon2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_CPU.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MII901.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MRV960.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MRV980.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS911.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS911R.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS916.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS917.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSA961.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSA962.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_PowerSupply.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_EMPTY.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSD980.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

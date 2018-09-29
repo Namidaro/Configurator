@@ -336,3 +336,5 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UniconGS.csproj.CoreCompileInputs.cache
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UniconGS.csproj.CopyComplete
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\PicGSConfig.exe
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\PicGSConfig.pdb
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2ModuleRequests.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2ModuleRequests.baml

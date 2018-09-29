@@ -16,6 +16,7 @@
     xmlns:time="clr-namespace:UniconGS.UI.Time"
     xmlns:uniconGsUi="clr-namespace:UniconGS.UI"
     xmlns:picon2="clr-namespace:UniconGS.UI.Picon2"
+    xmlns:moduleRequests="clr-namespace:UniconGS.UI.Picon2.ModuleRequests"
     Title="БЭМН Конфигуратор Минск ГОРСВЕТ"
     Width="1020"
     Height="822.05"
@@ -537,13 +538,22 @@
                         Name="MrNetwork"
                         Header="МР-сеть"
                         IsEnabled="False">
-
-
                         <Grid>
                             <mrNetworking:MRNetwork
                                 x:Name="uiMrNetwork"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
+                        </Grid>
+                    </TabItem>
+                    <TabItem
+                        Name="uiPicon2ModuleRequests"
+                        Header="Запросы к модулям"
+                        IsEnabled="False">
+                        <Grid>
+                            <moduleRequests:Picon2ModuleRequestsView
+                                x:Name="Picon2ModuleRequest"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"/>
                         </Grid>
                     </TabItem>
                 </TabControl>

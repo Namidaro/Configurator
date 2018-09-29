@@ -33,6 +33,7 @@ using UniconGS.UI.Time;
 using TabControl = System.Windows.Controls.TabControl;
 using static UniconGS.GSMConnection;
 using UniconGS.Enums;
+using UniconGS.UI.Picon2.ModuleRequests;
 
 namespace UniconGS
 {
@@ -79,7 +80,7 @@ namespace UniconGS
         {
 
             InitializeComponent();
-
+            isAutonomus = false;
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiScrollViewerPicon2.Visibility = Visibility.Visible;
@@ -97,12 +98,15 @@ namespace UniconGS
                 uiGPRSConfig.Visibility = Visibility.Collapsed;
                 uiGSMConnection.IsEnabled = false;
                 uiGPRSTab.Visibility = Visibility.Collapsed;
+                uiPicon2ModuleRequests.Visibility = Visibility.Visible;
+                Picon2ModuleRequest.DataContext = new Picon2ModuleRequestsViewModel();
             }
             else
             {
                 uiPicon2ConfigurationViewTab.Visibility = Visibility.Collapsed;
                 picon2ScheduleTab.Visibility = Visibility.Collapsed;
                 uiPicon2ConfigurationView.Visibility = Visibility.Collapsed;
+                uiPicon2ModuleRequests.Visibility = Visibility.Collapsed;
             }
             InitSlots();
 
@@ -112,6 +116,7 @@ namespace UniconGS
                 //if (isAutonomus == false)
                 //{
                 Application.Current.Dispatcher.Invoke(SetAllAutonomous);
+                //isAutonomus = true;
                 //}
                 //else
                 //{
@@ -215,7 +220,7 @@ namespace UniconGS
                     {
                         uiStateIcon.Visibility = Visibility.Visible;
                         uiStatePresenter.Visibility = Visibility.Visible;
-                        uiAutonomusPresenter.Visibility = Visibility.Hidden;
+                        //uiAutonomusPresenter.Visibility = Visibility.Hidden;
                     });
                 };
                 RTUConnectionGlobal.OnWritingCompleteAction += () =>
@@ -226,17 +231,12 @@ namespace UniconGS
                         {
                             uiStateIcon.Visibility = Visibility.Hidden;
                             uiStatePresenter.Visibility = Visibility.Hidden;
-                            uiAutonomusPresenter.Visibility = Visibility.Hidden;
+                            //uiAutonomusPresenter.Visibility = Visibility.Hidden;
                         });
                     }
                     catch (Exception ex) { };
                 };
             }
-
-
-
-
-
         }
 
 
@@ -356,7 +356,6 @@ namespace UniconGS
 
         }
 
-
         #region Menu items click
         void uiAbout_Click(object sender, RoutedEventArgs e)
         {
@@ -373,8 +372,6 @@ namespace UniconGS
         {
             this.RunProcess(new FileInfo(Directory.GetCurrentDirectory() + @"\Minsk2.chm"));
         }
-
-
 
         private bool RunProcess(FileInfo processFileInfo)
         {
@@ -539,10 +536,13 @@ namespace UniconGS
                 }
 
 
-                this.uiHider.Visibility = Visibility.Hidden;
+                this.uiHider.Visibility = Visibility.Hidden; 
                 this.Start();
                 this.uiDisconnect.IsEnabled = true;
                 this.uiConnect.IsEnabled = false;
+                this.uiAutonomous.IsEnabled = true;
+                AutonomusCheck = 0;
+                uiAutonomusPresenter.Visibility = Visibility.Hidden;
             }
 
         }
@@ -830,7 +830,6 @@ namespace UniconGS
                 {
                     SetAutonomusMode();
                     isAutonomus = true;
-                    uiAutonomusPresenter.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -929,6 +928,7 @@ namespace UniconGS
                 this.uiSettings.SetAutonomus();
                 //Dispatcher.CurrentDispatcher.InvokeShutdown();
                 //this.uiStatePresenter.Text = "Автономный режим";
+
                 this.UpdateLayout();
             }
             catch (Exception ex)
@@ -1048,6 +1048,7 @@ namespace UniconGS
 
             DataTransfer.UnInit();
         }
+
         #endregion Thread
 
         private void ShowMessage(string message, string caption, MessageBoxImage image)
@@ -1085,6 +1086,7 @@ namespace UniconGS
 
         private void uiDeviceSelection_Click(object sender, RoutedEventArgs e)
         {
+            RTUConnectionGlobal.CloseConnection();
             this.Close();
         }
 

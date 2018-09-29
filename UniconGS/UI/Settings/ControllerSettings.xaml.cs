@@ -27,29 +27,18 @@ namespace UniconGS.UI.Settings
     public partial class ControllerSettings
     {
         #region Fields
-
         public delegate void ShowMessageEventHandler(string message, string caption, MessageBoxImage image);
-
         public event ShowMessageEventHandler ShowMessage;
-
-
         private delegate void ReadCompleteDelegate(ushort[] res);
-
         private delegate void WriteCompleteDelegate(bool res);
-
         public delegate Settings GetControlsValueDelegate();
-
         public delegate void SetValueControlsDelegate(Settings settings);
-
         public delegate void GetPicon2ModuleInfoDelegate();
-
         object x;
         public event GetControlsValueDelegate GetControlsValue;
         public event SetValueControlsDelegate SetControlsValue;
         public event GetPicon2ModuleInfoDelegate GetPicon2ModuleInfo;
-
         private Settings _settings;
-
         private bool _isWriteSettings;
         //private ushort[] _logicConfig;
         //private ushort[] _lightingSchedule;
@@ -58,12 +47,10 @@ namespace UniconGS.UI.Settings
         //private ushort[] _conservationEnergySchedule;
         //private ushort[] _heatingSchedule;
         //private ushort[] _gprsConfig;
-
         #endregion
 
         public bool IsAutonomous { get; set; }
         public bool IsPicon2 { get; set; }
-
         public Config Config { get; set; }
 
         public ControllerSettings()
@@ -78,7 +65,6 @@ namespace UniconGS.UI.Settings
                 uiReadAll.IsEnabled = false;
                 IsPicon2 = true;
             }
-
             else
             {
                 uiPLCReset.IsEnabled = true;
@@ -90,9 +76,7 @@ namespace UniconGS.UI.Settings
                 IsPicon2 = false;
             }
         }
-
         public event EventHandler ReadAll;
-
         public event EventHandler WriteAll;
         //public void SetData(ushort[] s1, ushort[] s2, ushort[] s3, ushort[] s4, ushort[] s5, ushort[] s6, ushort[] s7)
         //{
@@ -103,12 +87,15 @@ namespace UniconGS.UI.Settings
         //    _conservationEnergySchedule = s5;
         //    _heatingSchedule = s6;
         //    _gprsConfig = s7;
-
         //}
-
         #region Signature
 
         private async void uiSignature_Click(object sender, RoutedEventArgs e)
+        {
+            GetSignature();
+        }
+
+        private async void GetSignature()
         {
             uiSignature.IsEnabled = false;
             try
@@ -152,20 +139,28 @@ namespace UniconGS.UI.Settings
             }
             uiSignature.IsEnabled = true;
         }
-
-
         #endregion Signature
 
         #region PLC reset
-
         private async void uiPLCReset_Click(object sender, RoutedEventArgs e)
         {
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);
+            }
+            else
+                ResetPLC();
+        }
+
+        private async void ResetPLC()
+        {
+            //todo: PLC reset in picon2
             uiPLCReset.IsEnabled = false;
             try
             {
                 await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(0x0302),
                     new ushort[] { 1 });
-                ShowMessage("Устройство было успешно сброшен.", "Внимание", MessageBoxImage.Information);
+                ShowMessage("Устройство было успешно сброшен.", "Внимание", MessageBoxImage.Information); 
             }
             catch (Exception exception)
             {
@@ -173,7 +168,6 @@ namespace UniconGS.UI.Settings
             }
             uiPLCReset.IsEnabled = true;
         }
-
         #endregion
 
         #region Settings
@@ -200,6 +194,16 @@ namespace UniconGS.UI.Settings
 
         private void uiSaveSettings_Click(object sender, RoutedEventArgs e)
         {
+            //todo: deal witch setting file in picon2
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);
+            }
+            else
+                SaveSettings();
+        }
+        private void SaveSettings()
+        {
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
             sfd.InitialDirectory = this.Config.AllSettingsExportInitialFilePath;
             sfd.Filter = "Файл настройки Руно|*.gsset";
@@ -221,7 +225,17 @@ namespace UniconGS.UI.Settings
 
         private void uiOpenSettings_Click(object sender, RoutedEventArgs e)
         {
+            //todo:deal with settings file in picon 2
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);
+            }
+            else
+                OpenSettings();
+        }
 
+        private void OpenSettings()
+        {
             var ofd = new System.Windows.Forms.OpenFileDialog
             {
                 Filter = "Файл настройки Руно|*.gsset",
@@ -249,7 +263,6 @@ namespace UniconGS.UI.Settings
             {
                 ShowMessage("Выбранный файл не существует", "Ошибка открытия настроек", MessageBoxImage.Error);
             }
-
             uiOpenSettings.IsEnabled = true;
         }
 
@@ -305,10 +318,7 @@ namespace UniconGS.UI.Settings
         #endregion Settings
 
         #region IQueryMember
-
-
         public ushort[] Value { get; set; }
-
         #endregion
 
         //private Table lightingSchedule;
@@ -316,15 +326,22 @@ namespace UniconGS.UI.Settings
         //private Table energySchedule;
         //private Table illuminationSchedule;
 
-
         private async void uiReadAll_Click(object sender, RoutedEventArgs e)
+        {
+            ReadAllConfig();
+        }
+
+        private void ReadAllConfig()
         {
             this.ReadAll?.Invoke(this, new EventArgs());
         }
 
-
-
         private async void uiWriteAll_Click(object sender, RoutedEventArgs e)
+        {
+            WriteAllConfig();
+        }
+
+        private void WriteAllConfig()
         {
             MessageBoxResult res = MessageBox.Show(
                 "Внимание! Проверьте графики и конфигурацию перед записью в устройство. Вы уверены, что хотите совершить запись графиков и конфигурации в устройство?",
@@ -337,12 +354,12 @@ namespace UniconGS.UI.Settings
                     this.WriteAll(this, new EventArgs());
                 }
             }
-
             if (res == MessageBoxResult.No)
             {
 
             }
         }
+
 
         //public void Setup(Table uiLightingSchedule, Table uiBacklightSchedule, Table uiEnergySchedule, Table uiIlluminationSchedule)
         //{
@@ -358,15 +375,12 @@ namespace UniconGS.UI.Settings
             this.uiSignature.IsEnabled = false;
             this.uiReadAll.IsEnabled = false;
             this.uiWriteAll.IsEnabled = false;
-
-
         }
 
         private void uiPicon2ModuleInfo_Click(object sender, RoutedEventArgs e)
         {
-            //TryReadPicon2ModuleInfo();
             GetPicon2ModuleInfo.Invoke();
         }
-        
+
     }
 }

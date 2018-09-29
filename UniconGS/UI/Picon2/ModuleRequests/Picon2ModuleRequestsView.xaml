@@ -1,0 +1,310 @@
+﻿<UserControl x:Class="UniconGS.UI.Picon2.ModuleRequests.Picon2ModuleRequestsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UniconGS.UI.Picon2.ModuleRequests"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!-- Device field-->
+        <Border Grid.Row="0" BorderThickness="2" BorderBrush="Blue">
+            <Grid
+            Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <!-- ROW = 0 -->
+                <TextBlock 
+                           Name="Selector_Position_PowerSupply"
+                           HorizontalAlignment="Stretch" 
+                           VerticalAlignment="Center" 
+                           Grid.Column="0" 
+                           TextAlignment="Center" 
+                           FontWeight="Bold" 
+                           Text="МП905" 
+                           />
+                <TextBlock Name="Selector_Position_CPU"
+                           HorizontalAlignment="Stretch" 
+                           VerticalAlignment="Center" 
+                           Grid.Column="1" 
+                           TextAlignment="Center" 
+                           FontWeight="Bold" 
+                           Text="МЦП52" 
+                           />
+
+                <ComboBox Name="Selector_Position_0x00"
+                          Grid.Column="2"
+                          ItemsSource="{Binding ModuleList}"
+                          SelectedItem="{Binding ModuleListForUI[0]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x01" 
+                          Grid.Column="3" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[1]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x02" 
+                          Grid.Column="4"
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[2]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x03" 
+                          Grid.Column="5" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[3]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x04" 
+                          Grid.Column="6" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[4]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x05" 
+                          Grid.Column="7" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[5]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x06" 
+                          Grid.Column="8" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[6]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x07" 
+                          Grid.Column="9" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[7]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x08" 
+                          Grid.Column="10" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[8]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x09" 
+                          Grid.Column="11" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[9]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x0A" 
+                          Grid.Column="12" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[10]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x0B" 
+                          Grid.Column="13" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[11]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x0C" 
+                          Grid.Column="14" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[12]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x0D" 
+                          Grid.Column="15" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[13]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x0E" 
+                          Grid.Column="16" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[14]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+                <ComboBox Name="Selector_Position_0x0F" 
+                          Grid.Column="17" 
+                          ItemsSource="{Binding ModuleList}" 
+                          SelectedItem="{Binding ModuleListForUI[15]}"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                      />
+
+                <!-- ROW = 1-->
+                <Image Name="Image_Position_PowerSupply"
+                       Grid.Row="1"
+                       Grid.Column="0"
+                       Source="{Binding ImageSRCList[16]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_CPU"
+                       Grid.Row="1"
+                       Grid.Column="1"
+                       Source="{Binding ImageSRCList[17]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x00"
+                       Grid.Row="1"
+                       Grid.Column="2"
+                       Source="{Binding ImageSRCList[0]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x01"
+                       Grid.Row="1"
+                       Grid.Column="3"
+                       Source="{Binding ImageSRCList[1]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x02"
+                       Grid.Row="1"
+                       Grid.Column="4"
+                       Source="{Binding ImageSRCList[2]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x03"
+                       Grid.Row="1"
+                       Grid.Column="5"
+                       Source="{Binding ImageSRCList[3]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x04"
+                       Grid.Row="1"
+                       Grid.Column="6"
+                       Source="{Binding ImageSRCList[4]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x05"
+                       Grid.Row="1"
+                       Grid.Column="7"
+                       Source="{Binding ImageSRCList[5]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x06"
+                       Grid.Row="1"
+                       Grid.Column="8"
+                       Source="{Binding ImageSRCList[6]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x07"
+                       Grid.Row="1"
+                       Grid.Column="9"
+                       Source="{Binding ImageSRCList[7]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x08"
+                       Grid.Row="1"
+                       Grid.Column="10"
+                       Source="{Binding ImageSRCList[8]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x09"
+                       Grid.Row="1"
+                       Grid.Column="11"
+                       Source="{Binding ImageSRCList[9]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x0A"
+                       Grid.Row="1"
+                       Grid.Column="12"
+                       Source="{Binding ImageSRCList[10]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x0B"
+                       Grid.Row="1"
+                       Grid.Column="13"
+                       Source="{Binding ImageSRCList[11]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x0C"
+                       Grid.Row="1"
+                       Grid.Column="14"
+                       Source="{Binding ImageSRCList[12]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x0D"
+                       Grid.Row="1"
+                       Grid.Column="15"
+                       Source="{Binding ImageSRCList[13]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x0E"
+                       Grid.Row="1"
+                       Grid.Column="16"
+                       Source="{Binding ImageSRCList[14]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+                <Image Name="Image_Position_0x0F"
+                       Grid.Row="1"
+                       Grid.Column="17"
+                       Source="{Binding ImageSRCList[15]}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       />
+
+                <!-- ROW = 2-->
+                <Button Name="test" 
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Content="Отладка"
+                        Command="{Binding BreakpointTestCommand}" />
+
+
+            </Grid>
+        </Border>
+        <!-- Command field -->
+        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
+
+        </Border>
+
+    </Grid>
+</UserControl>
