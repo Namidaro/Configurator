@@ -682,3 +682,6 @@ D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Innovative.Geometry.Angle.dll
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Innovative.SolarCalculator.dll
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll

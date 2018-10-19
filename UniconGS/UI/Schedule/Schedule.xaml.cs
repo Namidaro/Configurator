@@ -538,7 +538,9 @@ namespace UniconGS.UI.Schedule
 
         private async void uiClearAll_Click(object sender, RoutedEventArgs e)
         {
+
             await ClearAll();
+
             if (this.ShowMessage != null)
             {
 

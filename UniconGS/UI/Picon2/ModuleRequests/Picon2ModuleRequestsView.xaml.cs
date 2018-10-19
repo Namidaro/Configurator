@@ -28,13 +28,12 @@ namespace UniconGS.UI.Picon2.ModuleRequests
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //todo: переделать, надо как-то отследить изменение конкретного значения в коллекции
             var vm = this.DataContext as Picon2ModuleRequestsViewModel;
             for (byte i = 0; i < vm.ModuleListForUI.Count; i++)
             {
                 vm.ImageSRCList[i] = vm.GetImageSRC(vm.GetModuleType(vm.ModuleListForUI[i]));
             }
-            //todo: переделать, надо как-то отследить изменение конкретного значения в коллекции
-
         }
     }
 }
