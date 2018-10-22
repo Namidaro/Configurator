@@ -48,8 +48,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- ROW = 0 -->
-                <TextBlock 
-                           Name="Selector_Position_PowerSupply"
+                <TextBlock Name="Selector_Position_PowerSupply"
                            HorizontalAlignment="Stretch" 
                            VerticalAlignment="Center" 
                            Grid.Column="0" 
@@ -331,6 +330,23 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
+                <!-- ROW = 0-->
+                <TextBlock 
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="3"
+                    Margin="1,1,1,1"
+                    Text="Число запросов:"
+                    />
+                <TextBox 
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Margin="1,1,1,1"
+                    Text="{Binding RequestCount}"
+                    />
+                
+
+                <!-- ROW = 1-->
                 <ListBox Grid.Row="1"
                          Grid.Column="0"
                          Grid.ColumnSpan="18"
@@ -338,9 +354,32 @@
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"
                          ItemsSource="{Binding ModuleRequestsForUIList}"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                         >
                 </ListBox>
 
+
+                <!-- ROW = 2-->
+                <Button Name="Generate_request" 
+                        Grid.Row="2"
+                        Grid.Column="6"
+                        Grid.ColumnSpan="4"
+                        Margin="1,1,1,1"
+                        Content="Сгенерировать запросы"
+                        Command="{Binding GenerateRequests}" />
+                <Button Name="Read_from_device" 
+                        Grid.Row="2"
+                        Grid.Column="12"
+                        Grid.ColumnSpan="2"
+                        Margin="1,1,1,1"
+                        Content="Прочитать"
+                        Command="{Binding ReadFromDevice}" />
+                <Button Name="Write_request_to_device" 
+                        Grid.Row="2"
+                        Grid.Column="16"
+                        Grid.ColumnSpan="2"
+                        Margin="1,1,1,1"
+                        Content="Записать"
+                        Command="{Binding WriteToDevice}" />
             </Grid>
         </Border>
 

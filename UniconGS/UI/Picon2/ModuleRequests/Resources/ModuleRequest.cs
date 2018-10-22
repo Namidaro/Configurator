@@ -19,7 +19,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
         public ushort[] Request { get; set; }
         public string UIRequest { get; set; }
         #endregion
+
         #region [Ctor's]
+        /// <summary>
+        /// Пустой конструктор
+        /// </summary>
         public ModuleRequest()
         {
             Period = 0x00;
@@ -31,7 +35,16 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             ParameterCount = 0x00;
             UIRequest = String.Empty;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_period"></param>
+        /// <param name="_type"></param>
+        /// <param name="_crateAddress"></param>
+        /// <param name="_command"></param>
+        /// <param name="_paramModAddr"></param>
+        /// <param name="_paramBaseAddr"></param>
+        /// <param name="_paramCount"></param>
         public ModuleRequest(byte _period,
                             byte _type,
                             byte _crateAddress,
@@ -49,9 +62,18 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             ParameterCount = _paramCount;
 
             CreateRequest();
-            GenerateUIRequest();
+            GenerateUIRequestAsString();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_period"></param>
+        /// <param name="_type"></param>
+        /// <param name="_crateAddress"></param>
+        /// <param name="_command"></param>
+        /// <param name="_paramModAddr"></param>
+        /// <param name="_paramBaseAddr"></param>
+        /// <param name="_paramCount"></param>
         public ModuleRequest(byte _period,
                            byte _type,
                            byte _crateAddress,
@@ -69,19 +91,26 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             ParameterCount = _paramCount;
 
             CreateRequest();
-            GenerateUIRequest();
+            GenerateUIRequestAsString();
         }
-
+        /// <summary>
+        /// Конструктор для ответа из устройства
+        /// </summary>
+        /// <param name="req"></param>
         public ModuleRequest(ushort[] req)
         {
             Request = req;
             byte[] reqArray = ArrayExtension.UshortArrayToByteArray(Request);
 
             SpreadRequest(reqArray);
-            GenerateUIRequest();
+            GenerateUIRequestAsString();
         }
         #endregion
+
         #region [Methods]
+        /// <summary>
+        /// Создание запроса из свойств экземпляра
+        /// </summary>
         public void CreateRequest()
         {
             try
@@ -97,7 +126,10 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             }
             catch { }
         }
-
+        /// <summary>
+        /// Заполнение свойств экземпляра по данным из запроса
+        /// </summary>
+        /// <param name="req"></param>
         public void SpreadRequest(byte[] req)
         {
             try
@@ -125,22 +157,60 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             }
             catch { }
         }
-
-        private string GenerateUIRequest()
+        /// <summary>
+        /// Создание строки "запроса к модулю" (string),
+        /// </summary>
+        private void GenerateUIRequestAsString()
         {
+            //TODO: не нравится, надо как-то переделать
             StringBuilder sb = new StringBuilder();
+            if (Period < 10)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(Period) + "  ");
+            }
+            else
+            {
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(Period) + "  ");
+            }
+            sb.Append(Converters.Convert.ConvertFromDecToHexStr(Type));
+            sb.Append(Converters.Convert.ConvertFromDecToHexStr(CrateAddress) + "  ");
+            sb.Append(Converters.Convert.ConvertFromDecToHexStr(Command) + "  ");
+            if (ParameterModuleAddress[0] < 10)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterModuleAddress[0]));
+            }
+            else
+            {
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterModuleAddress[0]));
+            }
+            if (ParameterModuleAddress[1] < 10)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterModuleAddress[1]) + "  ");
+            }
+            else
+            {
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterModuleAddress[1]) + "  ");
+            }
+            if (ParameterBaseAddress[0] < 10)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[0]));
+            }
+            else
+            {
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[0]));
+            }
+            if (ParameterBaseAddress[1] < 10)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
+            }
+            else
+            {
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
+            }
+            sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterCount));
 
-
-
-
-
-
-
-
-            return "";
+            UIRequest = sb.ToString();
         }
-
-
 
         #endregion
     }

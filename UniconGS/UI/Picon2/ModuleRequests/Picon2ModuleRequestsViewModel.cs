@@ -9,6 +9,7 @@ using Prism.Commands;
 using Prism.Mvvm;
 using UniconGS.Enums;
 using UniconGS.UI.Picon2.ModuleRequests.Resources;
+using UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification;
 using System.ComponentModel;
 using Innovative.SolarCalculator;
 
@@ -19,12 +20,28 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         #region [Private fields]
         private ObservableCollection<string> _moduleListForUI;
         private ObservableCollection<string> _moduleRequestsForUIList;
+        private ObservableCollection<ModuleRequest> _requestsFromDevice;
+        private ObservableCollection<ModuleRequest> _requestsToWrite;
+        private ushort _requestCount;
         private List<string> _moduleList;
         private ModuleTypeList _moduleTypes;
         private ImageSRCList _imageSRC;
+        private byte _msdCount;
+        private byte _mrvCount;
+        private byte _msaCount;
         private ObservableCollection<string> _imageSRCList;
         private ICommand _breakpointTestCommand;
+        private ICommand _generateRequests;
+        private ICommand _readFromDevice;
+        private ICommand _writeToDevice;
 
+
+
+        #endregion
+
+        #region [CONST]
+        private const ushort REQUEST_COUNT_ADDRESS = 0x300E;
+        private const ushort MODULE_REQUEST_START_ADDRESS = 0x3080;
         #endregion
 
         #region [Properties]
@@ -82,6 +99,30 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             }
         }
         /// <summary>
+        /// Коллекция запросов для записи в устройство
+        /// </summary>
+        public ObservableCollection<ModuleRequest> RequestsToWrite
+        {
+            get { return _requestsToWrite; }
+            set
+            {
+                _requestsToWrite = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Коллекция запросов из устройства
+        /// </summary>
+        public ObservableCollection<ModuleRequest> RequestsFromDevice
+        {
+            get { return _requestsFromDevice; }
+            set
+            {
+                _requestsFromDevice = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
         /// Список ссылок на изображения модулей, должен быть привязан к выбраным модулям в UI
         /// </summary>
         public ObservableCollection<string> ImageSRCList
@@ -93,7 +134,51 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 RaisePropertyChanged();
             }
         }
-
+        public ushort RequestCount
+        {
+            get { return _requestCount; }
+            set
+            {
+                _requestCount = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Количество модулей МСД (для расчета адресов в базе)
+        /// </summary>
+        public byte MSDCount
+        {
+            get { return _msdCount; }
+            set
+            {
+                _msdCount = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Количество модулей МРВ (для расчета адресов в базе)
+        /// </summary>
+        public byte MRVCount
+        {
+            get { return _mrvCount; }
+            set
+            {
+                _mrvCount = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Количество модулей МСА (для расчета адресов в базе)
+        /// </summary>
+        public byte MSACount
+        {
+            get { return _msaCount; }
+            set
+            {
+                _msaCount = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region [NavigateCommands]
@@ -103,6 +188,21 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         public ICommand BreakpointTestCommand => this._breakpointTestCommand ??
             (this._breakpointTestCommand = new DelegateCommand(OnBreakpointTestCommand));
 
+        /// <summary>
+        /// Команда генерации запросов к модулям
+        /// </summary>
+        public ICommand GenerateRequests => this._generateRequests ??
+            (this._generateRequests = new DelegateCommand(OnGenerateRequestsCommand));
+        /// <summary>
+        /// Команда чтения запросов из устройства
+        /// </summary>
+        public ICommand ReadFromDevice => this._readFromDevice ??
+            (this._readFromDevice = new DelegateCommand(OnReadFromDeviceCommand));
+        /// <summary>
+        /// Команда записи запросов в устройство
+        /// </summary>
+        public ICommand WriteToDevice => this._writeToDevice ??
+            (this._writeToDevice = new DelegateCommand(OnWriteToDeviceCommand));
         #endregion
 
         #region [Ctor]
@@ -113,10 +213,15 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             this._moduleListForUI = new ObservableCollection<string>();
             this._imageSRC = new ImageSRCList();
             this._imageSRCList = new ObservableCollection<string>();
+            this._moduleRequestsForUIList = new ObservableCollection<string>();
+            this._requestsFromDevice = new ObservableCollection<ModuleRequest>();
+            this._requestsToWrite = new ObservableCollection<ModuleRequest>();
+            this.RequestCount = 0;
+            this.MRVCount = 0;
+            this.MSDCount = 0;
+            this.MSACount = 0;
             InitializeModuleList();
             InitializeImageList();
-
-
         }
         #endregion
 
@@ -173,7 +278,6 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             else
                 return "";
         }
-
         #endregion
 
         #region [UICommands]
@@ -270,35 +374,189 @@ namespace UniconGS.UI.Picon2.ModuleRequests
 
         }
 
+        /// <summary>
+        /// Чтение запросов из устройства
+        /// </summary>
+        private async void OnReadFromDeviceCommand()
+        {
+            this.RequestsFromDevice.Clear();
+            this.ModuleRequestsForUIList.Clear();
+            // число запросов к модулям хранится по адресу 0х300Е, читаем 1 слово(2 байта)
+            ushort[] RC = await RTUConnectionGlobal.GetDataByAddress(1, REQUEST_COUNT_ADDRESS, 1);
+            RequestCount = RC[0];
+            // начальный адрес
+            ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
+            for (byte i = 0; i < RC[0]; i++)
+            {
+                RequestsFromDevice.Add(new ModuleRequest(await RTUConnectionGlobal.GetDataByAddress(1, currentAddress, 4)));
+                ModuleRequestsForUIList.Add(RequestsFromDevice[i].UIRequest);
+                currentAddress += 4;
+            }
+        }
+        /// <summary>
+        /// Запись запросов в устройство
+        /// </summary>
+        private async void OnWriteToDeviceCommand()
+        {
+            ushort[] RC = new ushort[] { RequestCount };
+            await RTUConnectionGlobal.SendDataByAddressAsync(1, REQUEST_COUNT_ADDRESS, RC);
+            //заглушка
+            RequestsToWrite = RequestsFromDevice;
+            ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
+            for (byte i = 0; i < RC[0]; i++)
+            {
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, currentAddress, RequestsToWrite[i].Request);
+                currentAddress += 4;
+            }
+        }
+        /// <summary>
+        ///  Генерация запросов по данным из UI
+        /// </summary>
+        private void OnGenerateRequestsCommand()
+        {
+            MSDCount = 0;
+            MSACount = 0;
+            MRVCount = 0;
+
+            byte MSDUsed = 0;
+            byte MSAUsed = 0;
+            byte MRVUsed = 0;
+            //для генерации ввести общее число запросов
+
+            // сначала смотрим количество модулей МСД/МСА/МРВ
+            for (byte i = 0; i < RequestCount; i++)
+            {
+                switch (GetModuleType(ModuleListForUI[i]))
+                {
+                    case (byte)ModuleSelectionEnum.MODULE_MSD980:
+                        {
+                            MSDCount++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MSA961:
+                        {
+                            MSACount++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MSA962:
+                        {
+                            MSACount++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MRV960:
+                        {
+                            MRVCount++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MRV980:
+                        {
+                            MRVCount++;
+                            break;
+                        }
+                }
+            }
+
+            // заполняем список запросов для записи в устройство
+
+            for (byte i = 0; i < RequestCount; i++)
+            {
+                IModuleRequest req;
+                switch (GetModuleType(ModuleListForUI[i]))
+                {
+                    case (byte)ModuleSelectionEnum.MODULE_MSD980:
+                        {
+                            req = new MSD980ModuleSpecification() as IModuleRequest;
+                            byte temp = (byte)(req.ParameterBaseAddress[1] + MSDUsed * req.ParameterCount);
+                            req.ParameterBaseAddress[1] = temp;
+                            RequestsToWrite.Add(new ModuleRequest(
+                                0x00,
+                                req.Type,
+                                i,
+                                req.Command,
+                                req.ParameterModuleAddress,
+                                req.ParameterBaseAddress,
+                                req.ParameterCount));
+                            MSDUsed++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MSA961:
+                        {
+                            req = new MSA961ModuleSpecification() as IModuleRequest;
+                            byte temp = (byte)(req.ParameterBaseAddress[1] + MSAUsed * req.ParameterCount);
+                            req.ParameterBaseAddress[1] = temp;
+                            RequestsToWrite.Add(new ModuleRequest(
+                                0x00,
+                                req.Type,
+                                i,
+                                req.Command,
+                                req.ParameterModuleAddress,
+                                req.ParameterBaseAddress,
+                                req.ParameterCount));
+                            MSAUsed++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MSA962:
+                        {
+                            req = new MSA962ModuleSpecification() as IModuleRequest;
+                            byte temp = (byte)(req.ParameterBaseAddress[1] + MSAUsed * req.ParameterCount);
+                            req.ParameterBaseAddress[1] = temp;
+                            RequestsToWrite.Add(new ModuleRequest(
+                                0x00,
+                                req.Type,
+                                i,
+                                req.Command,
+                                req.ParameterModuleAddress,
+                                req.ParameterBaseAddress,
+                                req.ParameterCount));
+                            MSAUsed++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MRV960:
+                        {
+                            req = new MRV960ModuleSpecification() as IModuleRequest;
+                            byte temp = (byte)(req.ParameterBaseAddress[1] + MRVUsed * req.ParameterCount);
+                            req.ParameterBaseAddress[1] = temp;
+                            RequestsToWrite.Add(new ModuleRequest(
+                                0x00,
+                                req.Type,
+                                i,
+                                req.Command,
+                                req.ParameterModuleAddress,
+                                req.ParameterBaseAddress,
+                                req.ParameterCount));
+                            MRVUsed++;
+                            break;
+                        }
+                    case (byte)ModuleSelectionEnum.MODULE_MRV980:
+                        {
+                            req = new MRV980ModuleSpecification() as IModuleRequest;
+                            byte temp = (byte)(req.ParameterBaseAddress[1] + MRVUsed * req.ParameterCount);
+                            req.ParameterBaseAddress[1] = temp;
+                            RequestsToWrite.Add(new ModuleRequest(
+                                0x00,
+                                req.Type,
+                                i,
+                                req.Command,
+                                req.ParameterModuleAddress,
+                                req.ParameterBaseAddress,
+                                req.ParameterCount));
+                            MRVUsed++;
+                            break;
+                        }
+                }
+
+            }
 
 
 
+
+
+        }
 
         #endregion
 
         #region [Converters]
-        /// <summary>
-        /// Перевод из Hex в Dec (может понадобиться)
-        /// </summary>
-        /// <param name="Hex"></param>
-        /// <returns></returns>
-        private byte ConvertFromHexToDec(byte Hex)
-        {
-            string hexValueStr = Hex.ToString("X");
-            byte decValue = byte.Parse(hexValueStr, System.Globalization.NumberStyles.HexNumber);
-            return decValue;
-        }
-        /// <summary>
-        /// Перевод из Dec в Hex (может понадобиться)
-        /// </summary>
-        /// <param name="Dec"></param>
-        /// <returns></returns>
-        private byte ConvertFromDecToHex(byte Dec)
-        {
-            string hexValueStr = Dec.ToString("D");
-            byte hexValue = Convert.ToByte(hexValueStr, 16);
-            return hexValue;
-        }
+
         #endregion
 
 

@@ -461,7 +461,7 @@ namespace UniconGS.UI.Picon2.ViewModel
         public void OnNavigatedTo(int sheduleNumber)
         {
 
-            //todo подумать, как переделать чтение графика, чтобы по кнопке "Прочитать" он читал из устройства, не заглядывая в кэш и обновлял кэш
+            //TODO: подумать, как переделать чтение графика, чтобы по кнопке "Прочитать" он читал из устройства, не заглядывая в кэш и обновлял кэш
             ReadFromDeviceAndRefreshCache = false;
 
             IsMonthsEnabled = true;

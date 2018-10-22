@@ -172,7 +172,7 @@
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV960ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV980ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS911ModuleSpecification.cs" />
-    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA961DeviceSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA961ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA962ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSD980ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\Resources\ImageSRCList.cs" />

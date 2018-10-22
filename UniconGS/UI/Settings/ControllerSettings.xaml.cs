@@ -194,7 +194,7 @@ namespace UniconGS.UI.Settings
 
         private void uiSaveSettings_Click(object sender, RoutedEventArgs e)
         {
-            //todo: deal witch setting file in picon2
+            //todo: deal with setting file in picon2
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification
 {
-    public class MSA961DeviceSpecification : IModuleSpecification
+    public class MSA961ModuleSpecification : IModuleSpecification
     {
         public string DeviceName
         {

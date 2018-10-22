@@ -45,6 +45,10 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Converters
         {
             return (byte)(v >> 4);
         }
+
+
+        //todo: просмотреть конвертеры, че-то мне в них не нравится
+
         /// <summary>
         /// Перевод из Hex в Dec (может понадобиться)
         /// </summary>
