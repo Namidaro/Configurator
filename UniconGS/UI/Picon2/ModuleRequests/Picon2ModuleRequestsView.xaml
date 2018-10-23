@@ -295,6 +295,7 @@
                         Grid.Row="2"
                         Grid.Column="0"
                         Content="Отладка"
+                        Visibility="Collapsed"
                         Command="{Binding BreakpointTestCommand}" />
 
 
@@ -334,22 +335,47 @@
                 <TextBlock 
                     Grid.Row="0"
                     Grid.Column="1"
-                    Grid.ColumnSpan="3"
+                    Grid.ColumnSpan="4"
                     Margin="1,1,1,1"
-                    Text="Число запросов:"
+                    Text="Сгенерировано запросов:"
                     />
                 <TextBox 
                     Grid.Row="0"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Margin="1,1,1,1"
                     Text="{Binding RequestCount}"
                     />
-                
+
+
+                <TextBlock 
+                    Grid.Row="0"
+                    Grid.Column="10"
+                    Grid.ColumnSpan="5"
+                    Margin="1,1,1,1"
+                    Text="Прочитано запросов из устройства:"
+                    />
+                <TextBox 
+                    Grid.Row="0"
+                    Grid.Column="15"
+                    Margin="1,1,1,1"
+                    Text="{Binding RequestCountFromDevice}"
+                    />
+
 
                 <!-- ROW = 1-->
                 <ListBox Grid.Row="1"
                          Grid.Column="0"
-                         Grid.ColumnSpan="18"
+                         Grid.ColumnSpan="9"
+                         Margin="3,3,3,3"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         ItemsSource="{Binding ModuleRequestsGeneratedFromUI}"
+                         >
+                </ListBox>
+                
+                <ListBox Grid.Row="1"
+                         Grid.Column="9"
+                         Grid.ColumnSpan="9"
                          Margin="3,3,3,3"
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"
@@ -361,21 +387,21 @@
                 <!-- ROW = 2-->
                 <Button Name="Generate_request" 
                         Grid.Row="2"
-                        Grid.Column="6"
-                        Grid.ColumnSpan="4"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="5"
                         Margin="1,1,1,1"
                         Content="Сгенерировать запросы"
                         Command="{Binding GenerateRequests}" />
                 <Button Name="Read_from_device" 
                         Grid.Row="2"
-                        Grid.Column="12"
+                        Grid.Column="10"
                         Grid.ColumnSpan="2"
                         Margin="1,1,1,1"
                         Content="Прочитать"
                         Command="{Binding ReadFromDevice}" />
                 <Button Name="Write_request_to_device" 
                         Grid.Row="2"
-                        Grid.Column="16"
+                        Grid.Column="15"
                         Grid.ColumnSpan="2"
                         Margin="1,1,1,1"
                         Content="Записать"

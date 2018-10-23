@@ -20,9 +20,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         #region [Private fields]
         private ObservableCollection<string> _moduleListForUI;
         private ObservableCollection<string> _moduleRequestsForUIList;
+        private ObservableCollection<string> _moduleRequestsGeneratedFromUI;
         private ObservableCollection<ModuleRequest> _requestsFromDevice;
         private ObservableCollection<ModuleRequest> _requestsToWrite;
         private ushort _requestCount;
+        private ushort _requestCountFromDevice;
         private List<string> _moduleList;
         private ModuleTypeList _moduleTypes;
         private ImageSRCList _imageSRC;
@@ -99,6 +101,18 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             }
         }
         /// <summary>
+        /// Содержит список сгенерированных запросов, выводимый на экран
+        /// </summary>
+        public ObservableCollection<string> ModuleRequestsGeneratedFromUI
+        {
+            get { return _moduleRequestsGeneratedFromUI; }
+            set
+            {
+                _moduleRequestsGeneratedFromUI = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
         /// Коллекция запросов для записи в устройство
         /// </summary>
         public ObservableCollection<ModuleRequest> RequestsToWrite
@@ -134,12 +148,27 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 RaisePropertyChanged();
             }
         }
+        /// <summary>
+        /// Количество запросов. сгенерированных по схеме
+        /// </summary>
         public ushort RequestCount
         {
             get { return _requestCount; }
             set
             {
                 _requestCount = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Количество запросов, вычитанных из устройства
+        /// </summary>
+        public ushort RequestCountFromDevice
+        {
+            get { return _requestCountFromDevice; }
+            set
+            {
+                _requestCountFromDevice = value;
                 RaisePropertyChanged();
             }
         }
@@ -216,7 +245,9 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             this._moduleRequestsForUIList = new ObservableCollection<string>();
             this._requestsFromDevice = new ObservableCollection<ModuleRequest>();
             this._requestsToWrite = new ObservableCollection<ModuleRequest>();
+            this.ModuleRequestsGeneratedFromUI = new ObservableCollection<string>();
             this.RequestCount = 0;
+            this.RequestCountFromDevice = 0;
             this.MRVCount = 0;
             this.MSDCount = 0;
             this.MSACount = 0;
@@ -383,7 +414,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             this.ModuleRequestsForUIList.Clear();
             // число запросов к модулям хранится по адресу 0х300Е, читаем 1 слово(2 байта)
             ushort[] RC = await RTUConnectionGlobal.GetDataByAddress(1, REQUEST_COUNT_ADDRESS, 1);
-            RequestCount = RC[0];
+            RequestCountFromDevice = RC[0];
             // начальный адрес
             ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
             for (byte i = 0; i < RC[0]; i++)
@@ -401,11 +432,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             ushort[] RC = new ushort[] { RequestCount };
             await RTUConnectionGlobal.SendDataByAddressAsync(1, REQUEST_COUNT_ADDRESS, RC);
             //заглушка
-            RequestsToWrite = RequestsFromDevice;
+            //RequestsToWrite = RequestsFromDevice;
             ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
             for (byte i = 0; i < RC[0]; i++)
             {
-                await RTUConnectionGlobal.SendDataByAddressAsync(1, currentAddress, RequestsToWrite[i].Request);
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, currentAddress, RequestsToWrite[i].RequestToDevice);
                 currentAddress += 4;
             }
         }
@@ -421,7 +452,9 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             byte MSDUsed = 0;
             byte MSAUsed = 0;
             byte MRVUsed = 0;
-            //для генерации ввести общее число запросов
+
+            RequestsToWrite.Clear();
+            CalculateRequestCountForGeneration();
 
             // сначала смотрим количество модулей МСД/МСА/МРВ
             for (byte i = 0; i < RequestCount; i++)
@@ -455,104 +488,103 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                         }
                 }
             }
-
             // заполняем список запросов для записи в устройство
-
             for (byte i = 0; i < RequestCount; i++)
             {
-                IModuleRequest req;
                 switch (GetModuleType(ModuleListForUI[i]))
                 {
                     case (byte)ModuleSelectionEnum.MODULE_MSD980:
                         {
-                            req = new MSD980ModuleSpecification() as IModuleRequest;
-                            byte temp = (byte)(req.ParameterBaseAddress[1] + MSDUsed * req.ParameterCount);
-                            req.ParameterBaseAddress[1] = temp;
+                            var req = new MSD980ModuleSpecification();
                             RequestsToWrite.Add(new ModuleRequest(
                                 0x00,
-                                req.Type,
+                                req.ModuleType,
                                 i,
                                 req.Command,
-                                req.ParameterModuleAddress,
-                                req.ParameterBaseAddress,
+                                req.ModuleParameterAddress,
+                                (ushort)(req.FirstModuleDatabaseAddress + MSDUsed * req.ParameterCount),
                                 req.ParameterCount));
                             MSDUsed++;
                             break;
                         }
                     case (byte)ModuleSelectionEnum.MODULE_MSA961:
                         {
-                            req = new MSA961ModuleSpecification() as IModuleRequest;
-                            byte temp = (byte)(req.ParameterBaseAddress[1] + MSAUsed * req.ParameterCount);
-                            req.ParameterBaseAddress[1] = temp;
+                            var req = new MSA961ModuleSpecification();
                             RequestsToWrite.Add(new ModuleRequest(
                                 0x00,
-                                req.Type,
+                                req.ModuleType,
                                 i,
                                 req.Command,
-                                req.ParameterModuleAddress,
-                                req.ParameterBaseAddress,
+                                req.ModuleParameterAddress,
+                                (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
                                 req.ParameterCount));
                             MSAUsed++;
                             break;
                         }
                     case (byte)ModuleSelectionEnum.MODULE_MSA962:
                         {
-                            req = new MSA962ModuleSpecification() as IModuleRequest;
-                            byte temp = (byte)(req.ParameterBaseAddress[1] + MSAUsed * req.ParameterCount);
-                            req.ParameterBaseAddress[1] = temp;
+                            var req = new MSA962ModuleSpecification();
                             RequestsToWrite.Add(new ModuleRequest(
                                 0x00,
-                                req.Type,
+                                req.ModuleType,
                                 i,
                                 req.Command,
-                                req.ParameterModuleAddress,
-                                req.ParameterBaseAddress,
+                                req.ModuleParameterAddress,
+                                (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
                                 req.ParameterCount));
                             MSAUsed++;
                             break;
                         }
                     case (byte)ModuleSelectionEnum.MODULE_MRV960:
                         {
-                            req = new MRV960ModuleSpecification() as IModuleRequest;
-                            byte temp = (byte)(req.ParameterBaseAddress[1] + MRVUsed * req.ParameterCount);
-                            req.ParameterBaseAddress[1] = temp;
+                            var req = new MRV960ModuleSpecification();
                             RequestsToWrite.Add(new ModuleRequest(
                                 0x00,
-                                req.Type,
+                                req.ModuleType,
                                 i,
                                 req.Command,
-                                req.ParameterModuleAddress,
-                                req.ParameterBaseAddress,
+                                req.ModuleParameterAddress,
+                                (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
                                 req.ParameterCount));
                             MRVUsed++;
                             break;
                         }
                     case (byte)ModuleSelectionEnum.MODULE_MRV980:
                         {
-                            req = new MRV980ModuleSpecification() as IModuleRequest;
-                            byte temp = (byte)(req.ParameterBaseAddress[1] + MRVUsed * req.ParameterCount);
-                            req.ParameterBaseAddress[1] = temp;
+                            var req = new MRV980ModuleSpecification();
                             RequestsToWrite.Add(new ModuleRequest(
                                 0x00,
-                                req.Type,
+                                req.ModuleType,
                                 i,
                                 req.Command,
-                                req.ParameterModuleAddress,
-                                req.ParameterBaseAddress,
+                                req.ModuleParameterAddress,
+                                (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
                                 req.ParameterCount));
                             MRVUsed++;
                             break;
                         }
                 }
-
             }
-
-
-
-
-
+            // заполняем листбокс
+            for (byte i = 0; i < RequestsToWrite.Count; i++)
+            {
+                ModuleRequestsGeneratedFromUI.Add(RequestsToWrite[i].UIRequest);
+            }
         }
-
+        /// <summary>
+        /// Расчет количества запросов для генерирования (считает справа до первой НЕзаглушки)
+        /// </summary>
+        private void CalculateRequestCountForGeneration()
+        {
+            for (byte i = ((byte)(ModuleListForUI.Count - 1)); i >= 0; i--)
+            {
+                if (GetModuleType(ModuleListForUI[i]) != (byte)ModuleSelectionEnum.MODULE_EMPTY)
+                {
+                    RequestCount = (byte)(i + 1);
+                    break;
+                }
+            }
+        }
         #endregion
 
         #region [Converters]

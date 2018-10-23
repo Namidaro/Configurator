@@ -33,5 +33,9 @@ namespace UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification
             get { return 0x01; }
         }
 
+        public MSD980ModuleSpecification()
+        {
+                
+        }
     }
 }

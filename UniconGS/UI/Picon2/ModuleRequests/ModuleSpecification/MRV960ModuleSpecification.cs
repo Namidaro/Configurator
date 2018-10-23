@@ -44,5 +44,9 @@ namespace UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification
                 return 0x01;
             }
         }
+        public MRV960ModuleSpecification()
+        {
+
+        }
     }
 }

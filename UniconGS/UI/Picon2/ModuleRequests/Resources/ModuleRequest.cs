@@ -17,6 +17,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
         public byte[] ParameterBaseAddress { get; set; }
         public byte ParameterCount { get; set; }
         public ushort[] Request { get; set; }
+        public ushort[] RequestToDevice { get; set; }
         public string UIRequest { get; set; }
         #endregion
 
@@ -86,8 +87,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             Type = _type;
             CrateAddress = _crateAddress;
             Command = _command;
-            ParameterModuleAddress = new byte[2] { (byte)(_paramModAddr << 8), (byte)(_paramModAddr >> 8) };
-            ParameterBaseAddress = new byte[2] { (byte)(_paramBaseAddr << 8), (byte)(_paramBaseAddr >> 8) };
+            ParameterModuleAddress = new byte[2] { (byte)(_paramModAddr >> 8), (byte)(_paramModAddr & 0xff) };
+            ParameterBaseAddress = new byte[2] { (byte)(_paramBaseAddr >> 8), (byte)(_paramBaseAddr & 0xff) };
             ParameterCount = _paramCount;
 
             CreateRequest();
@@ -123,6 +124,10 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
                 req.AddRange(ParameterBaseAddress);
                 req.Add(ParameterCount);
                 Request = ArrayExtension.ByteArrayToUshortArray(req.ToArray());
+
+                byte[] reqToDev = req.ToArray();
+                ArrayExtension.SwapArrayItems(ref reqToDev);
+                RequestToDevice = ArrayExtension.ByteArrayToUshortArray(reqToDev);
             }
             catch { }
         }
@@ -205,7 +210,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             }
             else
             {
-                sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
             }
             sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterCount));
 
