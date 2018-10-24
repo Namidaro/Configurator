@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.IO;
+using System.Xml.Serialization;
+using System.Xml.Linq;
+using System.Globalization;
 using Prism.Commands;
 using Prism.Mvvm;
 using UniconGS.Enums;
@@ -36,14 +40,16 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         private ICommand _generateRequests;
         private ICommand _readFromDevice;
         private ICommand _writeToDevice;
-
-
+        private ICommand _openFile;
+        private ICommand _saveFile;
 
         #endregion
 
         #region [CONST]
         private const ushort REQUEST_COUNT_ADDRESS = 0x300E;
         private const ushort MODULE_REQUEST_START_ADDRESS = 0x3080;
+        private const string DECLARATION_VERSION = "1.0";
+        private const string DECLARATION_ENCODING = "utf-8";
         #endregion
 
         #region [Properties]
@@ -217,20 +223,31 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         public ICommand BreakpointTestCommand => this._breakpointTestCommand ??
             (this._breakpointTestCommand = new DelegateCommand(OnBreakpointTestCommand));
 
+        //TODO: уточнить какие запросы сохранять в файл
+        /// <summary>
+        /// Сохранить сгенерированные(или не сгенерированные, уточнить) запросы в файл
+        /// </summary>
+        public ICommand SaveFileCommand => this._saveFile ??
+            (this._saveFile = new DelegateCommand(OnSaveFileCommand));
+        /// <summary>
+        /// Открыть файл с запросами
+        /// </summary>
+        public ICommand OpenFileCommand => this._openFile ??
+            (this._openFile = new DelegateCommand(OnOpenFileCommand));
         /// <summary>
         /// Команда генерации запросов к модулям
         /// </summary>
-        public ICommand GenerateRequests => this._generateRequests ??
+        public ICommand GenerateRequestsCommand => this._generateRequests ??
             (this._generateRequests = new DelegateCommand(OnGenerateRequestsCommand));
         /// <summary>
         /// Команда чтения запросов из устройства
         /// </summary>
-        public ICommand ReadFromDevice => this._readFromDevice ??
+        public ICommand ReadFromDeviceCommand => this._readFromDevice ??
             (this._readFromDevice = new DelegateCommand(OnReadFromDeviceCommand));
         /// <summary>
         /// Команда записи запросов в устройство
         /// </summary>
-        public ICommand WriteToDevice => this._writeToDevice ??
+        public ICommand WriteToDeviceCommand => this._writeToDevice ??
             (this._writeToDevice = new DelegateCommand(OnWriteToDeviceCommand));
         #endregion
 
@@ -454,6 +471,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             byte MRVUsed = 0;
 
             RequestsToWrite.Clear();
+            ModuleRequestsGeneratedFromUI.Clear();
             CalculateRequestCountForGeneration();
 
             // сначала смотрим количество модулей МСД/МСА/МРВ
@@ -476,6 +494,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                             MSACount++;
                             break;
                         }
+                    case (byte)ModuleSelectionEnum.MODULE_MII901:
+                        {
+                            MSACount++;
+                            break;
+                        }
                     case (byte)ModuleSelectionEnum.MODULE_MRV960:
                         {
                             MRVCount++;
@@ -491,78 +514,106 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             // заполняем список запросов для записи в устройство
             for (byte i = 0; i < RequestCount; i++)
             {
-                switch (GetModuleType(ModuleListForUI[i]))
+                if (GetModuleType(ModuleListForUI[i]) != (byte)ModuleSelectionEnum.MODULE_EMPTY)
                 {
-                    case (byte)ModuleSelectionEnum.MODULE_MSD980:
-                        {
-                            var req = new MSD980ModuleSpecification();
-                            RequestsToWrite.Add(new ModuleRequest(
-                                0x00,
-                                req.ModuleType,
-                                i,
-                                req.Command,
-                                req.ModuleParameterAddress,
-                                (ushort)(req.FirstModuleDatabaseAddress + MSDUsed * req.ParameterCount),
-                                req.ParameterCount));
-                            MSDUsed++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MSA961:
-                        {
-                            var req = new MSA961ModuleSpecification();
-                            RequestsToWrite.Add(new ModuleRequest(
-                                0x00,
-                                req.ModuleType,
-                                i,
-                                req.Command,
-                                req.ModuleParameterAddress,
-                                (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
-                                req.ParameterCount));
-                            MSAUsed++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MSA962:
-                        {
-                            var req = new MSA962ModuleSpecification();
-                            RequestsToWrite.Add(new ModuleRequest(
-                                0x00,
-                                req.ModuleType,
-                                i,
-                                req.Command,
-                                req.ModuleParameterAddress,
-                                (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
-                                req.ParameterCount));
-                            MSAUsed++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MRV960:
-                        {
-                            var req = new MRV960ModuleSpecification();
-                            RequestsToWrite.Add(new ModuleRequest(
-                                0x00,
-                                req.ModuleType,
-                                i,
-                                req.Command,
-                                req.ModuleParameterAddress,
-                                (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
-                                req.ParameterCount));
-                            MRVUsed++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MRV980:
-                        {
-                            var req = new MRV980ModuleSpecification();
-                            RequestsToWrite.Add(new ModuleRequest(
-                                0x00,
-                                req.ModuleType,
-                                i,
-                                req.Command,
-                                req.ModuleParameterAddress,
-                                (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
-                                req.ParameterCount));
-                            MRVUsed++;
-                            break;
-                        }
+                    switch (GetModuleType(ModuleListForUI[i]))
+                    {
+                        case (byte)ModuleSelectionEnum.MODULE_MSD980:
+                            {
+                                var req = new MSD980ModuleSpecification();
+                                RequestsToWrite.Add(new ModuleRequest(
+                                    0x00,
+                                    req.ModuleType,
+                                    i,
+                                    req.Command,
+                                    req.ModuleParameterAddress,
+                                    (ushort)(req.FirstModuleDatabaseAddress + MSDUsed * req.ParameterCount),
+                                    req.ParameterCount));
+                                MSDUsed++;
+                                break;
+                            }
+                        case (byte)ModuleSelectionEnum.MODULE_MSA961:
+                            {
+                                var req = new MSA961ModuleSpecification();
+                                RequestsToWrite.Add(new ModuleRequest(
+                                    0x00,
+                                    req.ModuleType,
+                                    i,
+                                    req.Command,
+                                    req.ModuleParameterAddress,
+                                    (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
+                                    req.ParameterCount));
+                                MSAUsed++;
+                                break;
+                            }
+                        case (byte)ModuleSelectionEnum.MODULE_MSA962:
+                            {
+                                var req = new MSA962ModuleSpecification();
+                                RequestsToWrite.Add(new ModuleRequest(
+                                    0x00,
+                                    req.ModuleType,
+                                    i,
+                                    req.Command,
+                                    req.ModuleParameterAddress,
+                                    (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
+                                    req.ParameterCount));
+                                MSAUsed++;
+                                break;
+                            }
+                        case (byte)ModuleSelectionEnum.MODULE_MII901:
+                            {
+                                var req = new MII901ModuleSpecification();
+                                RequestsToWrite.Add(new ModuleRequest(
+                                    0x00,
+                                    req.ModuleType,
+                                    i,
+                                    req.Command,
+                                    req.ModuleParameterAddress,
+                                    (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
+                                    req.ParameterCount));
+                                MSAUsed++;
+                                break;
+                            }
+                        case (byte)ModuleSelectionEnum.MODULE_MRV960:
+                            {
+                                var req = new MRV960ModuleSpecification();
+                                RequestsToWrite.Add(new ModuleRequest(
+                                    0x00,
+                                    req.ModuleType,
+                                    i,
+                                    req.Command,
+                                    req.ModuleParameterAddress,
+                                    (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
+                                    req.ParameterCount));
+                                MRVUsed++;
+                                break;
+                            }
+                        case (byte)ModuleSelectionEnum.MODULE_MRV980:
+                            {
+                                var req = new MRV980ModuleSpecification();
+                                RequestsToWrite.Add(new ModuleRequest(
+                                    0x00,
+                                    req.ModuleType,
+                                    i,
+                                    req.Command,
+                                    req.ModuleParameterAddress,
+                                    (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
+                                    req.ParameterCount));
+                                MRVUsed++;
+                                break;
+                            }
+                    }
+                }
+                else
+                {
+                    RequestsToWrite.Add(new ModuleRequest(
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x0000,
+                                    0x0000,
+                                    0x00));
                 }
             }
             // заполняем листбокс
@@ -576,7 +627,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         private void CalculateRequestCountForGeneration()
         {
-            for (byte i = ((byte)(ModuleListForUI.Count - 1)); i >= 0; i--)
+            for (byte i = ((byte)(ModuleListForUI.Count - 1)); i < 16; i--)
             {
                 if (GetModuleType(ModuleListForUI[i]) != (byte)ModuleSelectionEnum.MODULE_EMPTY)
                 {
@@ -585,12 +636,82 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 }
             }
         }
+        /// <summary>
+        /// Открыть файл запросов к модулям, формат *.mrf
+        /// </summary>
+        private void OnOpenFileCommand()
+        {
+            var fileDialog = new System.Windows.Forms.OpenFileDialog
+            {
+                Filter = "Файл запросов к модулям|*.mrf",
+                Title = "Открыть файл запросов"
+            };
+            if (fileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+
+            try
+            {
+                var doc = XDocument.Load(fileDialog.FileName);
+                byte modulePosition = 0;
+                foreach (XElement xElement in doc.Root.Elements())
+                {
+                    if (xElement.Name.ToString().Equals("Device"))
+                    {
+                        if (xElement.Value.ToString(CultureInfo.InvariantCulture) != "PICON2")
+                        {
+                            new Exception("Файл от устройства: " +
+                                          xElement.Value.ToString(CultureInfo.InvariantCulture) +
+                                          ". Требуется файл, соответствующий устройству: PICON2");
+                            return;
+                        }
+                    }
+                    if (xElement.Name.ToString().Equals("RequestCount"))
+                    {
+                        this.RequestCount = byte.Parse(xElement.Value.ToString(CultureInfo.InvariantCulture));
+                    }
+                    if (xElement.Name.ToString().Equals("ModuleType"))
+                    {
+                        this.ModuleListForUI[modulePosition] = xElement.Value.ToString();
+                        modulePosition++;
+                    }
+                }
+            }
+            catch
+            {
+            }
+            OnGenerateRequestsCommand();
+        }
+        /// <summary>
+        /// Сохранить файл запросов к модулям, формат *.mrf
+        /// </summary>
+        private void OnSaveFileCommand()
+        {
+            var fileDialog = new System.Windows.Forms.SaveFileDialog()
+            {
+                Filter = "Файл запросов к модулям|*.mrf",
+                Title = "Сохранение файла запросов"
+            };
+            if (fileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            try
+            {
+                var xDoc = new XDocument(new XDeclaration(DECLARATION_VERSION, DECLARATION_ENCODING, ""));
+                var root = new XElement("Device", "PICON2");
+                root.Add(new XElement("RequestCount", this.RequestCount));
+                for (byte i = 0; i < RequestCount; i++)
+                {
+                    root.Add(new XElement("ModuleType", ModuleListForUI[i]));
+                }
+                xDoc.Add(root);
+                xDoc.Save(fileDialog.FileName);
+            }
+            catch (Exception exception)
+            {
+            }
+        }
         #endregion
 
         #region [Converters]
 
         #endregion
-
 
     }
 }

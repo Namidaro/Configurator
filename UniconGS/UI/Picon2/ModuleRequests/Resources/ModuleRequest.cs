@@ -179,7 +179,14 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             }
             sb.Append(Converters.Convert.ConvertFromDecToHexStr(Type));
             sb.Append(Converters.Convert.ConvertFromDecToHexStr(CrateAddress) + "  ");
-            sb.Append(Converters.Convert.ConvertFromDecToHexStr(Command) + "  ");
+            if (Command < 10)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(Command) + "  ");
+            }
+            else
+            {
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(Command) + "  ");
+            }
             if (ParameterModuleAddress[0] < 10)
             {
                 sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterModuleAddress[0]));
@@ -204,13 +211,13 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             {
                 sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[0]));
             }
-            if (ParameterBaseAddress[1] < 10)
+            if (Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]).Length==1)
             {
                 sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
             }
             else
             {
-                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
             }
             sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterCount));
 
