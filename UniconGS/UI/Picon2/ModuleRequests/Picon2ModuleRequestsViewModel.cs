@@ -11,9 +11,11 @@ using System.Xml.Linq;
 using System.Globalization;
 using Prism.Commands;
 using Prism.Mvvm;
+using System.Windows;
 using UniconGS.Enums;
 using UniconGS.UI.Picon2.ModuleRequests.Resources;
 using UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification;
+using System.Threading;
 using System.ComponentModel;
 using Innovative.SolarCalculator;
 
@@ -29,7 +31,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         private ObservableCollection<ModuleRequest> _requestsToWrite;
         private ushort _requestCount;
         private ushort _requestCountFromDevice;
-        private List<string> _moduleList;
+        private ObservableCollection<string> _moduleList;
         private ModuleTypeList _moduleTypes;
         private ImageSRCList _imageSRC;
         private byte _msdCount;
@@ -42,12 +44,17 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         private ICommand _writeToDevice;
         private ICommand _openFile;
         private ICommand _saveFile;
+        private bool _isToggleCrate918Checked;
+        private string _crateID;
 
         #endregion
 
         #region [CONST]
         private const ushort REQUEST_COUNT_ADDRESS = 0x300E;
         private const ushort MODULE_REQUEST_START_ADDRESS = 0x3080;
+        private const ushort LOWER_MODULE_ADDRESS = 0x3009;
+        private const ushort SLAVE_MODULE_REQUEST_START_ADDRESS = 0x3180;
+        private const ushort LOWER_MODULE_REQUEST_TO_SLAVES_COUNT_ADDRESS = 0x300F;
         private const string DECLARATION_VERSION = "1.0";
         private const string DECLARATION_ENCODING = "utf-8";
         #endregion
@@ -73,7 +80,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// <summary>
         /// Список модулей для комбобокса в UI
         /// </summary>
-        public List<string> ModuleList
+        public ObservableCollection<string> ModuleList
         {
             get { return _moduleList; }
             set
@@ -214,6 +221,38 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 RaisePropertyChanged();
             }
         }
+        /// <summary>
+        /// Переключатель вида крейта
+        /// </summary>
+        public bool IsToggleCrate918Checked
+        {
+            get { return _isToggleCrate918Checked; }
+            set
+            {
+                _isToggleCrate918Checked = value;
+                if (value)
+                {
+                    CrateID = "918";
+                }
+                else
+                {
+                    CrateID = "911";
+                }
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Тип крейта
+        /// </summary>
+        public string CrateID
+        {
+            get { return _crateID; }
+            set
+            {
+                _crateID = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region [NavigateCommands]
@@ -222,7 +261,6 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         public ICommand BreakpointTestCommand => this._breakpointTestCommand ??
             (this._breakpointTestCommand = new DelegateCommand(OnBreakpointTestCommand));
-
         //TODO: уточнить какие запросы сохранять в файл
         /// <summary>
         /// Сохранить сгенерированные(или не сгенерированные, уточнить) запросы в файл
@@ -255,7 +293,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         public Picon2ModuleRequestsViewModel()
         {
             this._moduleTypes = new ModuleTypeList();
-            this._moduleList = new List<string>();
+            this._moduleList = new ObservableCollection<string>();
             this._moduleListForUI = new ObservableCollection<string>();
             this._imageSRC = new ImageSRCList();
             this._imageSRCList = new ObservableCollection<string>();
@@ -268,6 +306,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             this.MRVCount = 0;
             this.MSDCount = 0;
             this.MSACount = 0;
+            this.CrateID = string.Empty;
+            this.IsToggleCrate918Checked = true;
             InitializeModuleList();
             InitializeImageList();
         }
@@ -279,7 +319,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         private void InitializeModuleList()
         {
-            ModuleList = ModuleTypes.ModuleList.Keys.ToList();
+            //ModuleList = ModuleTypes.ModuleList.Keys.ToList();
+            foreach(var item in ModuleTypes.ModuleList.Keys)
+            {
+                ModuleList.Add(item);
+            }
             for (byte i = 0; i < 16; i++)
             {
                 ModuleListForUI.Add(ModuleList.First());
@@ -334,111 +378,35 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         private async void OnBreakpointTestCommand()
         {
-            ushort[] RequestCount = await RTUConnectionGlobal.GetDataByAddress(1, 0x300E, 1);
-            ushort startAddress = 0x3080;
-            ushort currentAddress;
-            currentAddress = startAddress;
-            ObservableCollection<ModuleRequest> requests = new ObservableCollection<ModuleRequest>();
-
-            for (byte i = 0; i < RequestCount[0]; i++)
-            {
-
-                requests.Add(new ModuleRequest(await RTUConnectionGlobal.GetDataByAddress(1, currentAddress, 4)));
-                currentAddress += 4;
-
-            }
-
-
-            //ModuleRequest req = new ModuleRequest();
-            //ModuleRequest req2 = new ModuleRequest(0x00, 0x0F, 0x07, 0x20, 0x0000, 0x2000, 0x0C);
-            //req2.SpreadRequest();
-            //ModuleRequest req3 = new ModuleRequest();
-
-
-            //TimeZoneInfo cst = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-            //TimeZoneInfo cst = TimeZoneInfo.Local;
-
-            //DateTime jan = new DateTime(2018, 1, 15);
-            //DateTime feb = new DateTime(2018, 2, 15);
-            //DateTime mar = new DateTime(2018, 3, 15);
-            //DateTime apr = new DateTime(2018, 4, 15);
-            //DateTime may = new DateTime(2018, 5, 15);
-            //DateTime jun = new DateTime(2018, 6, 15);
-            //DateTime jul = new DateTime(2018, 7, 15);
-            //DateTime aug = new DateTime(2018, 8, 15);
-            //DateTime sep = new DateTime(2018, 9, 15);
-            //DateTime oct = new DateTime(2018, 10, 15);
-            //DateTime nov = new DateTime(2018, 11, 15);
-            //DateTime dec = new DateTime(2018, 12, 15);
-
-
-
-
-            //SolarTimes solarTimes = new SolarTimes(DateTime.Now.Date, 53.8622, 27.6060);
-            //DateTime sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //DateTime sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-
-
-            //solarTimes = new SolarTimes(jan, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(feb, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(mar, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(apr, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(may, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(jun, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(jul, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(aug, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(sep, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(oct, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(nov, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-            //solarTimes = new SolarTimes(dec, 53.8622, 27.6060);
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-
-            //sunrise = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunrise.ToUniversalTime(), cst);
-            //sunset = TimeZoneInfo.ConvertTimeFromUtc(solarTimes.Sunset.ToUniversalTime(), cst);
-
-
+            //var win = new Picon2CommunicationModule910SeriesView();
+            //win.DataContext = new Picon2CommunicationModule910SeriesViewModel(0x0E, 0x00, ModuleListForUI[0x00]);
+            //win.Show();
         }
-
         /// <summary>
         /// Чтение запросов из устройства
         /// </summary>
         private async void OnReadFromDeviceCommand()
         {
-            this.RequestsFromDevice.Clear();
-            this.ModuleRequestsForUIList.Clear();
-            // число запросов к модулям хранится по адресу 0х300Е, читаем 1 слово(2 байта)
-            ushort[] RC = await RTUConnectionGlobal.GetDataByAddress(1, REQUEST_COUNT_ADDRESS, 1);
-            RequestCountFromDevice = RC[0];
-            // начальный адрес
-            ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
-            for (byte i = 0; i < RC[0]; i++)
+            try
             {
-                RequestsFromDevice.Add(new ModuleRequest(await RTUConnectionGlobal.GetDataByAddress(1, currentAddress, 4)));
-                ModuleRequestsForUIList.Add(RequestsFromDevice[i].UIRequest);
-                currentAddress += 4;
+                this.RequestsFromDevice.Clear();
+                this.ModuleRequestsForUIList.Clear();
+                // число запросов к модулям хранится по адресу 0х300Е, читаем 1 слово(2 байта)
+                ushort[] RC = await RTUConnectionGlobal.GetDataByAddress(1, REQUEST_COUNT_ADDRESS, 1);
+                RequestCountFromDevice = RC[0];
+                // начальный адрес
+                ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
+                for (byte i = 0; i < RC[0]; i++)
+                {
+                    RequestsFromDevice.Add(new ModuleRequest(await RTUConnectionGlobal.GetDataByAddress(1, currentAddress, 4)));
+                    ModuleRequestsForUIList.Add(RequestsFromDevice[i].UIRequest);
+                    currentAddress += 4;
+                }
+                ShowMessage("Чтение запросов прошло успешно!", "Информация", MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("При чтении запросов произошла ошибка.", "Внимание", MessageBoxImage.Warning);
             }
         }
         /// <summary>
@@ -446,15 +414,23 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         private async void OnWriteToDeviceCommand()
         {
-            ushort[] RC = new ushort[] { RequestCount };
-            await RTUConnectionGlobal.SendDataByAddressAsync(1, REQUEST_COUNT_ADDRESS, RC);
-            //заглушка
-            //RequestsToWrite = RequestsFromDevice;
-            ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
-            for (byte i = 0; i < RC[0]; i++)
+            try
             {
-                await RTUConnectionGlobal.SendDataByAddressAsync(1, currentAddress, RequestsToWrite[i].RequestToDevice);
-                currentAddress += 4;
+                ushort[] RC = new ushort[] { RequestCount };
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, REQUEST_COUNT_ADDRESS, RC);
+                //заглушка
+                //RequestsToWrite = RequestsFromDevice;
+                ushort currentAddress = MODULE_REQUEST_START_ADDRESS;
+                for (byte i = 0; i < RC[0]; i++)
+                {
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, currentAddress, RequestsToWrite[i].RequestToDevice);
+                    currentAddress += 4;
+                }
+                ShowMessage("Запись прошла успешно!", "Информация", MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("При записи запросов произошла ошибка.", "Внимание", MessageBoxImage.Warning);
             }
         }
         /// <summary>
@@ -462,178 +438,304 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         private void OnGenerateRequestsCommand()
         {
-            MSDCount = 0;
-            MSACount = 0;
-            MRVCount = 0;
-
-            byte MSDUsed = 0;
-            byte MSAUsed = 0;
-            byte MRVUsed = 0;
-
-            RequestsToWrite.Clear();
-            ModuleRequestsGeneratedFromUI.Clear();
-            CalculateRequestCountForGeneration();
-
-            // сначала смотрим количество модулей МСД/МСА/МРВ
-            for (byte i = 0; i < RequestCount; i++)
+            try
             {
-                switch (GetModuleType(ModuleListForUI[i]))
-                {
-                    case (byte)ModuleSelectionEnum.MODULE_MSD980:
-                        {
-                            MSDCount++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MSA961:
-                        {
-                            MSACount++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MSA962:
-                        {
-                            MSACount++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MII901:
-                        {
-                            MSACount++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MRV960:
-                        {
-                            MRVCount++;
-                            break;
-                        }
-                    case (byte)ModuleSelectionEnum.MODULE_MRV980:
-                        {
-                            MRVCount++;
-                            break;
-                        }
-                }
-            }
-            // заполняем список запросов для записи в устройство
-            for (byte i = 0; i < RequestCount; i++)
-            {
-                if (GetModuleType(ModuleListForUI[i]) != (byte)ModuleSelectionEnum.MODULE_EMPTY)
+                MSDCount = 0;
+                MSACount = 0;
+                MRVCount = 0;
+
+                byte MSDUsed = 0;
+                byte MSAUsed = 0;
+                byte MRVUsed = 0;
+
+                RequestsToWrite.Clear();
+                ModuleRequestsGeneratedFromUI.Clear();
+                CalculateRequestCountForGeneration();
+
+                // сначала смотрим количество модулей МСД/МСА/МРВ
+                for (byte i = 0; i < RequestCount; i++)
                 {
                     switch (GetModuleType(ModuleListForUI[i]))
                     {
                         case (byte)ModuleSelectionEnum.MODULE_MSD980:
                             {
-                                var req = new MSD980ModuleSpecification();
-                                RequestsToWrite.Add(new ModuleRequest(
-                                    0x00,
-                                    req.ModuleType,
-                                    i,
-                                    req.Command,
-                                    req.ModuleParameterAddress,
-                                    (ushort)(req.FirstModuleDatabaseAddress + MSDUsed * req.ParameterCount),
-                                    req.ParameterCount));
-                                MSDUsed++;
+                                MSDCount++;
                                 break;
                             }
                         case (byte)ModuleSelectionEnum.MODULE_MSA961:
                             {
-                                var req = new MSA961ModuleSpecification();
-                                RequestsToWrite.Add(new ModuleRequest(
-                                    0x00,
-                                    req.ModuleType,
-                                    i,
-                                    req.Command,
-                                    req.ModuleParameterAddress,
-                                    (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
-                                    req.ParameterCount));
-                                MSAUsed++;
+                                MSACount++;
                                 break;
                             }
                         case (byte)ModuleSelectionEnum.MODULE_MSA962:
                             {
-                                var req = new MSA962ModuleSpecification();
-                                RequestsToWrite.Add(new ModuleRequest(
-                                    0x00,
-                                    req.ModuleType,
-                                    i,
-                                    req.Command,
-                                    req.ModuleParameterAddress,
-                                    (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
-                                    req.ParameterCount));
-                                MSAUsed++;
+                                MSACount++;
                                 break;
                             }
                         case (byte)ModuleSelectionEnum.MODULE_MII901:
                             {
-                                var req = new MII901ModuleSpecification();
-                                RequestsToWrite.Add(new ModuleRequest(
-                                    0x00,
-                                    req.ModuleType,
-                                    i,
-                                    req.Command,
-                                    req.ModuleParameterAddress,
-                                    (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
-                                    req.ParameterCount));
-                                MSAUsed++;
+                                MSACount++;
                                 break;
                             }
                         case (byte)ModuleSelectionEnum.MODULE_MRV960:
                             {
-                                var req = new MRV960ModuleSpecification();
-                                RequestsToWrite.Add(new ModuleRequest(
-                                    0x00,
-                                    req.ModuleType,
-                                    i,
-                                    req.Command,
-                                    req.ModuleParameterAddress,
-                                    (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
-                                    req.ParameterCount));
-                                MRVUsed++;
+                                MRVCount++;
                                 break;
                             }
                         case (byte)ModuleSelectionEnum.MODULE_MRV980:
                             {
-                                var req = new MRV980ModuleSpecification();
-                                RequestsToWrite.Add(new ModuleRequest(
-                                    0x00,
-                                    req.ModuleType,
-                                    i,
-                                    req.Command,
-                                    req.ModuleParameterAddress,
-                                    (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
-                                    req.ParameterCount));
-                                MRVUsed++;
+                                MRVCount++;
                                 break;
                             }
                     }
                 }
+                // заполняем список запросов для записи в устройство 
+                // есть нюанс, который я узнал, когда уже почти полностью сделал этот модуль
+                // оказывается активные еще и 911-е крейты, а не только 918, а в 911-х нумерация запросов идет с МЦП
+                // т.е. МЦП всегда будет на позиции 0х00, а первый модуль будет уже на позиции 0х01, когда в 918м вся  
+                // нумерация модулей идет после МЦП и первый модуль будет на позиции 0х00
+                // мне не хочется что-то тут переделывать, так что будет во так
+                byte _firstModulePos;
+                if (IsToggleCrate918Checked)
+                {
+                    _firstModulePos = 0;
+                }
                 else
                 {
-                    RequestsToWrite.Add(new ModuleRequest(
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x0000,
-                                    0x0000,
-                                    0x00));
+                    _firstModulePos = 1;
+                }
+                for (byte i = 0; i < RequestCount; i++)
+                {
+                    if (GetModuleType(ModuleListForUI[i]) != (byte)ModuleSelectionEnum.MODULE_EMPTY)
+                    {
+                        switch (GetModuleType(ModuleListForUI[i]))
+                        {
+                            case (byte)ModuleSelectionEnum.MODULE_MSD980:
+                                {
+                                    var req = new MSD980ModuleSpecification();
+                                    RequestsToWrite.Add(new ModuleRequest(
+                                        0x00,
+                                        req.ModuleType,
+                                        (byte)(i + _firstModulePos),
+                                        req.Command,
+                                        req.ModuleParameterAddress,
+                                        (ushort)(req.FirstModuleDatabaseAddress + MSDUsed * req.ParameterCount),
+                                        req.ParameterCount));
+                                    MSDUsed++;
+                                    break;
+                                }
+                            case (byte)ModuleSelectionEnum.MODULE_MSA961:
+                                {
+                                    var req = new MSA961ModuleSpecification();
+                                    RequestsToWrite.Add(new ModuleRequest(
+                                        0x00,
+                                        req.ModuleType,
+                                        (byte)(i + _firstModulePos),
+                                        req.Command,
+                                        req.ModuleParameterAddress,
+                                        (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
+                                        req.ParameterCount));
+                                    MSAUsed++;
+                                    break;
+                                }
+                            case (byte)ModuleSelectionEnum.MODULE_MSA962:
+                                {
+                                    var req = new MSA962ModuleSpecification();
+                                    RequestsToWrite.Add(new ModuleRequest(
+                                        0x00,
+                                        req.ModuleType,
+                                        (byte)(i + _firstModulePos),
+                                        req.Command,
+                                        req.ModuleParameterAddress,
+                                        (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
+                                        req.ParameterCount));
+                                    MSAUsed++;
+                                    break;
+                                }
+                            case (byte)ModuleSelectionEnum.MODULE_MII901:
+                                {
+                                    var req = new MII901ModuleSpecification();
+                                    RequestsToWrite.Add(new ModuleRequest(
+                                        0x00,
+                                        req.ModuleType,
+                                        (byte)(i + _firstModulePos),
+                                        req.Command,
+                                        req.ModuleParameterAddress,
+                                        (ushort)(req.FirstModuleDatabaseAddress + MSAUsed * req.ParameterCount),
+                                        req.ParameterCount));
+                                    MSAUsed++;
+                                    break;
+                                }
+                            case (byte)ModuleSelectionEnum.MODULE_MRV960:
+                                {
+                                    var req = new MRV960ModuleSpecification();
+                                    RequestsToWrite.Add(new ModuleRequest(
+                                        0x00,
+                                        req.ModuleType,
+                                        (byte)(i + _firstModulePos),
+                                        req.Command,
+                                        req.ModuleParameterAddress,
+                                        (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
+                                        req.ParameterCount));
+                                    MRVUsed++;
+                                    break;
+                                }
+                            case (byte)ModuleSelectionEnum.MODULE_MRV980:
+                                {
+                                    var req = new MRV980ModuleSpecification();
+                                    RequestsToWrite.Add(new ModuleRequest(
+                                        0x00,
+                                        req.ModuleType,
+                                        (byte)(i + _firstModulePos),
+                                        req.Command,
+                                        req.ModuleParameterAddress,
+                                        (ushort)(req.FirstModuleDatabaseAddress + MRVUsed * req.ParameterCount),
+                                        req.ParameterCount));
+                                    MRVUsed++;
+                                    break;
+                                }
+                            case (byte)ModuleSelectionEnum.MODULE_MS915C:
+                                {
+                                    var req = new MS915CModuleSpecification();
+                                    RequestsToWrite.Add(new ModuleRequest(
+                                        0x00,
+                                        req.ModuleType,
+                                        (byte)(i + _firstModulePos),
+                                        req.Command,
+                                        req.ModuleParameterAddress,
+                                        (ushort)(req.FirstModuleDatabaseAddress),
+                                        req.ParameterCount));
+                                    break;
+                                }
+                            //case (byte)ModuleSelectionEnum.MODULE_MS915L:
+                            //    {
+                            //        WriteLuxmetrRequest(i + _firstModulePos);
+                            //        break;
+                            //    }
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+                //делается для случая, если посреди модулей стоит заглушка
+                RequestCount = (ushort)RequestsToWrite.Count();
+                // заполняем листбокс
+                for (byte i = 0; i < RequestsToWrite.Count; i++)
+                {
+                    ModuleRequestsGeneratedFromUI.Add(RequestsToWrite[i].UIRequest);
                 }
             }
-            // заполняем листбокс
-            for (byte i = 0; i < RequestsToWrite.Count; i++)
+            catch (Exception ex)
             {
-                ModuleRequestsGeneratedFromUI.Add(RequestsToWrite[i].UIRequest);
+                ShowMessage("При генерации запросов к модулям произошла ошибка.", "Внимание",MessageBoxImage.Warning);
             }
+        }
+        /// <summary>
+        /// Запись запросов для люксметра (обожаю, когда вылазят новые требования, когда я уже всю логику взаимодействия продумал)
+        /// </summary>
+        /// <param name="_pos"></param>
+        public async void WriteLuxmetrRequest(int _pos)
+        {
+            List<byte> byteArr = new List<byte>();
+            List<ushort> confToDevice = new List<ushort>();
+            Config915Series conf915 = new Config915Series(115200, false, false, false, false);
+            byteArr.Add(100);
+            byteArr.Add((byte)((0x0E << 4) + _pos));
+            confToDevice.Add(ArrayExtension.ByteArrayToUshortArray(byteArr.ToArray()).First());
+            confToDevice.Add(200);
+            confToDevice.Add(conf915.Config);
+            confToDevice.Add(40);
+            confToDevice.Add(20);
+
+            ushort[] req915lower = confToDevice.ToArray();
+
+            byteArr.Clear();
+            confToDevice.Clear();
+
+            //запрос для люксметра, пишется в область памяти запросов к подчиненным устройствам
+            byteArr.Add(0x00);//период
+            byteArr.Add(0x01);//адрес+тип модуля
+            byteArr.Add(0x00);//команда
+            byteArr.Add(0x00);//адрес пар-ра в модуле 1
+            byteArr.Add(0x00);//адрес пар-ра в модуле 2
+            byteArr.Add(0x06);//адрес пар-ра в базе 1
+            byteArr.Add(0x40);//ажрес пар-ра в базе 2
+            byteArr.Add(0x01);//число пар-ров
+            confToDevice.AddRange(ArrayExtension.ByteArrayToUshortArray(byteArr.ToArray()));
+
+            ushort[] reqLux = confToDevice.ToArray();
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Будет произведена запись со следующими параметрами:");
+            sb.AppendLine("Модуль связи: МС915 с низом на позицию " + _pos.ToString());
+            sb.AppendLine("Ожидание ответа: 200 (*0,5 мс)");
+            sb.AppendLine("Скорость: 115200");
+            sb.AppendLine("Биты данных: 8 бит");
+            sb.AppendLine("Паритет: нечет");
+            sb.AppendLine("Паритет: нет");
+            sb.AppendLine("Число стоп битов: 1 бит");
+            sb.AppendLine("Таймаут ввода/вывода: 100 (*0,1 мс)");
+            sb.AppendLine("Включение передачи: 40 (*0,1 мс)");
+            sb.AppendLine("Выключение передачи: 20 (*0,1 мс)");
+
+            sb.AppendLine("Также будет добавлен запрос к подчиненному устройтсву(люксметру).");
+            sb.AppendLine("Продолжить?");
+
+            if (MessageBox.Show(sb.ToString(), "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    ushort[] LRC = new ushort[] { 1 };//договор был изначально на одно устройство, так что ничего придумывать не буду
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, LOWER_MODULE_REQUEST_TO_SLAVES_COUNT_ADDRESS, LRC);
+                    Thread.Sleep(100);
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, LOWER_MODULE_ADDRESS, req915lower);
+                    Thread.Sleep(100);
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, SLAVE_MODULE_REQUEST_START_ADDRESS, reqLux);
+                    Thread.Sleep(100);
+                    ShowMessage("Запись произведена.", "Информация", MessageBoxImage.Information);
+                }
+                catch
+                {
+                    ShowMessage("При записи в устройство произошла ошибка.", "Внимение", MessageBoxImage.Warning);
+                }
+            }
+            else
+            {
+                ShowMessage("Запись не была произведена", "Информация", MessageBoxImage.Information);
+            }
+
+        }
+        /// <summary>
+        /// Показ информации в окне
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="caption"></param>
+        /// <param name="image"></param>
+        private void ShowMessage(string message, string caption, MessageBoxImage image)
+        {
+            System.Windows.MessageBox.Show(message, caption, MessageBoxButton.OK, image);
         }
         /// <summary>
         /// Расчет количества запросов для генерирования (считает справа до первой НЕзаглушки)
         /// </summary>
         private void CalculateRequestCountForGeneration()
         {
-            for (byte i = ((byte)(ModuleListForUI.Count - 1)); i < 16; i--)
+            try
             {
-                if (GetModuleType(ModuleListForUI[i]) != (byte)ModuleSelectionEnum.MODULE_EMPTY)
+                for (byte i = ((byte)(ModuleListForUI.Count - 1)); i < 16; i--)
                 {
-                    RequestCount = (byte)(i + 1);
-                    break;
+                    if (GetModuleType(ModuleListForUI[i]) != (byte)ModuleSelectionEnum.MODULE_EMPTY)
+                    {
+                        RequestCount = (byte)(i + 1);
+                        break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
         /// <summary>
@@ -674,11 +776,14 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                         modulePosition++;
                     }
                 }
+                ShowMessage("Файл открыт успешно!", "Информация", MessageBoxImage.Information);
+                OnGenerateRequestsCommand();
             }
             catch
             {
+                ShowMessage("При открытии файла произошла ошибка!", "Внимание", MessageBoxImage.Warning);
             }
-            OnGenerateRequestsCommand();
+
         }
         /// <summary>
         /// Сохранить файл запросов к модулям, формат *.mrf
@@ -702,9 +807,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 }
                 xDoc.Add(root);
                 xDoc.Save(fileDialog.FileName);
+                ShowMessage("Сохранено!", "Информация", MessageBoxImage.Information);
             }
             catch (Exception exception)
             {
+                ShowMessage("При сохранении файла произошла ошибка", "Внимание", MessageBoxImage.Warning);
             }
         }
         #endregion

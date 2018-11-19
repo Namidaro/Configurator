@@ -41,7 +41,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification
         {
             get
             {
-                return 0x0C;
+                return 0x0E;
             }
         }
     }

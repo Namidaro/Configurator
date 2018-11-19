@@ -341,3 +341,7 @@ D:\Work\#Git\Cfg_Ur\UniconGS\bin\Release\Innovative.SolarCalculator.dll
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Release\System.Runtime.InteropServices.RuntimeInformation.dll
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.baml

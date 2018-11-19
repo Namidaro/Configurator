@@ -4,11 +4,95 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UniconGS.UI.Picon2.ModuleRequests"
+             xmlns:converters="clr-namespace:UniconGS.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             >
 
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BooleanToVisibilityRevertConverter x:Key="BoolToVisibilityReverceConverter"/>
 
+
+        <Style x:Key="ButtonFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" 
+                                   SnapsToDevicePixels="true" 
+                                   Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" 
+                                   StrokeThickness="1" 
+                                   StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#F3F3F3" Offset="0"/>
+            <GradientStop Color="#EBEBEB" Offset="0.5"/>
+            <GradientStop Color="#DDDDDD" Offset="0.5"/>
+            <GradientStop Color="#CDCDCD" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070"/>
+        <Style x:Key="ToggleRectStyle" TargetType="{x:Type ToggleButton}">
+
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}" >
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="on"
+                                    Grid.Column="0"
+                                    Background="LightGray"
+                                    CornerRadius="2,0,0,2" 
+                                    Margin="0,0,0,0" 
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                    >
+                                <TextBlock x:Name="onText" 
+                                           Text="911" 
+                                           HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center"
+                                           />
+                            </Border>
+                            <Border x:Name="off" 
+                                    Grid.Column="1"
+                                    Background="LightGray" 
+                                    CornerRadius="0,2,2,0" 
+                                    Margin="0,0,0,0"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                    >
+                                <TextBlock x:Name="offText" 
+                                           Text="918" 
+                                           HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center"
+                                           
+                                           />
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#ADADAD"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="on" Property="Background" Value="LightBlue"/>
+                                <Setter TargetName="onText" Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter TargetName="off" Property="Background" Value="LightBlue"/>
+                                <Setter TargetName="offText" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -18,28 +102,33 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <!-- Device field-->
-        <Border Grid.Row="0" BorderThickness="2" BorderBrush="Blue">
+        <Border Grid.Row="0" BorderThickness="2" BorderBrush="Blue" >
             <Grid
-            Grid.Row="0">
+                SnapsToDevicePixels="True"
+                UseLayoutRounding="True"
+                Grid.Row="0"
+                ClipToBounds="True"
+                
+                >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
@@ -124,42 +213,49 @@
                           ItemsSource="{Binding ModuleList}" 
                           SelectedItem="{Binding ModuleListForUI[9]}"
                           SelectionChanged="Selector_OnSelectionChanged"
+                          Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                       />
                 <ComboBox Name="Selector_Position_0x0A" 
                           Grid.Column="12" 
                           ItemsSource="{Binding ModuleList}" 
                           SelectedItem="{Binding ModuleListForUI[10]}"
                           SelectionChanged="Selector_OnSelectionChanged"
+                          Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                       />
                 <ComboBox Name="Selector_Position_0x0B" 
                           Grid.Column="13" 
                           ItemsSource="{Binding ModuleList}" 
                           SelectedItem="{Binding ModuleListForUI[11]}"
                           SelectionChanged="Selector_OnSelectionChanged"
+                          Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                       />
                 <ComboBox Name="Selector_Position_0x0C" 
                           Grid.Column="14" 
                           ItemsSource="{Binding ModuleList}" 
                           SelectedItem="{Binding ModuleListForUI[12]}"
                           SelectionChanged="Selector_OnSelectionChanged"
+                          Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                       />
                 <ComboBox Name="Selector_Position_0x0D" 
                           Grid.Column="15" 
                           ItemsSource="{Binding ModuleList}" 
                           SelectedItem="{Binding ModuleListForUI[13]}"
                           SelectionChanged="Selector_OnSelectionChanged"
+                          Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                       />
                 <ComboBox Name="Selector_Position_0x0E" 
                           Grid.Column="16" 
                           ItemsSource="{Binding ModuleList}" 
                           SelectedItem="{Binding ModuleListForUI[14]}"
                           SelectionChanged="Selector_OnSelectionChanged"
+                          Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                       />
                 <ComboBox Name="Selector_Position_0x0F" 
                           Grid.Column="17" 
                           ItemsSource="{Binding ModuleList}" 
                           SelectedItem="{Binding ModuleListForUI[15]}"
                           SelectionChanged="Selector_OnSelectionChanged"
+                          Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                       />
 
                 <!-- ROW = 1-->
@@ -167,137 +263,147 @@
                        Grid.Row="1"
                        Grid.Column="0"
                        Source="{Binding ImageSRCList[16]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
                        />
                 <Image Name="Image_Position_CPU"
                        Grid.Row="1"
                        Grid.Column="1"
                        Source="{Binding ImageSRCList[17]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+                       Margin="1"
                        />
                 <Image Name="Image_Position_0x00"
                        Grid.Row="1"
                        Grid.Column="2"
                        Source="{Binding ImageSRCList[0]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
                        />
                 <Image Name="Image_Position_0x01"
                        Grid.Row="1"
                        Grid.Column="3"
                        Source="{Binding ImageSRCList[1]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x02"
                        Grid.Row="1"
                        Grid.Column="4"
                        Source="{Binding ImageSRCList[2]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x03"
                        Grid.Row="1"
                        Grid.Column="5"
                        Source="{Binding ImageSRCList[3]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x04"
                        Grid.Row="1"
                        Grid.Column="6"
                        Source="{Binding ImageSRCList[4]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x05"
                        Grid.Row="1"
                        Grid.Column="7"
                        Source="{Binding ImageSRCList[5]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x06"
                        Grid.Row="1"
                        Grid.Column="8"
                        Source="{Binding ImageSRCList[6]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x07"
                        Grid.Row="1"
                        Grid.Column="9"
                        Source="{Binding ImageSRCList[7]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x08"
                        Grid.Row="1"
                        Grid.Column="10"
                        Source="{Binding ImageSRCList[8]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
                        />
                 <Image Name="Image_Position_0x09"
                        Grid.Row="1"
                        Grid.Column="11"
                        Source="{Binding ImageSRCList[9]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+
+                       Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                        />
                 <Image Name="Image_Position_0x0A"
                        Grid.Row="1"
                        Grid.Column="12"
                        Source="{Binding ImageSRCList[10]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+                       Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                        />
                 <Image Name="Image_Position_0x0B"
                        Grid.Row="1"
                        Grid.Column="13"
                        Source="{Binding ImageSRCList[11]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+                       Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                        />
                 <Image Name="Image_Position_0x0C"
                        Grid.Row="1"
                        Grid.Column="14"
                        Source="{Binding ImageSRCList[12]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+                       Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                        />
                 <Image Name="Image_Position_0x0D"
                        Grid.Row="1"
                        Grid.Column="15"
                        Source="{Binding ImageSRCList[13]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+                       Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                        />
                 <Image Name="Image_Position_0x0E"
                        Grid.Row="1"
                        Grid.Column="16"
                        Source="{Binding ImageSRCList[14]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+                       Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                        />
                 <Image Name="Image_Position_0x0F"
                        Grid.Row="1"
                        Grid.Column="17"
                        Source="{Binding ImageSRCList[15]}"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
+                       Stretch="Uniform"
+                       Visibility="{Binding IsToggleCrate918Checked, Converter={StaticResource BoolToVisibilityConverter}}"
                        />
 
                 <!-- ROW = 2-->
                 <Button Name="test" 
                         Grid.Row="2"
-                        Grid.Column="0"
+                        Grid.Column="17"
                         Content="Отладка"
                         Visibility="Collapsed"
                         Command="{Binding BreakpointTestCommand}" />
-
+                <ToggleButton Name="CrateSelector"
+                              Grid.Column="0"
+                              Grid.Row="2"
+                              IsChecked="{Binding IsToggleCrate918Checked}"
+                              IsThreeState="False"
+                              Content="{Binding CrateID}"
+                              Style="{StaticResource ToggleRectStyle}"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
+                              VerticalContentAlignment="Stretch"
+                              />
 
             </Grid>
         </Border>
@@ -376,7 +482,7 @@
                          ItemsSource="{Binding ModuleRequestsGeneratedFromUI}"
                          >
                 </ListBox>
-                
+
                 <ListBox Grid.Row="1"
                          Grid.Column="9"
                          Grid.ColumnSpan="9"
@@ -412,7 +518,7 @@
                         Margin="1,1,1,1"
                         Content="Сохранить"
                         Command="{Binding SaveFileCommand}" />
-                
+
                 <Button Name="Read_from_device" 
                         Grid.Row="2"
                         Grid.Column="14"

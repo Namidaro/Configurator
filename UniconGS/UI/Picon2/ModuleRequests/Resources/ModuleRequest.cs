@@ -219,11 +219,20 @@ namespace UniconGS.UI.Picon2.ModuleRequests.Resources
             {
                 sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterBaseAddress[1]) + "  ");
             }
-            sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterCount));
-
+            if (ParameterCount < 10)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterCount));
+            }
+            else if(Converters.Convert.ConvertFromDecToHexStr(ParameterCount).Length == 1)
+            {
+                sb.Append("0" + Converters.Convert.ConvertFromDecToHexStr(ParameterCount));
+            }
+            else
+            {
+                sb.Append(Converters.Convert.ConvertFromDecToHexStr(ParameterCount));
+            }
             UIRequest = sb.ToString();
         }
-
         #endregion
     }
 }

@@ -143,6 +143,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ConfiguratorSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanReverceConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityRevertConverter.cs" />
     <Compile Include="Enums\DeviceSelectionEnum.cs" />
     <Compile Include="Enums\LightningScheduleEnum.cs" />
@@ -168,13 +169,29 @@
     </Compile>
     <Compile Include="UI\Picon2\Extensions.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\Converters\Converters.cs" />
-    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\IModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS915LModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\Structures\Config910Series.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\Structures\Config915Series.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\Interfaces\IModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV960ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV980ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MII901ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS911ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS911RModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS915CModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS910RModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS917ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA961ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA962ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSD980ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.xaml.cs">
+      <DependentUpon>Picon2CommunicationModule910SeriesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesViewModel.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.xaml.cs">
+      <DependentUpon>Picon2CommunicationModule915SeriesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesViewModel.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\Resources\ImageSRCList.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.xaml.cs">
       <DependentUpon>Picon2ModuleRequestsView.xaml</DependentUpon>
@@ -197,6 +214,8 @@
     <Compile Include="UI\Picon2\ViewModel\PICON2ConfigCheckBoxControlViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\PICON2ConfigurationModeViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\Picon2LightingSheduleViewModel.cs" />
+    <Compile Include="UI\Schedule\SolarSchedule\CityCoordinates.cs" />
+    <Compile Include="UI\Schedule\SolarSchedule\Solar.cs" />
     <Compile Include="UI\TurnOnError.xaml.cs">
       <DependentUpon>TurnOnError.xaml</DependentUpon>
     </Compile>
@@ -251,6 +270,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Picon2\DaySheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -669,7 +696,7 @@
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS911.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS911R.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915.png" />
-    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS916.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS910R.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS917.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSA961.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSA962.png" />
@@ -682,6 +709,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSD980.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915C.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915L.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
