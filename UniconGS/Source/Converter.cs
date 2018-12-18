@@ -132,5 +132,51 @@ namespace UniconGS.Source
             else
                 return null;
         }
+
+        public static double BytesToIntVoltageFormatterPicon2(byte[] value)
+        {
+            return (double)((int)(
+                (((double)value[0] * 256 + value[1]) * 400 / 65535)*100
+                )
+                )/100;
+        }
+
+        public static double BytesToIntCurrentFormatterPicon2(byte[] value)
+        {
+            return (double)((int)(
+                (((double)value[0] * 256 + value[1]) * 100 / 65535)*100
+                )
+                )/100;
+        }
+
+        public static double BytesToIntPowerFormatterPicon2(byte[] value)
+        {
+            return (double)((int)(
+                (((double)value[0] * 256 + value[1]) * 40 / 65535)*100
+                )
+                )/100;
+        }
+
+        public static double BytesToLongEnergyFormatterPicon2(byte[] value)
+        {
+            //double a = value[0] * 256;
+            //a = a + value[1];
+            //double b = value[2] * 256; //смещение на байт  
+            //b = (b + value[3]) * 65535; //на 2 байта
+            //a = b + a;  //складываем 2 слова в одно значение
+            //var result = ((a * 999999) / 4294901760);//поменял большое число, раньше стояло "4294967296" это 65535^2 + 65535*2 +1 (возможно опечатка или чтобы ноль не получался, хз),
+            //                                         //сейчас 65535^2+65535
+            //                                         //я хз откудо оно взялось, но оно давало погрешность в 0.16%, 
+            //                                         //что роляло на больших числах - сейчас погрешности практически нет, так что аллилуя
+            //return (long)result;
+            byte[] bytes = new[] { value[1], value[0], value[3], value[2] };
+            float fff = BitConverter.ToSingle(bytes, 0);
+            return (double)((int)(
+                fff*1000
+                )
+                )/1000;
+
+
+        }
     }
 }

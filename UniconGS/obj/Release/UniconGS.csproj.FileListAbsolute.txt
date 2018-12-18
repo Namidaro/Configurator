@@ -345,3 +345,9 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2Communic
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.baml
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\DiscretModules\Picon2States.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2ModuleErrors.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2DiagnosticsErrors.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\DiscretModules\Picon2States.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2ModuleErrors.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2DiagnosticsErrors.baml

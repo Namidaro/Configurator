@@ -109,5 +109,31 @@ namespace UniconGS
             }
             return resultBytes;
         }
+
+        public static async Task ExecuteFunction15Async(byte numOfDevice, ushort address, bool[] data)
+        {
+            if (_modbusMaster != null)
+            {
+                OnWritingStartedAction?.Invoke();
+                try
+                {
+                    OnWritingStartedAction?.Invoke();
+                    await _modbusMaster.WriteMultipleCoilsAsync(numOfDevice, address, data);
+                }
+                catch (Exception e)
+                {
+                    ConnectionLostAction?.Invoke();
+                    throw;
+                }
+                finally
+                {
+                    OnWritingCompleteAction?.Invoke();
+                }
+            }
+            else
+            {
+                throw new Exception("Не инициализирован обЪект связи");
+            }
+        }
     }
 }

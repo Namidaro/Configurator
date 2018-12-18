@@ -74,7 +74,7 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         private double _latitude;
         private double _longitude;
-        private ICommand _calculateSchedule;
+        private ICommand _calculateScheduleCommand;
 
         private bool _isMonthsEnabled = false;
         private string _currentMonthName;
@@ -148,6 +148,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             this.CityList = new List<string>();
             this.CoordinatesDictionary = new Dictionary<string, CityCoordinates>();
             InitializeCityDictionary();
+            this.SelectedCity = CityList.First();
         }
         #endregion
 
@@ -198,7 +199,8 @@ namespace UniconGS.UI.Picon2.ViewModel
             set
             {
                 this._longitude = value;
-                RaisePropertyChanged();
+                OnPropertyChanged("Longitude");
+                //RaisePropertyChanged();
             }
         }
         /// <summary>
@@ -210,7 +212,8 @@ namespace UniconGS.UI.Picon2.ViewModel
             set
             {
                 _coordinatesDictionary = value;
-                RaisePropertyChanged();
+                //RaisePropertyChanged();
+                OnPropertyChanged("CoordinatesDictionary");
             }
         }
         /// <summary>
@@ -222,7 +225,8 @@ namespace UniconGS.UI.Picon2.ViewModel
             set
             {
                 _cityList = value;
-                RaisePropertyChanged();
+                //RaisePropertyChanged();
+                OnPropertyChanged("CityList");
             }
         }
 
@@ -235,7 +239,9 @@ namespace UniconGS.UI.Picon2.ViewModel
                 CityCoordinates cc = CoordinatesDictionary.ElementAt(GetCityIndex(value)).Value;
                 Latitude = cc.Latitude;
                 Longitude = cc.Longitude;
-                RaisePropertyChanged();
+                //RaisePropertyChanged();
+                OnPropertyChanged("SelectedCity");
+
             }
         }
 
@@ -382,8 +388,8 @@ namespace UniconGS.UI.Picon2.ViewModel
         {
             get
             {
-                return this._calculateSchedule ??
-                    (this._calculateSchedule = new DelegateCommand(OnCalculateScheduleCommand));
+                return this._calculateScheduleCommand ??
+                    (this._calculateScheduleCommand = new DelegateCommand(OnCalculateScheduleCommand));
             }
         }
 
@@ -676,7 +682,7 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         private void InitializeCityDictionary()
         {
-            
+
 
             CityList.Add("Минск");
             CityList.Add("Брест");
@@ -1041,6 +1047,8 @@ namespace UniconGS.UI.Picon2.ViewModel
         /// <returns>byte[] array</returns>
         private void GetScheduleDataFromSolar()
         {
+            //тут много в принципе не нужных try-catch конструкций, которые я поставил, чтобы отловить ошибку, которая появлялась только в exe-шнике
+            //оказалось проблема вообще не в этом была, но я оставлю все так, если будет желание - потом как-нибудь почищу
             this.IsMonthsEnabled = true;
             SolarTimes solarTimes = new SolarTimes();
             TimeSpan sunriseTime = new TimeSpan();
@@ -1050,77 +1058,120 @@ namespace UniconGS.UI.Picon2.ViewModel
             byte[] result = new byte[1536];
 
             this._monthsCollection.Clear();
-            foreach (var mothName in this._mothNames)
+            try
             {
-                this._monthsCollection.Add(mothName, new ObservableCollection<DaySheduleViewModel>());
-            }
-            var monthLengthList = this._monthsLenghtDictionary.Values.ToArray();
-            for (int i = 0; i < MONTH_COUNT; i++)
-            {
-                for (int j = 0; j < monthLengthList[i]; j++)
+
+                foreach (var mothName in this._mothNames)
                 {
+                    this._monthsCollection.Add(mothName, new ObservableCollection<DaySheduleViewModel>());
+                }
+                var monthLengthList = this._monthsLenghtDictionary.Values.ToArray();
+                for (int i = 0; i < MONTH_COUNT; i++)
+                {
+                    for (int j = 0; j < monthLengthList[i]; j++)
+                    {
+                        this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                        {
+                            Month = this._mothNames[i],
+                            DayNumber = j + 1
+                        });
+                    }
                     this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
                     {
                         Month = this._mothNames[i],
-                        DayNumber = j + 1
+                        DayNumber = monthLengthList[i] + 1,
+                        IsEconomy = true
+
                     });
                 }
-                this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
-                {
-                    Month = this._mothNames[i],
-                    DayNumber = monthLengthList[i] + 1,
-                    IsEconomy = true
-
-                });
+                this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
             }
-            this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
-
-
-            for (int i = 0; i < this.MonthCollection.Count; i++)
+            catch (Exception ex)
             {
-                string monthName = this._mothNames[i];
-                int monthStartIndex = MONTH_LENGHT_INDEX * i;
-                
-                //что делать с экономией
-                DaySheduleViewModel economyDaySheduleViewModel = this._monthsCollection[monthName].Last();
-
-                result[monthStartIndex + 1] = (byte)economyDaySheduleViewModel.StartHour;
-                result[monthStartIndex] = (byte)economyDaySheduleViewModel.StartMinute;
-                result[monthStartIndex + 3] = (byte)economyDaySheduleViewModel.StopHour;
-                result[monthStartIndex + 2] = (byte)economyDaySheduleViewModel.StopMinute;
-
-                for (int j = 0; j < this._monthsLenghtDictionary[monthName]; j++)
+                ShowMessage("Заполнение коллекции месяцев", "ошибка", MessageBoxImage.Error);
+            }
+            try
+            {
+                for (int i = 0; i < this.MonthCollection.Count; i++)
                 {
+
                     try
                     {
-                        solarTimes = new SolarTimes(new DateTime(DateTime.Today.Year, i + 1, j + 1), Latitude, Longitude);
-                        sunriseTime = solarTimes.Sunrise.TimeOfDay;
-                        sunsetTime = solarTimes.Sunset.TimeOfDay;
 
-                        Solar solar = new Solar(Latitude, solarTimes.SolarDeclination);
+                        string monthName = this._mothNames[i];
+                        int monthStartIndex = MONTH_LENGHT_INDEX * i;
 
-                        TimeSpan civilDelta = new TimeSpan((int)Math.Abs(Math.Floor(solar.TCivil)),
-                                                           (int)Math.Abs((solar.TCivil - Math.Truncate(solar.TCivil)) * 60),
-                                                           0);
+                        //что делать с экономией
+                        DaySheduleViewModel economyDaySheduleViewModel = this._monthsCollection[monthName].Last();
 
-                        civilDuskM = (sunriseTime - civilDelta);
-                        civilDuskE = (sunsetTime + civilDelta);
+                        result[monthStartIndex + 1] = (byte)economyDaySheduleViewModel.StartHour;
+                        result[monthStartIndex] = (byte)economyDaySheduleViewModel.StartMinute;
+                        result[monthStartIndex + 3] = (byte)economyDaySheduleViewModel.StopHour;
+                        result[monthStartIndex + 2] = (byte)economyDaySheduleViewModel.StopMinute;
 
-                        int dayStartIndex = monthStartIndex + j * DAY_LENGHT_INDEX;
-                        result[dayStartIndex + 5] = (byte)civilDuskE.Hours;
-                        result[dayStartIndex + 4] = (byte)civilDuskE.Minutes;
-                        result[dayStartIndex + 7] = (byte)civilDuskM.Hours;
-                        result[dayStartIndex + 6] = (byte)civilDuskM.Minutes;
+                        for (int j = 0; j < this._monthsLenghtDictionary[monthName]; j++)
+                        {
+                            try
+                            {
+                                solarTimes = new SolarTimes(new DateTime(DateTime.Today.Year, i + 1, j + 1), Latitude, Longitude);
+                                sunriseTime = solarTimes.Sunrise.TimeOfDay;
+                                sunsetTime = solarTimes.Sunset.TimeOfDay;
+
+                                Solar solar = new Solar(Latitude, solarTimes.SolarDeclination);
+
+                                TimeSpan civilDelta = new TimeSpan((int)Math.Abs(Math.Floor(solar.TCivil)),
+                                                                   (int)Math.Abs((solar.TCivil - Math.Truncate(solar.TCivil)) * 60),
+                                                                   0);
+
+                                civilDuskM = (sunriseTime - civilDelta);
+                                civilDuskE = (sunsetTime + civilDelta);
+
+                                int dayStartIndex = monthStartIndex + j * DAY_LENGHT_INDEX;
+                                result[dayStartIndex + 5] = (byte)civilDuskE.Hours;
+                                result[dayStartIndex + 4] = (byte)civilDuskE.Minutes;
+                                result[dayStartIndex + 7] = (byte)civilDuskM.Hours;
+                                result[dayStartIndex + 6] = (byte)civilDuskM.Minutes;
+                            }
+                            catch { }
+                        }
                     }
-                    catch { }
+                    catch (Exception ex1)
+                    {
+                        ShowMessage("расчет", "ошибка", MessageBoxImage.Error);
+                    }
+
                 }
             }
-            InitializeOnNavigateTo(result);
+            catch (Exception ex3)
+            {
+                ShowMessage("цикл", "ошибка", MessageBoxImage.Error);
+            }
+
+
+            try
+            {
+                InitializeOnNavigateTo(result);
+
+            }
+            catch (Exception ex2)
+            {
+                ShowMessage("заполнение ui", "ошибка", MessageBoxImage.Error);
+
+            }
         }
 
         private void OnCalculateScheduleCommand()
         {
-            GetScheduleDataFromSolar();
+            try
+            {
+                GetScheduleDataFromSolar();
+
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Вызов метода", "ошибка", MessageBoxImage.Error);
+
+            }
         }
 
         private async Task<byte[]> GetLightingSheduleDataFromDeviceAsync()

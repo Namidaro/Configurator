@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using UniconGS.Interfaces;
 using UniconGS.Source;
+using UniconGS.Enums;
 
 namespace UniconGS.UI.Channels
 {
@@ -363,13 +364,30 @@ namespace UniconGS.UI.Channels
 
         public async Task Update()
         {
-            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0000, 5);
-            //var res = DataTransfer.ReadWords(Querer);
-            //Dispatcher.BeginInvoke(new ReadComplete(RunWorkerCompleted), DispatcherPriority.SystemIdle, res);
-            Application.Current.Dispatcher.Invoke(() =>
+            if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                SetChannelsValue(value);
-            });
+                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0000, 5);
+                //var res = DataTransfer.ReadWords(Querer);
+                //Dispatcher.BeginInvoke(new ReadComplete(RunWorkerCompleted), DispatcherPriority.SystemIdle, res);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetChannelsValue(value);
+                });
+
+
+
+            }
+            else
+            {
+                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0000, 5);
+                //var res = DataTransfer.ReadWords(Querer);
+                //Dispatcher.BeginInvoke(new ReadComplete(RunWorkerCompleted), DispatcherPriority.SystemIdle, res);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetChannelsValue(value);
+                });
+
+            }
         }
 
         public async Task<bool> WriteContext()

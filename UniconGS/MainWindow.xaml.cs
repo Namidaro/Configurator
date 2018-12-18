@@ -87,6 +87,8 @@ namespace UniconGS
                 uiPicon2Diagnostics.Visibility = Visibility.Visible;
                 uiLogicConfig.Visibility = Visibility.Collapsed;
                 uiLogicConfigTab.Visibility = Visibility.Collapsed;
+
+
                 picon2LightingSheduleView.DataContext = new Picon2LightingSheduleViewModel();
                 uiPicon2ConfigurationView.DataContext = new PICON2ConfigurationModeViewModel();
                 uiSheduleLightining.Visibility = Visibility.Collapsed;
@@ -94,10 +96,11 @@ namespace UniconGS
                 uiSheduleIllumination.Visibility = Visibility.Collapsed;
                 uiSheduleEconomy.Visibility = Visibility.Collapsed;
                 uiSheduleHeating.Visibility = Visibility.Collapsed;
-                LogicTab.Visibility = Visibility.Collapsed;
+                LogicTab.Visibility = Visibility.Visible;
                 uiGPRSConfig.Visibility = Visibility.Collapsed;
                 uiGSMConnection.IsEnabled = false;
                 uiGPRSTab.Visibility = Visibility.Collapsed;
+
                 uiPicon2ModuleRequests.Visibility = Visibility.Visible;
                 Picon2ModuleRequest.DataContext = new Picon2ModuleRequestsViewModel();
             }
@@ -107,6 +110,7 @@ namespace UniconGS
                 picon2ScheduleTab.Visibility = Visibility.Collapsed;
                 uiPicon2ConfigurationView.Visibility = Visibility.Collapsed;
                 uiPicon2ModuleRequests.Visibility = Visibility.Collapsed;
+
             }
             InitSlots();
 
@@ -259,13 +263,24 @@ namespace UniconGS
                 });
                 if (isDiagTabSelected)
                 {
+                    if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                    {
+                        await uiPicon2DiagnosticsErrors.Update();
 
-
-                    await uiPiconDiagnostics.Update();
-                    await uiTime.Update();
-                    await uiSignalGSMLevel.Update();
-                    await uiRuno3Diagnostics.Update();
-                    await uiDiagnosticsErrors.Update();
+                        await uiPiconDiagnostics.Update();
+                        await uiTime.Update();
+                        await uiSignalGSMLevel.Update();
+                        await uiRuno3Diagnostics.Update();
+                        await uiDiagnosticsErrors.Update();
+                    }
+                    else
+                    {
+                        await uiPiconDiagnostics.Update();
+                        await uiTime.Update();
+                        await uiSignalGSMLevel.Update();
+                        await uiRuno3Diagnostics.Update();
+                        await uiDiagnosticsErrors.Update();
+                    }
                 }
                 var isLogicTabSelected = false;
                 Application.Current.Dispatcher.Invoke(() =>
@@ -294,16 +309,25 @@ namespace UniconGS
                     }
                     if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                     {
-                        //await uiChannelsManagment.Update();
-                        //await uiErrors.Update();
-                        //await uiFuseErrors.Update();
-                        //await uiTurnOnError.Update();
-                        //await uiStates.Update();
-                        //await uiMeter.Update();
+                        await uiChannelsManagment.Update();
+                        await uiErrors.Update();
+                        await uiFuseErrors.Update();
+                        await uiTurnOnError.Update();
+                        await uiStates.Update();
+                        await uiMeter.Update();
                     }
 
                 }
+                var isModuleRequestsTabSelected = false;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    isModuleRequestsTabSelected = uiPicon2ModuleRequests.IsSelected;
 
+                });
+                if (isModuleRequestsTabSelected)
+                {
+                    await Picon2ModuleRequest.Update();
+                }
                 //Application.Current.Dispatcher.Invoke(() =>
                 //{
                 //    MrNetwork.IsSelected;
@@ -536,7 +560,7 @@ namespace UniconGS
                 }
 
 
-                this.uiHider.Visibility = Visibility.Hidden; 
+                this.uiHider.Visibility = Visibility.Hidden;
                 this.Start();
                 this.uiDisconnect.IsEnabled = true;
                 this.uiConnect.IsEnabled = false;
@@ -903,6 +927,7 @@ namespace UniconGS
                     uiScrollViewer.Visibility = Visibility.Hidden;
                     uiDiagnosticsErrors.Visibility = Visibility.Hidden;
                     uiPiconDiagnostics.Visibility = Visibility.Hidden;
+                    uiPicon2DiagnosticsErrors.Visibility = Visibility.Visible;
                     uiScrollViewerPicon2.Visibility = Visibility.Visible;
                     uiPicon2Diagnostics.Visibility = Visibility.Visible;
                     //picon2LightingSheduleView.uiReadPicon2Schdule.IsEnabled = true;
@@ -913,6 +938,7 @@ namespace UniconGS
                 this.uiSettings.IsAutonomous = _isAutonomous;
                 this.uiTime.SetAutonomus();
                 this.uiPiconDiagnostics.SetAutonomus();
+                this.uiPicon2DiagnosticsErrors.SetAutonomus();
                 this.uiRuno3Diagnostics.SetAutonomus();
                 this.uiSystemJournal.SetAutonomous();
                 this.uiLogicConfig.SetAutonomous();
@@ -1027,8 +1053,8 @@ namespace UniconGS
                 //uiRuno3Diagnostics.Visibility = Visibility.Hidden;
                 //uiScroll.Visibility = Visibility.Hidden;
                 //uiScrollViewer.Visibility = Visibility.Visible;
-                //uiDiagnosticsErrors.Visibility = Visibility.Visible;
-                //uiPiconDiagnostics.Visibility = Visibility.Visible;
+                uiPicon2Diagnostics.Visibility = Visibility.Visible;
+                uiPicon2DiagnosticsErrors.Visibility = Visibility.Visible;
 
             }
             (this.uiMainControl.Items[0] as TabItem).Visibility = Visibility.Collapsed;

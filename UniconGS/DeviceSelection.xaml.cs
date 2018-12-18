@@ -24,33 +24,33 @@ namespace UniconGS
 
         private void uiRunoSelection_Click(object sender, RoutedEventArgs e)
         {
-          
+
             DeviceSelection.SelectedDevice = (int)DeviceSelectionEnum.DEVICE_RUNO;
             var mainWindow = new MainWindow
             {
                 Title = "БЭМН Конфигуратор Минск ГОРСВЕТ - РУНО 3"
             };
             this.Hide();
-            
+
             mainWindow.Show();
             mainWindow.Closed += this.ChildWindowClosed;
         }
 
         private void uiPiconGSSelection_Click(object sender, RoutedEventArgs e)
         {
-           
+
             DeviceSelection.SelectedDevice = (int)DeviceSelectionEnum.DEVICE_PICON_GS;
             var mainWindow = new MainWindow
             {
                 Title = "БЭМН Конфигуратор Минск ГОРСВЕТ - ПИКОН ГС 2"
             };
             this.Hide();
-           
+
             mainWindow.Show();
             mainWindow.Closed += this.ChildWindowClosed;
         }
 
-        
+
         //private void uiLuxometr_Click(object sender, RoutedEventArgs e)
         //{
         //    DeviceSelection.SelectedDevice = 3;
@@ -64,12 +64,19 @@ namespace UniconGS
         //    luxmetr.Closed += this.ChildWindowClosed;
 
         //}
-        
+
 
         private void ChildWindowClosed(object sender, EventArgs e)
         {
             RTUConnectionGlobal.CloseConnection();
-            this.Show();
+            try
+            {
+                this.Show();
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         private void uiPicon2Selection_Click(object sender, RoutedEventArgs e)

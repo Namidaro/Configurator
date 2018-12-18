@@ -159,11 +159,26 @@
                     <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Введите координаты" Margin="1,1,1,1"/>
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Широта" Margin="1,1,1,1"/>
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Долгота" Margin="1,1,1,1"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Latitude}" Margin="1,1,1,1"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Longitude}" Margin="1,1,1,1"/>
-                    <ComboBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"   ItemsSource="{Binding CityList}" SelectedItem="{Binding SelectedCity}" />
+                    <TextBox Grid.Row="1" 
+                             Grid.Column="1" 
+                             Text="{Binding Latitude,Mode=TwoWay}" 
+                             Margin="1,1,1,1"/>
+                    <TextBox Grid.Row="2" 
+                             Grid.Column="1" 
+                             Text="{Binding Longitude,Mode=TwoWay}" 
+                             Margin="1,1,1,1"/>
+                    <ComboBox Grid.Row="3" 
+                              Grid.Column="0" 
+                              Grid.ColumnSpan="2"   
+                              ItemsSource="{Binding CityList,Mode=TwoWay}" 
+                              SelectedItem="{Binding SelectedCity,Mode=TwoWay}" />
 
-                    <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="1,1,1,1" Content="Рассчитать" Command="{Binding CalculateScheduleCommand}"/>
+                    <Button Grid.Row="4" 
+                            Grid.Column="0" 
+                            Grid.ColumnSpan="2" 
+                            Margin="1,1,1,1" 
+                            Content="Рассчитать" 
+                            Command="{Binding CalculateScheduleCommand}"/>
                 </Grid>
             </Expander>
             <!--<StackPanel Margin="3"

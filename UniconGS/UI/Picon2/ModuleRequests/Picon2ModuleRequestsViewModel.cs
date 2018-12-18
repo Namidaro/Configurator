@@ -18,6 +18,9 @@ using UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification;
 using System.Threading;
 using System.ComponentModel;
 using Innovative.SolarCalculator;
+using System.Collections;
+using UniconGS.Source;
+
 
 namespace UniconGS.UI.Picon2.ModuleRequests
 {
@@ -44,17 +47,38 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         private ICommand _writeToDevice;
         private ICommand _openFile;
         private ICommand _saveFile;
+        private ICommand _deleteSlave;
         private bool _isToggleCrate918Checked;
         private string _crateID;
-
+        private ObservableCollection<bool> _moduleErrors;
         #endregion
 
         #region [CONST]
+        /// <summary>
+        /// Адрес, по которому пишется число запросов к модулям
+        /// </summary>
         private const ushort REQUEST_COUNT_ADDRESS = 0x300E;
+        /// <summary>
+        /// Адрес начала области памяти под запросы к модулям
+        /// </summary>
         private const ushort MODULE_REQUEST_START_ADDRESS = 0x3080;
+        /// <summary>
+        /// Адрес модуля связи с верхом
+        /// </summary>
+        private const ushort UPPER_MODULE_ADDRESS = 0x3004;
+        /// <summary>
+        /// Адрес модуля связи с низом
+        /// </summary>
         private const ushort LOWER_MODULE_ADDRESS = 0x3009;
+        /// <summary>
+        /// Адрес начала области памяти запросов к подчиненным устройствам
+        /// </summary>
         private const ushort SLAVE_MODULE_REQUEST_START_ADDRESS = 0x3180;
+        /// <summary>
+        /// Адрес, по которому пишется число запросов к подчиненным устройствам
+        /// </summary>
         private const ushort LOWER_MODULE_REQUEST_TO_SLAVES_COUNT_ADDRESS = 0x300F;
+
         private const string DECLARATION_VERSION = "1.0";
         private const string DECLARATION_ENCODING = "utf-8";
         #endregion
@@ -230,13 +254,31 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             set
             {
                 _isToggleCrate918Checked = value;
-                if (value)
+                if (!value)
                 {
-                    CrateID = "918";
+                    try
+                    {
+                        for (int i = 9; i < 16; i++)
+                        {
+                            ModuleListForUI[i] = ModuleTypes.ModuleList.Keys.First();
+                        }
+                        OnGenerateRequestsCommand();
+                    }
+                    catch
+                    {
+
+                    }
                 }
                 else
                 {
-                    CrateID = "911";
+                    try
+                    {
+                        OnGenerateRequestsCommand();
+                    }
+                    catch
+                    {
+
+                    }
                 }
                 RaisePropertyChanged();
             }
@@ -250,6 +292,18 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             set
             {
                 _crateID = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Коллекция, содержащая ошибки модулей
+        /// </summary>
+        public ObservableCollection<bool> ModuleErrors
+        {
+            get { return _moduleErrors; }
+            set
+            {
+                _moduleErrors = value;
                 RaisePropertyChanged();
             }
         }
@@ -287,6 +341,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         public ICommand WriteToDeviceCommand => this._writeToDevice ??
             (this._writeToDevice = new DelegateCommand(OnWriteToDeviceCommand));
+        /// <summary>
+        /// Удалить запрос к подчиненному устройству
+        /// </summary>
+        public ICommand DeleteSlaveCommand => this._deleteSlave ??
+            (this._deleteSlave = new DelegateCommand(OnDeleteSlaveCommand));
         #endregion
 
         #region [Ctor]
@@ -307,20 +366,32 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             this.MSDCount = 0;
             this.MSACount = 0;
             this.CrateID = string.Empty;
-            this.IsToggleCrate918Checked = true;
+            this.IsToggleCrate918Checked = false;
+            this.ModuleErrors = new ObservableCollection<bool>();
             InitializeModuleList();
             InitializeImageList();
+            InitializeModuleErrors();
         }
         #endregion
 
         #region [Methods]
+        /// <summary>
+        /// инициализация коллекции ошибок модулей
+        /// </summary>
+        private void InitializeModuleErrors()
+        {
+            for (int i = 0; i < 17; i++)
+            {
+                ModuleErrors.Add(false);
+            }
+        }
         /// <summary>
         /// инициализация элементов списка для UI
         /// </summary>
         private void InitializeModuleList()
         {
             //ModuleList = ModuleTypes.ModuleList.Keys.ToList();
-            foreach(var item in ModuleTypes.ModuleList.Keys)
+            foreach (var item in ModuleTypes.ModuleList.Keys)
             {
                 ModuleList.Add(item);
             }
@@ -370,6 +441,32 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             else
                 return "";
         }
+        /// <summary>
+        /// Зажигает индикаторы ошибок модулей
+        /// </summary>
+        /// <param name="val"></param>
+        public async void SetModuleErrors()
+        {
+            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1102, 1);
+            BitArray array = Converter.GetBitsFromWord(value[0]);
+            if (IsToggleCrate918Checked)
+            {
+                //костыли по причине того, что всякие люди не могут договориться между собой иделают все по-своему
+                ModuleErrors[0] = false;
+                for (int i = 0; i < 16; i++)
+                {
+                    ModuleErrors[i + 1] = array[i];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    ModuleErrors[i] = array[i];
+                }
+            }
+
+        }
         #endregion
 
         #region [UICommands]
@@ -403,10 +500,161 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                     currentAddress += 4;
                 }
                 ShowMessage("Чтение запросов прошло успешно!", "Информация", MessageBoxImage.Information);
+                AnalyzeModulesFromDevice();
             }
             catch (Exception ex)
             {
                 ShowMessage("При чтении запросов произошла ошибка.", "Внимание", MessageBoxImage.Warning);
+            }
+        }
+        /// <summary>
+        /// Анализ модулей, прочитанных из устройства + их расстановка по местам
+        /// </summary>
+        private async void AnalyzeModulesFromDevice()
+        {
+            /// читаем модуль с верхом
+            try
+            {
+                ushort[] upperModule = await RTUConnectionGlobal.GetDataByAddress(1, UPPER_MODULE_ADDRESS, 5);
+                if (upperModule != null)
+                {
+                    byte[] byteArrayUpper = ArrayExtension.UshortArrayToByteArray(upperModule);
+                    string _typeAddressUpper = Converters.Convert.ConvertFromDecToHexStr(byteArrayUpper[1]);
+                    byte _typeUpper = Converters.Convert.ConvertFromHexToDec((byte)Int32.Parse(_typeAddressUpper.First().ToString(), System.Globalization.NumberStyles.HexNumber));
+                    byte _addressUpper = Converters.Convert.ConvertFromHexToDec((byte)Int32.Parse(_typeAddressUpper.Last().ToString(), System.Globalization.NumberStyles.HexNumber));
+                    string upperName = "Заглушка";
+                    if (_typeUpper != 0)
+                    {
+                        if (_typeUpper == 0x0E)
+                        {
+                            //немного костыли, но че уж поделать, если таски возникают после того, как ниписано практически все
+                            Config915Series cfg915 = new Config915Series(byteArrayUpper[5]);
+                            if (cfg915.ModbusSpeed == 115200)
+                                upperName = "MС915";
+                            if (cfg915.ModbusSpeed == 19200)
+                                upperName = "MС917";
+                        }
+                        if (_typeUpper == 0x0F)
+                        {
+                            upperName = "MС911";
+                        }
+                        this.ModuleListForUI[_addressUpper] = upperName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("При чтении запроса модуля связи с верхом произошла ошибка.", "Внимание", MessageBoxImage.Warning);
+            }
+            /// читаем модуль с низом
+            try
+            {
+                ushort[] slaveCount = await RTUConnectionGlobal.GetDataByAddress(1, LOWER_MODULE_REQUEST_TO_SLAVES_COUNT_ADDRESS, 1);
+                if (slaveCount[0] != 0)
+                {
+                    ushort[] lowerModule = await RTUConnectionGlobal.GetDataByAddress(1, LOWER_MODULE_ADDRESS, 5);
+                    if (lowerModule != null)
+                    {
+                        byte[] byteArrayLower = ArrayExtension.UshortArrayToByteArray(lowerModule);
+                        string _typeAddressLower = Converters.Convert.ConvertFromDecToHexStr(byteArrayLower[1]);
+                        byte _typeLower = Converters.Convert.ConvertFromHexToDec((byte)Int32.Parse(_typeAddressLower.First().ToString(), System.Globalization.NumberStyles.HexNumber));
+                        byte _addressLower = Converters.Convert.ConvertFromHexToDec((byte)Int32.Parse(_typeAddressLower.Last().ToString(), System.Globalization.NumberStyles.HexNumber));
+                        string lowerName = "Заглушка";
+                        if (_typeLower == 0x0E)
+                        {
+                            lowerName = "Люксметр";
+                        }
+                        this.ModuleListForUI[_addressLower] = lowerName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("При чтении запроса модуля связи с низом произошла ошибка.", "Внимание", MessageBoxImage.Warning);
+            }
+            ///модули
+            byte _firstModulePos;
+            if (IsToggleCrate918Checked)
+            {
+                _firstModulePos = 0;
+            }
+            else
+            {
+                _firstModulePos = 1;
+            }
+            for (int i = 0; i < RequestsFromDevice.Count(); i++)
+            {
+                this.ModuleListForUI[RequestsFromDevice[i].CrateAddress - _firstModulePos] = GetModuleNameFromType(RequestsFromDevice[i].Type, RequestsFromDevice[i].ParameterCount);
+            }
+            ///верх
+
+
+            ///низ
+
+        }
+        /// <summary>
+        /// Возвращает имя модуля по его типу и количеству параметров
+        /// </summary>
+        /// <param name="_type">Тип модуля</param>
+        /// <param name="_paramCount">Число параметров</param>
+        /// <returns></returns>
+        private string GetModuleNameFromType(byte _type, byte _paramCount)
+        {
+            switch (_type)
+            {
+                case (0x08):
+                    {
+                        return "MСД980";
+                    }
+                case (0x0A):
+                    {
+                        return "MРВ960";
+                    }
+                case (0x0B):
+                    {
+                        return "MРВ980";
+                    }
+                case (0x04):
+                    {
+                        return "MСА961";
+                    }
+                case (0x05):
+                    {
+                        if (_paramCount == 0x0C)
+                        {
+                            return "MСА962";
+                        }
+                        if (_paramCount == 0x0E)
+                        {
+                            return "MИИ901";
+                        }
+                        break;
+                    }
+                case (0x0E):
+                    {
+                        return "Счетчик";
+                    }
+            }
+            return "Заглушка";
+        }
+        /// <summary>
+        /// Удаление подчиненного устройства
+        /// </summary>
+        private async void OnDeleteSlaveCommand()
+        {
+            try
+            {
+                ushort[] LRC = new ushort[] { 0 };
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, LOWER_MODULE_REQUEST_TO_SLAVES_COUNT_ADDRESS, LRC);
+
+                ushort[] req915lower = new ushort[] { 0, 0, 0, 0 };
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, LOWER_MODULE_ADDRESS, req915lower);
+
+                ShowMessage("Удаление запроса прошло успешно.", "Информация", MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Произошла ошибка.", "Внимание", MessageBoxImage.Warning);
             }
         }
         /// <summary>
@@ -436,7 +684,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// <summary>
         ///  Генерация запросов по данным из UI
         /// </summary>
-        private void OnGenerateRequestsCommand()
+        public void OnGenerateRequestsCommand()
         {
             try
             {
@@ -607,11 +855,11 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                                         req.ParameterCount));
                                     break;
                                 }
-                            //case (byte)ModuleSelectionEnum.MODULE_MS915L:
-                            //    {
-                            //        WriteLuxmetrRequest(i + _firstModulePos);
-                            //        break;
-                            //    }
+                                //case (byte)ModuleSelectionEnum.MODULE_MS915L:
+                                //    {
+                                //        WriteLuxmetrRequest(i + _firstModulePos);
+                                //        break;
+                                //    }
                         }
                     }
                     else
@@ -629,7 +877,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             }
             catch (Exception ex)
             {
-                ShowMessage("При генерации запросов к модулям произошла ошибка.", "Внимание",MessageBoxImage.Warning);
+                ShowMessage("При генерации запросов к модулям произошла ошибка.", "Внимание", MessageBoxImage.Warning);
             }
         }
         /// <summary>
@@ -663,9 +911,15 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             byteArr.Add(0x06);//адрес пар-ра в базе 1
             byteArr.Add(0x40);//ажрес пар-ра в базе 2
             byteArr.Add(0x01);//число пар-ров
-            confToDevice.AddRange(ArrayExtension.ByteArrayToUshortArray(byteArr.ToArray()));
+
+            byte[] byteArray = byteArr.ToArray();
+
+            ArrayExtension.SwapArrayItems(ref byteArray);
+
+            confToDevice.AddRange(ArrayExtension.ByteArrayToUshortArray(byteArray));
 
             ushort[] reqLux = confToDevice.ToArray();
+            ModuleRequest mr = new ModuleRequest(reqLux);
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Будет произведена запись со следующими параметрами:");
@@ -680,7 +934,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             sb.AppendLine("Включение передачи: 40 (*0,1 мс)");
             sb.AppendLine("Выключение передачи: 20 (*0,1 мс)");
 
-            sb.AppendLine("Также будет добавлен запрос к подчиненному устройтсву(люксметру).");
+            sb.AppendLine("Также будет добавлен запрос к подчиненному устройтсву(люксметру):");
+            sb.AppendLine(mr.UIRequest);
             sb.AppendLine("Продолжить?");
 
             if (MessageBox.Show(sb.ToString(), "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -749,9 +1004,13 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 Title = "Открыть файл запросов"
             };
             if (fileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
-
+            for (byte i = 0; i < 16; i++)
+            {
+                ModuleListForUI[i] = ModuleTypes.ModuleList.Keys.First();
+            }
             try
             {
+
                 var doc = XDocument.Load(fileDialog.FileName);
                 byte modulePosition = 0;
                 foreach (XElement xElement in doc.Root.Elements())
@@ -796,12 +1055,25 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 Title = "Сохранение файла запросов"
             };
             if (fileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            //try
+            //{
+            //    var xDoc = new XDocument(new XDeclaration(DECLARATION_VERSION, DECLARATION_ENCODING, ""));
+            //    var root = new XElement("Device", "PICON2");
+            //    root.Add(new XElement("RequestCount", this.RequestCount));
+            //    for (byte i = 0; i < RequestCount; i++)
+            //    {
+            //        root.Add(new XElement("ModuleType", ModuleListForUI[i]));
+            //    }
+            //    xDoc.Add(root);
+            //    xDoc.Save(fileDialog.FileName);
+            //    ShowMessage("Сохранено!", "Информация", MessageBoxImage.Information);
+            //}
             try
             {
                 var xDoc = new XDocument(new XDeclaration(DECLARATION_VERSION, DECLARATION_ENCODING, ""));
                 var root = new XElement("Device", "PICON2");
                 root.Add(new XElement("RequestCount", this.RequestCount));
-                for (byte i = 0; i < RequestCount; i++)
+                for (byte i = 0; i < ModuleListForUI.Count; i++)
                 {
                     root.Add(new XElement("ModuleType", ModuleListForUI[i]));
                 }

@@ -82,6 +82,23 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                         break;
                     }
             }
+            vm.OnGenerateRequestsCommand();
+        }
+        public async Task Update()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as Picon2ModuleRequestsViewModel;
+                    vm.SetModuleErrors();
+                });
+                
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }

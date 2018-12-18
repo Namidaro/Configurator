@@ -145,9 +145,11 @@
     </Compile>
     <Compile Include="Converters\BooleanReverceConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityRevertConverter.cs" />
+    <Compile Include="Converters\BooleanToModuleErrorsColorConverter.cs" />
     <Compile Include="Enums\DeviceSelectionEnum.cs" />
     <Compile Include="Enums\LightningScheduleEnum.cs" />
     <Compile Include="Enums\ModuleSelectionEnum.cs" />
+    <Compile Include="Enums\Picon2MeterFormatterSelector.cs" />
     <Compile Include="GSMConnection.xaml.cs">
       <DependentUpon>GSMConnection.xaml</DependentUpon>
     </Compile>
@@ -155,6 +157,15 @@
     <Compile Include="RTUConnectionGlobal.cs" />
     <Compile Include="UI\Configuration\ErrorMaskMark.xaml.cs">
       <DependentUpon>ErrorMaskMark.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DiscretModules\Picon2States.xaml.cs">
+      <DependentUpon>Picon2States.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2ModuleErrors.xaml.cs">
+      <DependentUpon>Picon2ModuleErrors.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2DiagnosticsErrors.xaml.cs">
+      <DependentUpon>Picon2DiagnosticsErrors.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\FuseErrors.xaml.cs">
       <DependentUpon>FuseErrors.xaml</DependentUpon>
@@ -252,6 +263,18 @@
     <Page Include="UI\Configuration\ErrorMaskMark.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\DiscretModules\Picon2States.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Picon2ModuleErrors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Picon2DiagnosticsErrors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\FuseErrors.xaml">
       <SubType>Designer</SubType>
@@ -716,6 +739,7 @@
   <ItemGroup>
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915L.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
