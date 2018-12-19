@@ -100,5 +100,21 @@ namespace UniconGS.UI.Picon2.ModuleRequests
 
             }
         }
+        public void SetAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as Picon2ModuleRequestsViewModel;
+                    vm.SetAutonomus();
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

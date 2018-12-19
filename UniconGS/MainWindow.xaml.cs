@@ -952,6 +952,8 @@ namespace UniconGS
                 this.uiDiagnosticsErrors.SetAutonomus();
                 this.uiSignalGSMLevel.SetAutonomus();
                 this.uiSettings.SetAutonomus();
+
+                this.Picon2ModuleRequest.SetAutonomus();
                 //Dispatcher.CurrentDispatcher.InvokeShutdown();
                 //this.uiStatePresenter.Text = "Автономный режим";
 

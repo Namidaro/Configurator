@@ -50,7 +50,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         private ICommand _deleteSlave;
         private bool _isToggleCrate918Checked;
         private string _crateID;
-        private ObservableCollection<bool> _moduleErrors;
+        private ObservableCollection<bool?> _moduleErrors;
         #endregion
 
         #region [CONST]
@@ -298,7 +298,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// <summary>
         /// Коллекция, содержащая ошибки модулей
         /// </summary>
-        public ObservableCollection<bool> ModuleErrors
+        public ObservableCollection<bool?> ModuleErrors
         {
             get { return _moduleErrors; }
             set
@@ -367,7 +367,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             this.MSACount = 0;
             this.CrateID = string.Empty;
             this.IsToggleCrate918Checked = false;
-            this.ModuleErrors = new ObservableCollection<bool>();
+            this.ModuleErrors = new ObservableCollection<bool?>();
             InitializeModuleList();
             InitializeImageList();
             InitializeModuleErrors();
@@ -382,7 +382,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         {
             for (int i = 0; i < 17; i++)
             {
-                ModuleErrors.Add(false);
+                ModuleErrors.Add(null);
             }
         }
         /// <summary>
@@ -447,25 +447,40 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// <param name="val"></param>
         public async void SetModuleErrors()
         {
-            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1102, 1);
-            BitArray array = Converter.GetBitsFromWord(value[0]);
-            if (IsToggleCrate918Checked)
+            try
             {
-                //костыли по причине того, что всякие люди не могут договориться между собой иделают все по-своему
-                ModuleErrors[0] = false;
-                for (int i = 0; i < 16; i++)
+                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1102, 1);
+                BitArray array = Converter.GetBitsFromWord(value[0]);
+                if (IsToggleCrate918Checked)
                 {
-                    ModuleErrors[i + 1] = array[i];
+                    //костыли по причине того, что всякие люди не могут договориться между собой иделают все по-своему
+                    ModuleErrors[0] = false;
+                    for (int i = 0; i < 16; i++)
+                    {
+                        ModuleErrors[i + 1] = array[i];
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        ModuleErrors[i] = array[i];
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                for (int i = 0; i < 10; i++)
-                {
-                    ModuleErrors[i] = array[i];
-                }
+                ShowMessage("Ошибка чтения состояния модулей", "Ошибка", MessageBoxImage.Error);
             }
 
+        }
+
+        public void SetAutonomus()
+        {
+            for (int i = 0; i < 17; i++)
+            {
+                ModuleErrors[i] = null;
+            }
         }
         #endregion
 
