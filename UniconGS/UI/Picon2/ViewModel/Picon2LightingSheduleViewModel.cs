@@ -18,6 +18,8 @@ using Prism.Mvvm;
 using Prism.Regions;
 using MessageBox = System.Windows.Forms.MessageBox;
 using UniconGS.Enums;
+using Innovative.SolarCalculator;
+using UniconGS.UI.Schedule.SolarSchedule;
 
 namespace UniconGS.UI.Picon2.ViewModel
 {
@@ -59,7 +61,6 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         private Dictionary<string, byte[]> _sheduleCache;
 
-
         private string _deviceName;
         private ICommand _sendLightingShedule;
         private ICommand _backToSchemeCommand;
@@ -70,6 +71,10 @@ namespace UniconGS.UI.Picon2.ViewModel
         private ICommand _getSheduleFromFileCommand;
         private ICommand _storeToFileCommand;
         private ICommand _clearScheduleCommand;
+
+        private double _latitude;
+        private double _longitude;
+        private ICommand _calculateScheduleCommand;
 
         private bool _isMonthsEnabled = false;
         private string _currentMonthName;
@@ -113,13 +118,14 @@ namespace UniconGS.UI.Picon2.ViewModel
         private Dictionary<string, int> _monthsLenghtDictionary;
         private Dictionary<string, ObservableCollection<DaySheduleViewModel>> _monthsCollection;
 
+        private Dictionary<string, CityCoordinates> _coordinatesDictionary;
+        private List<string> _cityList;
+        private string _selectedCity;
 
         private Dictionary<string, object> _navigationContext = new Dictionary<string, object>();
         private ushort _startAddress; // адрес начала блока данных на устройстве
 
-
         private string _title = String.Empty;
-
         #endregion
 
         #region [Ctor's]
@@ -139,7 +145,10 @@ namespace UniconGS.UI.Picon2.ViewModel
                 this._monthsLenghtDictionary.Add(this._mothNames[i], DateTime.DaysInMonth(2012, i + 1));
             }
             this._monthsCollection = new Dictionary<string, ObservableCollection<DaySheduleViewModel>>();
-
+            this.CityList = new List<string>();
+            this.CoordinatesDictionary = new Dictionary<string, CityCoordinates>();
+            InitializeCityDictionary();
+            this.SelectedCity = CityList.First();
         }
         #endregion
 
@@ -157,16 +166,84 @@ namespace UniconGS.UI.Picon2.ViewModel
                 OnPropertyChanged("Title");
             }
         }
-
+        /// <summary>
+        /// Костыль для обновления кэша графиков
+        /// </summary>
         public bool ReadFromDeviceAndRefreshCache { get; set; }
-
+        /// <summary>
+        /// Стартовый адрес для графика
+        /// </summary>
         public ushort StartAddress
         {
             get { return _startAddress; }
             set { _startAddress = value; }
         }
+        /// <summary>
+        /// Широта местности
+        /// </summary>
+        public double Latitude
+        {
+            get { return this._latitude; }
+            set
+            {
+                this._latitude = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Долгота местности
+        /// </summary>
+        public double Longitude
+        {
+            get { return this._longitude; }
+            set
+            {
+                this._longitude = value;
+                OnPropertyChanged("Longitude");
+                //RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Библиотека городов и их координат
+        /// </summary>
+        public Dictionary<string, CityCoordinates> CoordinatesDictionary
+        {
+            get { return _coordinatesDictionary; }
+            set
+            {
+                _coordinatesDictionary = value;
+                //RaisePropertyChanged();
+                OnPropertyChanged("CoordinatesDictionary");
+            }
+        }
+        /// <summary>
+        /// Список городов
+        /// </summary>
+        public List<string> CityList
+        {
+            get { return _cityList; }
+            set
+            {
+                _cityList = value;
+                //RaisePropertyChanged();
+                OnPropertyChanged("CityList");
+            }
+        }
 
+        public string SelectedCity
+        {
+            get { return _selectedCity; }
+            set
+            {
+                _selectedCity = value;
+                CityCoordinates cc = CoordinatesDictionary.ElementAt(GetCityIndex(value)).Value;
+                Latitude = cc.Latitude;
+                Longitude = cc.Longitude;
+                //RaisePropertyChanged();
+                OnPropertyChanged("SelectedCity");
 
+            }
+        }
 
 
         /// <summary>
@@ -307,7 +384,14 @@ namespace UniconGS.UI.Picon2.ViewModel
         }
 
 
-
+        public ICommand CalculateScheduleCommand
+        {
+            get
+            {
+                return this._calculateScheduleCommand ??
+                    (this._calculateScheduleCommand = new DelegateCommand(OnCalculateScheduleCommand));
+            }
+        }
 
         /// <summary>
         ///     Команда рагрузки графика освещения из файла
@@ -389,7 +473,6 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         public async void OnClearScheduleCommand()
         {
-            //var test = Convert.ToByte("FF");
             await TryClearSchedule();
         }
 
@@ -448,8 +531,6 @@ namespace UniconGS.UI.Picon2.ViewModel
                 {
                     //ExportComplete(false);
                 }
-
-
             }
         }
 
@@ -461,7 +542,7 @@ namespace UniconGS.UI.Picon2.ViewModel
         public void OnNavigatedTo(int sheduleNumber)
         {
 
-            //todo подумать, как переделать чтение графика, чтобы по кнопке "Прочитать" он читал из устройства, не заглядывая в кэш и обновлял кэш
+            //TODO: подумать, как переделать чтение графика, чтобы по кнопке "Прочитать" он читал из устройства, не заглядывая в кэш и обновлял кэш
             ReadFromDeviceAndRefreshCache = false;
 
             IsMonthsEnabled = true;
@@ -598,6 +679,41 @@ namespace UniconGS.UI.Picon2.ViewModel
         #endregion
 
         #region [Help members]
+
+        private void InitializeCityDictionary()
+        {
+
+
+            CityList.Add("Минск");
+            CityList.Add("Брест");
+            CityList.Add("Гродно");
+            CityList.Add("Гомель");
+            CityList.Add("Витебск");
+            CityList.Add("Могилев");
+            CityList.Add("Бобруйск");
+            CityList.Add("Барановичи");
+            CityList.Add("Орша");
+            CityList.Add("Лида");
+
+            CoordinatesDictionary.Add("Минск", new CityCoordinates(53.902, 27.561));
+            CoordinatesDictionary.Add("Брест", new CityCoordinates(52.093, 23.718));
+            CoordinatesDictionary.Add("Гродно", new CityCoordinates(53.675, 23.864));
+            CoordinatesDictionary.Add("Гомель", new CityCoordinates(52.435, 30.998));
+            CoordinatesDictionary.Add("Витебск", new CityCoordinates(55.183, 30.201));
+            CoordinatesDictionary.Add("Могилев", new CityCoordinates(53.898, 30.328));
+            CoordinatesDictionary.Add("Бобруйск", new CityCoordinates(53.140, 29.220));
+            CoordinatesDictionary.Add("Барановичи", new CityCoordinates(53.131, 26.015));
+            CoordinatesDictionary.Add("Орша", new CityCoordinates(54.50, 30.411));
+            CoordinatesDictionary.Add("Лида", new CityCoordinates(53.885, 25.289));
+        }
+
+        private int GetCityIndex(string _name)
+        {
+            for (int i = 0; i < CityList.Count; i++)
+                if (CityList[i].Equals(_name)) return i;
+
+            return 0;
+        }
 
         private void OnGetScheduleFromFileCommand()
         {
@@ -923,6 +1039,139 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
             List<byte> resAsHex = ConvertFromIntAsDecToIntAsHex(result);
             return resAsHex.ToArray();
+        }
+
+        /// <summary>
+        /// Составление графиков, основываясь на времени гражданских сумерек данной местности
+        /// </summary>
+        /// <returns>byte[] array</returns>
+        private void GetScheduleDataFromSolar()
+        {
+            //тут много в принципе не нужных try-catch конструкций, которые я поставил, чтобы отловить ошибку, которая появлялась только в exe-шнике
+            //оказалось проблема вообще не в этом была, но я оставлю все так, если будет желание - потом как-нибудь почищу
+            this.IsMonthsEnabled = true;
+            SolarTimes solarTimes = new SolarTimes();
+            TimeSpan sunriseTime = new TimeSpan();
+            TimeSpan sunsetTime = new TimeSpan();
+            TimeSpan civilDuskM = new TimeSpan();
+            TimeSpan civilDuskE = new TimeSpan();
+            byte[] result = new byte[1536];
+
+            this._monthsCollection.Clear();
+            try
+            {
+
+                foreach (var mothName in this._mothNames)
+                {
+                    this._monthsCollection.Add(mothName, new ObservableCollection<DaySheduleViewModel>());
+                }
+                var monthLengthList = this._monthsLenghtDictionary.Values.ToArray();
+                for (int i = 0; i < MONTH_COUNT; i++)
+                {
+                    for (int j = 0; j < monthLengthList[i]; j++)
+                    {
+                        this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                        {
+                            Month = this._mothNames[i],
+                            DayNumber = j + 1
+                        });
+                    }
+                    this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                    {
+                        Month = this._mothNames[i],
+                        DayNumber = monthLengthList[i] + 1,
+                        IsEconomy = true
+
+                    });
+                }
+                this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Заполнение коллекции месяцев", "ошибка", MessageBoxImage.Error);
+            }
+            try
+            {
+                for (int i = 0; i < this.MonthCollection.Count; i++)
+                {
+
+                    try
+                    {
+
+                        string monthName = this._mothNames[i];
+                        int monthStartIndex = MONTH_LENGHT_INDEX * i;
+
+                        //что делать с экономией
+                        DaySheduleViewModel economyDaySheduleViewModel = this._monthsCollection[monthName].Last();
+
+                        result[monthStartIndex + 1] = (byte)economyDaySheduleViewModel.StartHour;
+                        result[monthStartIndex] = (byte)economyDaySheduleViewModel.StartMinute;
+                        result[monthStartIndex + 3] = (byte)economyDaySheduleViewModel.StopHour;
+                        result[monthStartIndex + 2] = (byte)economyDaySheduleViewModel.StopMinute;
+
+                        for (int j = 0; j < this._monthsLenghtDictionary[monthName]; j++)
+                        {
+                            try
+                            {
+                                solarTimes = new SolarTimes(new DateTime(DateTime.Today.Year, i + 1, j + 1), Latitude, Longitude);
+                                sunriseTime = solarTimes.Sunrise.TimeOfDay;
+                                sunsetTime = solarTimes.Sunset.TimeOfDay;
+
+                                Solar solar = new Solar(Latitude, solarTimes.SolarDeclination);
+
+                                TimeSpan civilDelta = new TimeSpan((int)Math.Abs(Math.Floor(solar.TCivil)),
+                                                                   (int)Math.Abs((solar.TCivil - Math.Truncate(solar.TCivil)) * 60),
+                                                                   0);
+
+                                civilDuskM = (sunriseTime - civilDelta);
+                                civilDuskE = (sunsetTime + civilDelta);
+
+                                int dayStartIndex = monthStartIndex + j * DAY_LENGHT_INDEX;
+                                result[dayStartIndex + 5] = (byte)civilDuskE.Hours;
+                                result[dayStartIndex + 4] = (byte)civilDuskE.Minutes;
+                                result[dayStartIndex + 7] = (byte)civilDuskM.Hours;
+                                result[dayStartIndex + 6] = (byte)civilDuskM.Minutes;
+                            }
+                            catch { }
+                        }
+                    }
+                    catch (Exception ex1)
+                    {
+                        ShowMessage("расчет", "ошибка", MessageBoxImage.Error);
+                    }
+
+                }
+            }
+            catch (Exception ex3)
+            {
+                ShowMessage("цикл", "ошибка", MessageBoxImage.Error);
+            }
+
+
+            try
+            {
+                InitializeOnNavigateTo(result);
+
+            }
+            catch (Exception ex2)
+            {
+                ShowMessage("заполнение ui", "ошибка", MessageBoxImage.Error);
+
+            }
+        }
+
+        private void OnCalculateScheduleCommand()
+        {
+            try
+            {
+                GetScheduleDataFromSolar();
+
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Вызов метода", "ошибка", MessageBoxImage.Error);
+
+            }
         }
 
         private async Task<byte[]> GetLightingSheduleDataFromDeviceAsync()

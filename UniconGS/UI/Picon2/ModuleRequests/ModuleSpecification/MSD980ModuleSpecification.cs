@@ -26,12 +26,16 @@ namespace UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification
         }
         public ushort FirstModuleDatabaseAddress
         {
-            get { return 0x0000; }
+            get { return 0x2020; }
         }
         public byte ParameterCount
         {
             get { return 0x01; }
         }
 
+        public MSD980ModuleSpecification()
+        {
+                
+        }
     }
 }

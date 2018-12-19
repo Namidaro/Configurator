@@ -55,6 +55,12 @@
     <Reference Include="CegekaDsa.TestContracts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DTool.1.0.0.17\lib\net45\CegekaDsa.TestContracts.dll</HintPath>
     </Reference>
+    <Reference Include="Innovative.Geometry.Angle, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Angle.2.0.0\lib\netstandard1.2\Innovative.Geometry.Angle.dll</HintPath>
+    </Reference>
+    <Reference Include="Innovative.SolarCalculator, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SolarCalculator.2.0.3\lib\netstandard1.2\Innovative.SolarCalculator.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.3.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.3.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -87,10 +93,17 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -130,10 +143,13 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ConfiguratorSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanReverceConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityRevertConverter.cs" />
+    <Compile Include="Converters\BooleanToModuleErrorsColorConverter.cs" />
     <Compile Include="Enums\DeviceSelectionEnum.cs" />
     <Compile Include="Enums\LightningScheduleEnum.cs" />
     <Compile Include="Enums\ModuleSelectionEnum.cs" />
+    <Compile Include="Enums\Picon2MeterFormatterSelector.cs" />
     <Compile Include="GSMConnection.xaml.cs">
       <DependentUpon>GSMConnection.xaml</DependentUpon>
     </Compile>
@@ -141,6 +157,15 @@
     <Compile Include="RTUConnectionGlobal.cs" />
     <Compile Include="UI\Configuration\ErrorMaskMark.xaml.cs">
       <DependentUpon>ErrorMaskMark.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DiscretModules\Picon2States.xaml.cs">
+      <DependentUpon>Picon2States.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2ModuleErrors.xaml.cs">
+      <DependentUpon>Picon2ModuleErrors.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2DiagnosticsErrors.xaml.cs">
+      <DependentUpon>Picon2DiagnosticsErrors.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\FuseErrors.xaml.cs">
       <DependentUpon>FuseErrors.xaml</DependentUpon>
@@ -154,18 +179,37 @@
       <DependentUpon>DaySheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Picon2\Extensions.cs" />
-    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\IModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Converters\Converters.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS915LModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\Structures\Config910Series.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\Structures\Config915Series.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\Interfaces\IModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV960ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MRV980ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MII901ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS911ModuleSpecification.cs" />
-    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA961DeviceSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS911RModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS915CModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS910RModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MS917ModuleSpecification.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA961ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSA962ModuleSpecification.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\ModuleSpecification\MSD980ModuleSpecification.cs" />
-    <Compile Include="UI\Picon2\ModuleRequests\ImageSRCList.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.xaml.cs">
+      <DependentUpon>Picon2CommunicationModule910SeriesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesViewModel.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.xaml.cs">
+      <DependentUpon>Picon2CommunicationModule915SeriesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesViewModel.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Resources\ImageSRCList.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.xaml.cs">
       <DependentUpon>Picon2ModuleRequestsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Picon2\ModuleRequests\ModuleTypeList.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Resources\IModuleRequest.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Resources\ModuleRequest.cs" />
+    <Compile Include="UI\Picon2\ModuleRequests\Resources\ModuleTypeList.cs" />
     <Compile Include="UI\Picon2\ModuleRequests\Picon2ModuleRequestsViewModel.cs" />
     <Compile Include="UI\Picon2\PICON2ConfigCheckBoxControlView.xaml.cs">
       <DependentUpon>PICON2ConfigCheckBoxControlView.xaml</DependentUpon>
@@ -181,6 +225,8 @@
     <Compile Include="UI\Picon2\ViewModel\PICON2ConfigCheckBoxControlViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\PICON2ConfigurationModeViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\Picon2LightingSheduleViewModel.cs" />
+    <Compile Include="UI\Schedule\SolarSchedule\CityCoordinates.cs" />
+    <Compile Include="UI\Schedule\SolarSchedule\Solar.cs" />
     <Compile Include="UI\TurnOnError.xaml.cs">
       <DependentUpon>TurnOnError.xaml</DependentUpon>
     </Compile>
@@ -218,6 +264,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\DiscretModules\Picon2States.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Picon2ModuleErrors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Picon2DiagnosticsErrors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\FuseErrors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -235,6 +293,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Picon2\DaySheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -653,7 +719,7 @@
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS911.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS911R.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915.png" />
-    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS916.png" />
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS910R.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS917.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSA961.png" />
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSA962.png" />
@@ -667,6 +733,13 @@
   <ItemGroup>
     <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MSD980.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915C.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UI\Picon2\ModuleRequests\Images\Image_MS915L.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

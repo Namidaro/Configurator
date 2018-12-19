@@ -34,7 +34,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification
         {
             get
             {
-                return 0x2000;
+                return 0x001C;
             }
         }
         public byte ParameterCount
@@ -43,6 +43,10 @@ namespace UniconGS.UI.Picon2.ModuleRequests.ModuleSpecification
             {
                 return 0x0C;
             }
+        }
+        public MSA962ModuleSpecification()
+        {
+
         }
     }
 }

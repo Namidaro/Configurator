@@ -682,3 +682,16 @@ D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Innovative.Geometry.Angle.dll
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Innovative.SolarCalculator.dll
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2DiagnosticsErrors.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2DiagnosticsErrors.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ModuleErrors.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ModuleErrors.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.baml

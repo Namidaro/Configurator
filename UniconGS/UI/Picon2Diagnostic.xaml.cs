@@ -24,5 +24,20 @@ namespace UniconGS.UI
         {
             InitializeComponent();
         }
+        public async Task Update()
+        {
+
+
+            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0200, 5);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SetValue(value);
+            });
+        }
+
+        private void SetValue(ushort[] value)
+        {
+
+        }
     }
 }

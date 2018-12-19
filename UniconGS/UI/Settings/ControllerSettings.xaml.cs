@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Windows.Controls.Primitives;
 using UniconGS.UI.Schedule;
 using UniconGS.Enums;
+using System.Collections;
 
 namespace UniconGS.UI.Settings
 {
@@ -144,11 +145,6 @@ namespace UniconGS.UI.Settings
         #region PLC reset
         private async void uiPLCReset_Click(object sender, RoutedEventArgs e)
         {
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
-            {
-                ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);
-            }
-            else
                 ResetPLC();
         }
 
@@ -156,15 +152,32 @@ namespace UniconGS.UI.Settings
         {
             //todo: PLC reset in picon2
             uiPLCReset.IsEnabled = false;
-            try
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(0x0302),
-                    new ushort[] { 1 });
-                ShowMessage("Устройство было успешно сброшен.", "Внимание", MessageBoxImage.Information); 
+                try
+                {
+                    await RTUConnectionGlobal.ExecuteFunction15Async(1, 0xFFFF, new bool[] { false,false, false, false, false, false, false, false,
+                                                                                                false, false, false, false, false, false, false, false,
+                                                                                                    false, false, false, false, false, false, false, false});
+                    ShowMessage("Устройство было успешно сброшено.", "Внимание", MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Во время сброса устройства произошла ошибка.", "Ошибка", MessageBoxImage.Error);
+                }
             }
-            catch (Exception exception)
+            else
             {
-                ShowMessage("Во время сброса устройства произошла ошибка.", "Ошибка", MessageBoxImage.Error);
+                try
+                {
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(0x0302),
+                        new ushort[] { 1 });
+                    ShowMessage("Устройство было успешно сброшено.", "Внимание", MessageBoxImage.Information);
+                }
+                catch (Exception exception)
+                {
+                    ShowMessage("Во время сброса устройства произошла ошибка.", "Ошибка", MessageBoxImage.Error);
+                }
             }
             uiPLCReset.IsEnabled = true;
         }
@@ -194,7 +207,7 @@ namespace UniconGS.UI.Settings
 
         private void uiSaveSettings_Click(object sender, RoutedEventArgs e)
         {
-            //todo: deal witch setting file in picon2
+            //todo: deal with setting file in picon2
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);
