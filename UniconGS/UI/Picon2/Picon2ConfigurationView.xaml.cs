@@ -33,6 +33,18 @@ namespace UniconGS.UI.Picon2
         {
             InitializeComponent();
         }
+        //TODO: make updateState for picon2
+        public async Task UpdateState()
+        {
+
+            ushort[] value;
+            {
+                value = await RTUConnectionGlobal.GetDataByAddress(1, 0x8200, 61);
+            }
+
+            //ImportComplete(value);
+
+        }
 
         private void TimeToStartTextBox_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
         {

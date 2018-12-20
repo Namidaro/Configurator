@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
 using UniconGS.Source;
+using UniconGS.Enums;
 
 namespace UniconGS
 {
@@ -11,6 +12,7 @@ namespace UniconGS
     /// </summary>
     public partial class CreateConnectionWizard : Window
     {
+
         public CreateConnectionWizard()
         {
             InitializeComponent();
@@ -21,7 +23,17 @@ namespace UniconGS
             uiRelodePorts.Click += uiRelodePorts_Click;
             uiBack.Click += uiBack_Click;
             uiApply.Click += uiApply_Click;
+
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                uiSpeed.SelectedIndex = 4;
+            }
+            else
+            {
+                uiSpeed.SelectedIndex = 7;
+            }
         }
+
 
         public Result ResultDialog { get; set; }
         public static int DeviceConnected = 0;
@@ -53,6 +65,7 @@ namespace UniconGS
                                 int.Parse((uiSpeed.SelectedItem as ComboBoxItem).Content.ToString());
                             ResultDialog.Timeout = int.Parse(uiTimeout.Text);
                             DialogResult = true;
+                            MainWindow.isAutonomus = false;
                             Close();
                         }
                     }
@@ -61,6 +74,7 @@ namespace UniconGS
                 {
                     MessageBox.Show("Введено не верное значение", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
         }
 
         private void uiBack_Click(object sender, RoutedEventArgs e)

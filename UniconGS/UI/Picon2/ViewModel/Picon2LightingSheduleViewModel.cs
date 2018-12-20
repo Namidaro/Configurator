@@ -17,6 +17,9 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using MessageBox = System.Windows.Forms.MessageBox;
+using UniconGS.Enums;
+using Innovative.SolarCalculator;
+using UniconGS.UI.Schedule.SolarSchedule;
 
 namespace UniconGS.UI.Picon2.ViewModel
 {
@@ -58,7 +61,6 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         private Dictionary<string, byte[]> _sheduleCache;
 
-
         private string _deviceName;
         private ICommand _sendLightingShedule;
         private ICommand _backToSchemeCommand;
@@ -68,7 +70,13 @@ namespace UniconGS.UI.Picon2.ViewModel
         private ICommand _navigateToStoregeEnergyShedule;
         private ICommand _getSheduleFromFileCommand;
         private ICommand _storeToFileCommand;
+        private ICommand _clearScheduleCommand;
 
+        private double _latitude;
+        private double _longitude;
+        private ICommand _calculateScheduleCommand;
+
+        private bool _isMonthsEnabled = false;
         private string _currentMonthName;
         private int _currentMonthIndex;
         private ObservableCollection<DaySheduleViewModel> _currentMothDaysCollection;
@@ -110,13 +118,14 @@ namespace UniconGS.UI.Picon2.ViewModel
         private Dictionary<string, int> _monthsLenghtDictionary;
         private Dictionary<string, ObservableCollection<DaySheduleViewModel>> _monthsCollection;
 
+        private Dictionary<string, CityCoordinates> _coordinatesDictionary;
+        private List<string> _cityList;
+        private string _selectedCity;
 
         private Dictionary<string, object> _navigationContext = new Dictionary<string, object>();
         private ushort _startAddress; // адрес начала блока данных на устройстве
 
-
         private string _title = String.Empty;
-
         #endregion
 
         #region [Ctor's]
@@ -126,6 +135,7 @@ namespace UniconGS.UI.Picon2.ViewModel
         /// </summary>
         public Picon2LightingSheduleViewModel()
         {
+            ReadFromDeviceAndRefreshCache = true;
             _sheduleCache = new Dictionary<string, byte[]>();
 
             this._monthsLenghtDictionary = new Dictionary<string, int>();
@@ -134,14 +144,15 @@ namespace UniconGS.UI.Picon2.ViewModel
                 //2012 год, т.к. он высокосный а на вьюшке у февраля д.б. 29 дней
                 this._monthsLenghtDictionary.Add(this._mothNames[i], DateTime.DaysInMonth(2012, i + 1));
             }
-
             this._monthsCollection = new Dictionary<string, ObservableCollection<DaySheduleViewModel>>();
+            this.CityList = new List<string>();
+            this.CoordinatesDictionary = new Dictionary<string, CityCoordinates>();
+            InitializeCityDictionary();
+            this.SelectedCity = CityList.First();
         }
-
         #endregion
 
         #region [Properties]
-
         /// <summary>
         ///     Заголовок вьюхи
         /// </summary>
@@ -155,6 +166,85 @@ namespace UniconGS.UI.Picon2.ViewModel
                 OnPropertyChanged("Title");
             }
         }
+        /// <summary>
+        /// Костыль для обновления кэша графиков
+        /// </summary>
+        public bool ReadFromDeviceAndRefreshCache { get; set; }
+        /// <summary>
+        /// Стартовый адрес для графика
+        /// </summary>
+        public ushort StartAddress
+        {
+            get { return _startAddress; }
+            set { _startAddress = value; }
+        }
+        /// <summary>
+        /// Широта местности
+        /// </summary>
+        public double Latitude
+        {
+            get { return this._latitude; }
+            set
+            {
+                this._latitude = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Долгота местности
+        /// </summary>
+        public double Longitude
+        {
+            get { return this._longitude; }
+            set
+            {
+                this._longitude = value;
+                OnPropertyChanged("Longitude");
+                //RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// Библиотека городов и их координат
+        /// </summary>
+        public Dictionary<string, CityCoordinates> CoordinatesDictionary
+        {
+            get { return _coordinatesDictionary; }
+            set
+            {
+                _coordinatesDictionary = value;
+                //RaisePropertyChanged();
+                OnPropertyChanged("CoordinatesDictionary");
+            }
+        }
+        /// <summary>
+        /// Список городов
+        /// </summary>
+        public List<string> CityList
+        {
+            get { return _cityList; }
+            set
+            {
+                _cityList = value;
+                //RaisePropertyChanged();
+                OnPropertyChanged("CityList");
+            }
+        }
+
+        public string SelectedCity
+        {
+            get { return _selectedCity; }
+            set
+            {
+                _selectedCity = value;
+                CityCoordinates cc = CoordinatesDictionary.ElementAt(GetCityIndex(value)).Value;
+                Latitude = cc.Latitude;
+                Longitude = cc.Longitude;
+                //RaisePropertyChanged();
+                OnPropertyChanged("SelectedCity");
+
+            }
+        }
+
 
         /// <summary>
         ///     Свойство для представления текущего месяца(выбранного на вьюшке)
@@ -249,6 +339,22 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
         }
 
+        public bool IsMonthsEnabled
+        {
+            get
+            {
+                return _isMonthsEnabled;
+            }
+            set
+            {
+                //TODO: доделать propertychanged
+                if (this._isMonthsEnabled != null && this._isMonthsEnabled.Equals(value))
+                    return;
+                this._isMonthsEnabled = true;
+                OnPropertyChanged("IsMonthsEnabled");
+            }
+        }
+
         #endregion
 
         #region [IlightingSheduleViewModel]
@@ -264,6 +370,26 @@ namespace UniconGS.UI.Picon2.ViewModel
                 if (this._deviceName != null && this._deviceName.Equals(value)) return;
                 this._deviceName = value;
                 OnPropertyChanged("DeviceName");
+            }
+        }
+
+
+        public ICommand ClearSchedule
+        {
+            get
+            {
+                return this._clearScheduleCommand ??
+                    (this._clearScheduleCommand = new DelegateCommand(OnClearScheduleCommand));
+            }
+        }
+
+
+        public ICommand CalculateScheduleCommand
+        {
+            get
+            {
+                return this._calculateScheduleCommand ??
+                    (this._calculateScheduleCommand = new DelegateCommand(OnCalculateScheduleCommand));
             }
         }
 
@@ -303,16 +429,21 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
         }
 
-        
+
         /// <summary>
         ///     Представляет команду считывания графика освещения с устройства
         /// </summary>
         public ICommand GetLightingShedule
         {
+            //get
+            //{
+            //    return this._getLightingSheduleCommand ??
+            //           (this._getLightingSheduleCommand = new DelegateCommand<byte[]>(this.InitializeOnNavigateTo));
+            //}
             get
             {
                 return this._getLightingSheduleCommand ??
-                       (this._getLightingSheduleCommand = new DelegateCommand<byte[]>(this.InitializeOnNavigateTo));
+                       (this._getLightingSheduleCommand = new DelegateCommand(OnGetLightningSchedule));
             }
         }
 
@@ -340,30 +471,141 @@ namespace UniconGS.UI.Picon2.ViewModel
             this._sendLightingShedule = null;
         }
 
+        public async void OnClearScheduleCommand()
+        {
+            await TryClearSchedule();
+        }
+
+        private async Task TryClearSchedule()
+        {
+
+            ushort[] NullValue = new ushort[770];
+            for (int i = 0; i < 770; i++)
+            {
+                //NullValue[i] = 0xFFFF;
+                NullValue[i] = 0;
+            }
+
+            {
+                try
+                {
+                    if (Title == "График 1")
+                    {
+                        StartAddress = 0x3280;
+                    }
+
+                    if (Title == "График 2")
+                    {
+                        StartAddress = 0x3580;
+                    }
+                    if (Title == "График 3")
+                    {
+                        StartAddress = 0x3880;
+                    }
+
+                    //if (Title == "uiEnergySchedule")
+                    //{
+                    //    baseAddr = 0x8E06;
+                    //}
+
+
+                    for (ushort i = 0; i < 700; i += 60)
+                    {
+                        var r = NullValue.Skip(i).Take(60).ToArray();
+                        await RTUConnectionGlobal.SendDataByAddressAsync(1,
+                        (ushort)(StartAddress + i), r);
+
+                    }
+
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(StartAddress + 720), NullValue.Skip(720).Take(50).ToArray());
+
+                    OnGetLightningSchedule();
+                    //await ReadScheduleData(StartAddress);
+                    //UpdateBinding();
+                    //await UpdateState();
+                    //ExportComplete(true);
+                }
+
+
+                catch
+                {
+                    //ExportComplete(false);
+                }
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="navigationContext"></param>
         public void OnNavigatedTo(int sheduleNumber)
         {
-          
-                // this._startAddress = ushort.Parse(navigationContext.Parameters["address"].ToString());
-             
-            
-                if (sheduleNumber==1)
-                {
-                    Title = "График 1";
-                    _startAddress = 0x3280;
-                }
-                if (sheduleNumber == 2)
+
+            //TODO: подумать, как переделать чтение графика, чтобы по кнопке "Прочитать" он читал из устройства, не заглядывая в кэш и обновлял кэш
+            ReadFromDeviceAndRefreshCache = false;
+
+            IsMonthsEnabled = true;
+
+            if (sheduleNumber == (int)LightningScheduleEnum.SCHEDULE_LIGHTNING)
+            {
+                Title = "График 1";
+                StartAddress = 0x3280;
+            }
+            if (sheduleNumber == (int)LightningScheduleEnum.SCHEDULE_ILLUMINATION)
             {
                 Title = "График 2";
-                _startAddress = 0x3580;
-                }
-                if (sheduleNumber == 3)
+                StartAddress = 0x3580;
+            }
+            if (sheduleNumber == (int)LightningScheduleEnum.SCHEDULE_SUBLIGHT)
             {
                 Title = "График 3";
-                _startAddress = 0x3880;
+                StartAddress = 0x3880;
+            }
+            if (this._sheduleCache.ContainsKey(this.Title))
+            {
+                this.InitializeOnNavigateTo(this._sheduleCache[this.Title]);
+            }
+
+            OnGetLightningSchedule();
+
+            ReadFromDeviceAndRefreshCache = true;//надо подумать, пока такая заглушка
+            // this._startAddress = ushort.Parse(navigationContext.Parameters["address"].ToString());
+            //GetSchedule(sheduleNumber);
+        }
+
+        private async void OnGetLightningSchedule()
+        {
+            if (MainWindow.isAutonomus == false)
+            {
+                if (ReadFromDeviceAndRefreshCache == true)
+                {
+                    if (_sheduleCache.Count != 0)
+                    {
+                        if (_sheduleCache.ContainsKey(this.Title))
+                        {
+                            _sheduleCache.Remove(this.Title);
+                        }
+                    }
+                    else
+                    {
+                        //дикие костыли, но ничего умнее пока не придумал, 
+                        //тут все уже написано через лютейшую жопу блять, 
+                        //велосипеды нахуй на костыльной тяге
+                        IsMonthsEnabled = true;
+                        ReadFromDeviceAndRefreshCache = false;
+                        Title = "График 3";
+                        StartAddress = 0x3880;
+                        OnGetLightningSchedule();
+                        await Task.Delay(1500);
+                        Title = "График 2";
+                        StartAddress = 0x3580;
+                        OnGetLightningSchedule();
+                        await Task.Delay(1500);
+                        Title = "График 1";
+                        StartAddress = 0x3280;
+                        ReadFromDeviceAndRefreshCache = true;
+                    }
                 }
 
                 this.RangeDaysEconomyStartMonth = new ObservableCollection<int>();
@@ -378,7 +620,7 @@ namespace UniconGS.UI.Picon2.ViewModel
                 for (int i = 0; i < MONTH_COUNT; i++)
                 {
                     for (int j = 0; j < monthLengthList[i]; j++)
-                     {
+                    {
                         this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
                         {
                             Month = this._mothNames[i],
@@ -396,7 +638,7 @@ namespace UniconGS.UI.Picon2.ViewModel
 
 
                 this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
-                
+
                 for (int i = 0; i < this.MonthCollection.Count; i++)
                 {
                     string monthName = this._mothNames[i];
@@ -426,13 +668,52 @@ namespace UniconGS.UI.Picon2.ViewModel
                     this.InitializeOnNavigateTo();
                 }
 
-            
-            _navigationContext.Clear();
-        }
 
+                _navigationContext.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Чтение невозможно, автономный режим", "Внимание!");
+            }
+        }
         #endregion
 
         #region [Help members]
+
+        private void InitializeCityDictionary()
+        {
+
+
+            CityList.Add("Минск");
+            CityList.Add("Брест");
+            CityList.Add("Гродно");
+            CityList.Add("Гомель");
+            CityList.Add("Витебск");
+            CityList.Add("Могилев");
+            CityList.Add("Бобруйск");
+            CityList.Add("Барановичи");
+            CityList.Add("Орша");
+            CityList.Add("Лида");
+
+            CoordinatesDictionary.Add("Минск", new CityCoordinates(53.902, 27.561));
+            CoordinatesDictionary.Add("Брест", new CityCoordinates(52.093, 23.718));
+            CoordinatesDictionary.Add("Гродно", new CityCoordinates(53.675, 23.864));
+            CoordinatesDictionary.Add("Гомель", new CityCoordinates(52.435, 30.998));
+            CoordinatesDictionary.Add("Витебск", new CityCoordinates(55.183, 30.201));
+            CoordinatesDictionary.Add("Могилев", new CityCoordinates(53.898, 30.328));
+            CoordinatesDictionary.Add("Бобруйск", new CityCoordinates(53.140, 29.220));
+            CoordinatesDictionary.Add("Барановичи", new CityCoordinates(53.131, 26.015));
+            CoordinatesDictionary.Add("Орша", new CityCoordinates(54.50, 30.411));
+            CoordinatesDictionary.Add("Лида", new CityCoordinates(53.885, 25.289));
+        }
+
+        private int GetCityIndex(string _name)
+        {
+            for (int i = 0; i < CityList.Count; i++)
+                if (CityList[i].Equals(_name)) return i;
+
+            return 0;
+        }
 
         private void OnGetScheduleFromFileCommand()
         {
@@ -703,12 +984,15 @@ namespace UniconGS.UI.Picon2.ViewModel
                 {
                     int startIndexPackage = i * lenghtMainPackage * 2; //*2 - т.к. здесь байты, а там слова
                     await RTUConnectionGlobal.SendDataByAddressAsync(1,
-                        (ushort) (_startAddress + lenghtMainPackage * i), 
+                        (ushort)(StartAddress + lenghtMainPackage * i),
                         ArrayExtension.ByteArrayToUshortArray(this.GetPackageFromAllDAta(startIndexPackage, lenghtMainPackage * 2, initializingData)));
+                    await Task.Delay(100);  //задержка для записи графиков,
+                                            //видимо иногда устройство не успевает обработать
+                                            //предыдущий пакет, когда в него уже запихивают новый
                 }
-                
-                    MessageBox.Show("Запись графиков прошла успешно", "Запись графиков", MessageBoxButtons.OK);
-               
+
+                MessageBox.Show("Запись графиков прошла успешно", "Запись графиков", MessageBoxButtons.OK);
+
             }
             catch (Exception error)
             {
@@ -757,24 +1041,157 @@ namespace UniconGS.UI.Picon2.ViewModel
             return resAsHex.ToArray();
         }
 
+        /// <summary>
+        /// Составление графиков, основываясь на времени гражданских сумерек данной местности
+        /// </summary>
+        /// <returns>byte[] array</returns>
+        private void GetScheduleDataFromSolar()
+        {
+            //тут много в принципе не нужных try-catch конструкций, которые я поставил, чтобы отловить ошибку, которая появлялась только в exe-шнике
+            //оказалось проблема вообще не в этом была, но я оставлю все так, если будет желание - потом как-нибудь почищу
+            this.IsMonthsEnabled = true;
+            SolarTimes solarTimes = new SolarTimes();
+            TimeSpan sunriseTime = new TimeSpan();
+            TimeSpan sunsetTime = new TimeSpan();
+            TimeSpan civilDuskM = new TimeSpan();
+            TimeSpan civilDuskE = new TimeSpan();
+            byte[] result = new byte[1536];
+
+            this._monthsCollection.Clear();
+            try
+            {
+
+                foreach (var mothName in this._mothNames)
+                {
+                    this._monthsCollection.Add(mothName, new ObservableCollection<DaySheduleViewModel>());
+                }
+                var monthLengthList = this._monthsLenghtDictionary.Values.ToArray();
+                for (int i = 0; i < MONTH_COUNT; i++)
+                {
+                    for (int j = 0; j < monthLengthList[i]; j++)
+                    {
+                        this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                        {
+                            Month = this._mothNames[i],
+                            DayNumber = j + 1
+                        });
+                    }
+                    this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                    {
+                        Month = this._mothNames[i],
+                        DayNumber = monthLengthList[i] + 1,
+                        IsEconomy = true
+
+                    });
+                }
+                this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Заполнение коллекции месяцев", "ошибка", MessageBoxImage.Error);
+            }
+            try
+            {
+                for (int i = 0; i < this.MonthCollection.Count; i++)
+                {
+
+                    try
+                    {
+
+                        string monthName = this._mothNames[i];
+                        int monthStartIndex = MONTH_LENGHT_INDEX * i;
+
+                        //что делать с экономией
+                        DaySheduleViewModel economyDaySheduleViewModel = this._monthsCollection[monthName].Last();
+
+                        result[monthStartIndex + 1] = (byte)economyDaySheduleViewModel.StartHour;
+                        result[monthStartIndex] = (byte)economyDaySheduleViewModel.StartMinute;
+                        result[monthStartIndex + 3] = (byte)economyDaySheduleViewModel.StopHour;
+                        result[monthStartIndex + 2] = (byte)economyDaySheduleViewModel.StopMinute;
+
+                        for (int j = 0; j < this._monthsLenghtDictionary[monthName]; j++)
+                        {
+                            try
+                            {
+                                solarTimes = new SolarTimes(new DateTime(DateTime.Today.Year, i + 1, j + 1), Latitude, Longitude);
+                                sunriseTime = solarTimes.Sunrise.TimeOfDay;
+                                sunsetTime = solarTimes.Sunset.TimeOfDay;
+
+                                Solar solar = new Solar(Latitude, solarTimes.SolarDeclination);
+
+                                TimeSpan civilDelta = new TimeSpan((int)Math.Abs(Math.Floor(solar.TCivil)),
+                                                                   (int)Math.Abs((solar.TCivil - Math.Truncate(solar.TCivil)) * 60),
+                                                                   0);
+
+                                civilDuskM = (sunriseTime - civilDelta);
+                                civilDuskE = (sunsetTime + civilDelta);
+
+                                int dayStartIndex = monthStartIndex + j * DAY_LENGHT_INDEX;
+                                result[dayStartIndex + 5] = (byte)civilDuskE.Hours;
+                                result[dayStartIndex + 4] = (byte)civilDuskE.Minutes;
+                                result[dayStartIndex + 7] = (byte)civilDuskM.Hours;
+                                result[dayStartIndex + 6] = (byte)civilDuskM.Minutes;
+                            }
+                            catch { }
+                        }
+                    }
+                    catch (Exception ex1)
+                    {
+                        ShowMessage("расчет", "ошибка", MessageBoxImage.Error);
+                    }
+
+                }
+            }
+            catch (Exception ex3)
+            {
+                ShowMessage("цикл", "ошибка", MessageBoxImage.Error);
+            }
+
+
+            try
+            {
+                InitializeOnNavigateTo(result);
+
+            }
+            catch (Exception ex2)
+            {
+                ShowMessage("заполнение ui", "ошибка", MessageBoxImage.Error);
+
+            }
+        }
+
+        private void OnCalculateScheduleCommand()
+        {
+            try
+            {
+                GetScheduleDataFromSolar();
+
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Вызов метода", "ошибка", MessageBoxImage.Error);
+
+            }
+        }
+
         private async Task<byte[]> GetLightingSheduleDataFromDeviceAsync()
         {
             List<byte[]> dataToRead = new List<byte[]>(COUNT_PACKAGE);
 
-           
+
 
             for (int i = 0; i < COUNT_PACKAGE - 1; i++)
             {
-                
-                dataToRead.Add(ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(_startAddress + MAIN_PACKAGE_LENGHT_WORD * i),
+
+                dataToRead.Add(ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(StartAddress + MAIN_PACKAGE_LENGHT_WORD * i),
                     MAIN_PACKAGE_LENGHT_WORD)));
             }
-            dataToRead.Add(ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(_startAddress + 700),
+            dataToRead.Add(ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(StartAddress + 700),
                 LAST_PACKAGE_LENGHT)));
 
             var result = new List<byte>();
 
-            
+
 
             foreach (byte[] data in dataToRead)
             {
@@ -789,16 +1206,13 @@ namespace UniconGS.UI.Picon2.ViewModel
             if (this._sheduleCache.ContainsKey(this.Title))
             {
                 this._sheduleCache[this.Title] = arrayResult;
-                
+
             }
             else
             {
                 this._sheduleCache.Add(this.Title, arrayResult);
             }
-            
             return arrayResult;
-
-           
         }
 
         private async void InitializeOnNavigateTo(byte[] data = null)
@@ -826,7 +1240,7 @@ namespace UniconGS.UI.Picon2.ViewModel
                     this.CurrentMonthDayCollection[i].StopMinute = curMonthData[i].StopMinute;
                 }
 
-            res = true;
+                //res = true;
 
             }
             catch (Exception error)
@@ -835,10 +1249,10 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
 
 
-            if (res == true)
-            {
-                MessageBox.Show("Чтение графиков прошло успешно", "Чтение графиков", MessageBoxButtons.OK);
-            }
+            //if (res == true)
+            //{
+            //    MessageBox.Show("Чтение графиков прошло успешно", "Чтение графиков", MessageBoxButtons.OK);
+            //}
 
         }
 
@@ -879,8 +1293,9 @@ namespace UniconGS.UI.Picon2.ViewModel
                 }
             }
 
-            
+
         }
+
 
 
         private void InteractWithError(Exception error)
@@ -900,7 +1315,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             get
             {
                 return this._navigateToLightingShedule ??
-                       (this._navigateToLightingShedule = new DelegateCommand(() => OnNavigatedTo(1)));
+                       (this._navigateToLightingShedule = new DelegateCommand(() => OnNavigatedTo((int)LightningScheduleEnum.SCHEDULE_LIGHTNING)));
             }
         }
 
@@ -912,7 +1327,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             get
             {
                 return this._navigateToBackLightShedule ??
-                       (this._navigateToBackLightShedule = new DelegateCommand(()=>OnNavigatedTo(2)));
+                       (this._navigateToBackLightShedule = new DelegateCommand(() => OnNavigatedTo((int)LightningScheduleEnum.SCHEDULE_ILLUMINATION)));
             }
         }
 
@@ -924,16 +1339,14 @@ namespace UniconGS.UI.Picon2.ViewModel
             get
             {
                 return this._navigateToStoregeEnergyShedule ??
-                       (this._navigateToStoregeEnergyShedule = new DelegateCommand(() => OnNavigatedTo(3)));
+                       (this._navigateToStoregeEnergyShedule = new DelegateCommand(() => OnNavigatedTo((int)LightningScheduleEnum.SCHEDULE_SUBLIGHT)));
             }
         }
 
 
-        
 
-      
 
-    
+
         // интересная история: в пиконе2 значения времени хранятся в хексе, 
         // но если читать это хексовое значение и предполагать, что на самом деле ты видишь десятичное, то это и будет действительное значение времени в десятичном варианте
         // то есть видишь 22 в хексе значит это 22 в дэке, но с устройства получаем уже преобразованные из хекса в дэк байты, поэтому так:
@@ -962,6 +1375,10 @@ namespace UniconGS.UI.Picon2.ViewModel
 
             return intsAsHex;
         }
+
+
+
+
         #endregion
     }
 }

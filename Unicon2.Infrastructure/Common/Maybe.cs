@@ -14,7 +14,7 @@ namespace Unicon2.Infrastructure.Common
        {
            _innerList=new List<T>();
        }
-
+         
        public void AddValue(T value)
        {
            _innerList.Add(value);

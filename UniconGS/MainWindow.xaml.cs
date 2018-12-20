@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Threading;
+using System.Text;
 using System.Windows.Threading;
 using UniconGS.UI;
 using UniconGS.Source;
@@ -31,6 +32,8 @@ using UniconGS.UI.Settings;
 using UniconGS.UI.Time;
 using TabControl = System.Windows.Controls.TabControl;
 using static UniconGS.GSMConnection;
+using UniconGS.Enums;
+using UniconGS.UI.Picon2.ModuleRequests;
 
 namespace UniconGS
 {
@@ -61,18 +64,31 @@ namespace UniconGS
         #endregion
         int AutonomusCheck;
         public Schedule LightningSchedule => this.uiLightingSchedule;
+        public Timer UITimer
+        {
+            get
+            {
+                return _uiUpdateTimer;
+            }
+            set
+            {
+                this._uiUpdateTimer = value;
+            }
+        }
 
         public MainWindow()
         {
 
             InitializeComponent();
-
-            if (DeviceSelection.SelectedDevice == 3)
+            isAutonomus = false;
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiScrollViewerPicon2.Visibility = Visibility.Visible;
                 uiPicon2Diagnostics.Visibility = Visibility.Visible;
                 uiLogicConfig.Visibility = Visibility.Collapsed;
                 uiLogicConfigTab.Visibility = Visibility.Collapsed;
+
+
                 picon2LightingSheduleView.DataContext = new Picon2LightingSheduleViewModel();
                 uiPicon2ConfigurationView.DataContext = new PICON2ConfigurationModeViewModel();
                 uiSheduleLightining.Visibility = Visibility.Collapsed;
@@ -80,17 +96,21 @@ namespace UniconGS
                 uiSheduleIllumination.Visibility = Visibility.Collapsed;
                 uiSheduleEconomy.Visibility = Visibility.Collapsed;
                 uiSheduleHeating.Visibility = Visibility.Collapsed;
-                LogicTab.Visibility = Visibility.Collapsed;
+                LogicTab.Visibility = Visibility.Visible;
                 uiGPRSConfig.Visibility = Visibility.Collapsed;
                 uiGSMConnection.IsEnabled = false;
                 uiGPRSTab.Visibility = Visibility.Collapsed;
 
+                uiPicon2ModuleRequests.Visibility = Visibility.Visible;
+                Picon2ModuleRequest.DataContext = new Picon2ModuleRequestsViewModel();
             }
             else
             {
                 uiPicon2ConfigurationViewTab.Visibility = Visibility.Collapsed;
                 picon2ScheduleTab.Visibility = Visibility.Collapsed;
                 uiPicon2ConfigurationView.Visibility = Visibility.Collapsed;
+                uiPicon2ModuleRequests.Visibility = Visibility.Collapsed;
+
             }
             InitSlots();
 
@@ -100,6 +120,7 @@ namespace UniconGS
                 //if (isAutonomus == false)
                 //{
                 Application.Current.Dispatcher.Invoke(SetAllAutonomous);
+                //isAutonomus = true;
                 //}
                 //else
                 //{
@@ -117,7 +138,15 @@ namespace UniconGS
                 await this.uiBacklightSchedule.UpdateState();
                 await this.uiIlluminationSchedule.UpdateState();
                 await this.uiEnergySchedule.UpdateState();
-                await this.uiLogicConfig.UpdateState();
+                //TODO: make decision on what device connected and update uiLogicConfig or picon2LogicConfig
+                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                {
+                    await this.uiPicon2ConfigurationView.UpdateState();
+                }
+                else
+                {
+                    await this.uiLogicConfig.UpdateState();
+                }
                 await this.uiHeatingSchedule.UpdateState();
                 this.ShowMessage("Чтение настроек из устройства прошло успешно." + Environment.NewLine + "Чтение конфигурации прошло успешно." + Environment.NewLine +
                     "Чтение графика освещения прошло успешно." + Environment.NewLine + "Чтение графика подсветки прошло успешно." + Environment.NewLine + "Чтение графика иллюминации прошло успешно."
@@ -182,6 +211,7 @@ namespace UniconGS
             this.uiAbout.Click += new RoutedEventHandler(uiAbout_Click);
             this.uiSettings.GetControlsValue += new ControllerSettings.GetControlsValueDelegate(GetControlsValue);
             this.uiSettings.SetControlsValue += new ControllerSettings.SetValueControlsDelegate(SetValueControls);
+            this.uiSettings.GetPicon2ModuleInfo += new ControllerSettings.GetPicon2ModuleInfoDelegate(GetPicon2ModuleInfo);
             this.uiSettings.ShowMessage += new ControllerSettings.ShowMessageEventHandler(ShowMessage);
             this.uiSettings.IsAutonomous = this._isAutonomous;
             this.uiSettings.Config = this._config;
@@ -191,30 +221,29 @@ namespace UniconGS
                 RTUConnectionGlobal.OnWritingStartedAction += () =>
                 {
                     uiStateIcon.Dispatcher.Invoke(() =>
-                    { 
+                    {
                         uiStateIcon.Visibility = Visibility.Visible;
                         uiStatePresenter.Visibility = Visibility.Visible;
-                        uiAutonomusPresenter.Visibility = Visibility.Hidden;
+                        //uiAutonomusPresenter.Visibility = Visibility.Hidden;
                     });
                 };
                 RTUConnectionGlobal.OnWritingCompleteAction += () =>
                 {
-                    uiStateIcon.Dispatcher.Invoke(() =>
+                    try
                     {
-                        uiStateIcon.Visibility = Visibility.Hidden;
-                        uiStatePresenter.Visibility = Visibility.Hidden;
-                        uiAutonomusPresenter.Visibility = Visibility.Hidden;
-                    });
+                        uiStateIcon.Dispatcher.Invoke(() =>
+                        {
+                            uiStateIcon.Visibility = Visibility.Hidden;
+                            uiStatePresenter.Visibility = Visibility.Hidden;
+                            //uiAutonomusPresenter.Visibility = Visibility.Hidden;
+                        });
+                    }
+                    catch (Exception ex) { };
                 };
             }
-           
-            
-            
-
-
         }
 
-      
+
 
         private async void UiUpdateTimerTriggered()
         {
@@ -229,18 +258,29 @@ namespace UniconGS
                 var isDiagTabSelected = false;
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                     isDiagTabSelected = DiagnosticTab.IsSelected;
+                    isDiagTabSelected = DiagnosticTab.IsSelected;
 
                 });
                 if (isDiagTabSelected)
                 {
+                    if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                    {
+                        await uiPicon2DiagnosticsErrors.Update();
 
-
-                    await uiPiconDiagnostics.Update();
-                    await uiTime.Update();
-                    await uiSignalGSMLevel.Update();
-                    await uiRuno3Diagnostics.Update();
-                    await uiDiagnosticsErrors.Update();
+                        await uiPiconDiagnostics.Update();
+                        await uiTime.Update();
+                        await uiSignalGSMLevel.Update();
+                        await uiRuno3Diagnostics.Update();
+                        await uiDiagnosticsErrors.Update();
+                    }
+                    else
+                    {
+                        await uiPiconDiagnostics.Update();
+                        await uiTime.Update();
+                        await uiSignalGSMLevel.Update();
+                        await uiRuno3Diagnostics.Update();
+                        await uiDiagnosticsErrors.Update();
+                    }
                 }
                 var isLogicTabSelected = false;
                 Application.Current.Dispatcher.Invoke(() =>
@@ -249,7 +289,7 @@ namespace UniconGS
                 });
                 if (isLogicTabSelected)
                 {
-                    if (DeviceSelection.SelectedDevice == 1)
+                    if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
                     {
                         await uiChannelsManagment.Update();
                         await uiErrors.Update();
@@ -258,7 +298,7 @@ namespace UniconGS
                         await uiStates.Update();
                         await uiMeter.Update();
                     }
-                    if (DeviceSelection.SelectedDevice == 2)
+                    if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
                     {
                         await uiChannelsManagment.Update();
                         await uiErrors.Update();
@@ -267,18 +307,27 @@ namespace UniconGS
                         await uiStates.Update();
                         await uiMeter.Update();
                     }
-                    if (DeviceSelection.SelectedDevice == 3)
+                    if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                     {
-                        //await uiChannelsManagment.Update();
-                        //await uiErrors.Update();
-                        //await uiFuseErrors.Update();
-                        //await uiTurnOnError.Update();
-                        //await uiStates.Update();
-                        //await uiMeter.Update();
+                        await uiChannelsManagment.Update();
+                        await uiErrors.Update();
+                        await uiFuseErrors.Update();
+                        await uiTurnOnError.Update();
+                        await uiStates.Update();
+                        await uiMeter.Update();
                     }
 
                 }
+                var isModuleRequestsTabSelected = false;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    isModuleRequestsTabSelected = uiPicon2ModuleRequests.IsSelected;
 
+                });
+                if (isModuleRequestsTabSelected)
+                {
+                    await Picon2ModuleRequest.Update();
+                }
                 //Application.Current.Dispatcher.Invoke(() =>
                 //{
                 //    MrNetwork.IsSelected;
@@ -329,13 +378,7 @@ namespace UniconGS
                 this._config = config;
             #endregion
 
-
-
-
-
-
         }
-
 
         #region Menu items click
         void uiAbout_Click(object sender, RoutedEventArgs e)
@@ -353,8 +396,6 @@ namespace UniconGS
         {
             this.RunProcess(new FileInfo(Directory.GetCurrentDirectory() + @"\Minsk2.chm"));
         }
-
-
 
         private bool RunProcess(FileInfo processFileInfo)
         {
@@ -523,6 +564,9 @@ namespace UniconGS
                 this.Start();
                 this.uiDisconnect.IsEnabled = true;
                 this.uiConnect.IsEnabled = false;
+                this.uiAutonomous.IsEnabled = true;
+                AutonomusCheck = 0;
+                uiAutonomusPresenter.Visibility = Visibility.Hidden;
             }
 
         }
@@ -582,7 +626,10 @@ namespace UniconGS
             this.uiGPRSConfig.Value = settings.GPRS;
 
         }
-
+        private void GetPicon2ModuleInfo()
+        {
+            TryReadPicon2ModuleInfo();
+        }
 
         #endregion
 
@@ -796,32 +843,27 @@ namespace UniconGS
         {
             if (AutonomusCheck == 0)
             {
-
+                AutonomusCheck++;
                 RTUConnectionGlobal.CloseConnection();
-                _uiUpdateTimer.Dispose();
+                if (_uiUpdateTimer != null)
+                {
+                    _uiUpdateTimer.Dispose();
+                }
                 if (MessageBox.Show("Связь с устройством потеряна. Перейти в автономный режим?", "Внимание!", MessageBoxButton.YesNo,
                         MessageBoxImage.Information) == MessageBoxResult.Yes)
                 {
-
                     SetAutonomusMode();
                     isAutonomus = true;
-
                 }
-
                 else
                 {
-
                     this.Close();
-
                 }
-                AutonomusCheck++;
             }
             else
             {
                 return;
             }
-
-
         }
 
         public void SetAutonomusMode()
@@ -856,7 +898,7 @@ namespace UniconGS
                 DiagnosticTab.IsSelected = true;
                 //uiMainControl.Visibility = Visibility.Hidden; 
                 uiHider.Visibility = Visibility.Visible;
-                if (DeviceSelection.SelectedDevice == 1)
+                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
                 {
                     uiRuno3Diagnostics.Visibility = Visibility.Visible;
                     uiScroll.Visibility = Visibility.Visible;
@@ -866,7 +908,7 @@ namespace UniconGS
                     uiScrollViewerPicon2.Visibility = Visibility.Hidden;
                     uiPicon2Diagnostics.Visibility = Visibility.Hidden;
                 }
-                else if (DeviceSelection.SelectedDevice == 2)
+                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
                 {
                     uiRuno3Diagnostics.Visibility = Visibility.Hidden;
                     uiScroll.Visibility = Visibility.Hidden;
@@ -877,7 +919,7 @@ namespace UniconGS
                     uiPicon2Diagnostics.Visibility = Visibility.Hidden;
 
                 }
-                else if (DeviceSelection.SelectedDevice == 3)
+                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                 {
 
                     uiRuno3Diagnostics.Visibility = Visibility.Hidden;
@@ -885,6 +927,7 @@ namespace UniconGS
                     uiScrollViewer.Visibility = Visibility.Hidden;
                     uiDiagnosticsErrors.Visibility = Visibility.Hidden;
                     uiPiconDiagnostics.Visibility = Visibility.Hidden;
+                    uiPicon2DiagnosticsErrors.Visibility = Visibility.Visible;
                     uiScrollViewerPicon2.Visibility = Visibility.Visible;
                     uiPicon2Diagnostics.Visibility = Visibility.Visible;
                     //picon2LightingSheduleView.uiReadPicon2Schdule.IsEnabled = true;
@@ -895,6 +938,7 @@ namespace UniconGS
                 this.uiSettings.IsAutonomous = _isAutonomous;
                 this.uiTime.SetAutonomus();
                 this.uiPiconDiagnostics.SetAutonomus();
+                this.uiPicon2DiagnosticsErrors.SetAutonomus();
                 this.uiRuno3Diagnostics.SetAutonomus();
                 this.uiSystemJournal.SetAutonomous();
                 this.uiLogicConfig.SetAutonomous();
@@ -908,8 +952,11 @@ namespace UniconGS
                 this.uiDiagnosticsErrors.SetAutonomus();
                 this.uiSignalGSMLevel.SetAutonomus();
                 this.uiSettings.SetAutonomus();
+
+                this.Picon2ModuleRequest.SetAutonomus();
                 //Dispatcher.CurrentDispatcher.InvokeShutdown();
                 //this.uiStatePresenter.Text = "Автономный режим";
+
                 this.UpdateLayout();
             }
             catch (Exception ex)
@@ -928,6 +975,8 @@ namespace UniconGS
             this.uiDisconnectBtn.Visibility = System.Windows.Visibility.Visible;
             this.uiAutonomousBtn.Visibility = System.Windows.Visibility.Collapsed;
             this.uiReconnectBtn.Visibility = System.Windows.Visibility.Visible;
+            this.uiAutonomusPresenter.Visibility = Visibility.Hidden;
+            this.uiStatePresenter.Visibility = Visibility.Visible;
             this.uiReconnect.IsEnabled = false;
             this.uiDisconnect.IsEnabled = true;
             this.uiConnect.IsEnabled = false;
@@ -981,7 +1030,7 @@ namespace UniconGS
 
             this._shutDownEvent.Reset();
 
-            if (DeviceSelection.SelectedDevice == 1)
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
             {
                 uiRuno3Diagnostics.Visibility = Visibility.Visible;
                 uiScroll.Visibility = Visibility.Visible;
@@ -991,7 +1040,7 @@ namespace UniconGS
 
                 //uiDiscretScroll.Visibility = Visibility.Hidden;
             }
-            else if (DeviceSelection.SelectedDevice == 2)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
             {
                 uiRuno3Diagnostics.Visibility = Visibility.Hidden;
                 uiScroll.Visibility = Visibility.Hidden;
@@ -1001,13 +1050,13 @@ namespace UniconGS
 
 
             }
-            else if (DeviceSelection.SelectedDevice == 3)
+            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 //uiRuno3Diagnostics.Visibility = Visibility.Hidden;
                 //uiScroll.Visibility = Visibility.Hidden;
                 //uiScrollViewer.Visibility = Visibility.Visible;
-                //uiDiagnosticsErrors.Visibility = Visibility.Visible;
-                //uiPiconDiagnostics.Visibility = Visibility.Visible;
+                uiPicon2Diagnostics.Visibility = Visibility.Visible;
+                uiPicon2DiagnosticsErrors.Visibility = Visibility.Visible;
 
             }
             (this.uiMainControl.Items[0] as TabItem).Visibility = Visibility.Collapsed;
@@ -1027,6 +1076,7 @@ namespace UniconGS
 
             DataTransfer.UnInit();
         }
+
         #endregion Thread
 
         private void ShowMessage(string message, string caption, MessageBoxImage image)
@@ -1062,9 +1112,9 @@ namespace UniconGS
         }
         #endregion Common
 
-
         private void uiDeviceSelection_Click(object sender, RoutedEventArgs e)
         {
+            RTUConnectionGlobal.CloseConnection();
             this.Close();
         }
 
@@ -1091,6 +1141,68 @@ namespace UniconGS
 
             }
 
+        }
+
+        private async void TryReadPicon2ModuleInfo()
+        {
+            try
+            {
+                ushort[] ConnectionModuleId;
+                {
+                    ConnectionModuleId = await RTUConnectionGlobal.GetDataByAddress(1, 0x3004, 1);
+                }
+                string ModuleFirmwareVersion = null;
+                string ModemVersion = null;
+                string ModemFirmwareVersion = null;
+                string ModemIMEI = null;
+
+                var data = await RTUConnectionGlobal.ExecuteFunction12Async(
+                       (byte)ConnectionModuleId[0], "GetModuleFirmwareVersion", 0xF0);
+                if (data != null)
+                {
+                    ModuleFirmwareVersion = Encoding.UTF8.GetString(data);
+                }
+                data = await RTUConnectionGlobal.ExecuteFunction12Async(
+                    (byte)ConnectionModuleId[0], "GetModemVersion", 0xF1);
+                if (data != null)
+                {
+                    ModemVersion = Encoding.UTF8.GetString(data);
+                }
+                data = await RTUConnectionGlobal.ExecuteFunction12Async(
+                    (byte)ConnectionModuleId[0], "GetModemFirmwareVersion", 0xF2);
+                if (data != null)
+                {
+                    ModemFirmwareVersion = Encoding.UTF8.GetString(data);
+                }
+                data = await RTUConnectionGlobal.ExecuteFunction12Async(
+                    (byte)ConnectionModuleId[0], "GetModemIMEI", 0xF3);
+                if (data != null)
+                {
+                    ModemIMEI = Encoding.UTF8.GetString(data);
+                }
+                ShowPicon2ModuleInfo(ModuleFirmwareVersion, ModemVersion, ModemFirmwareVersion, ModemIMEI);
+            }
+            catch (Exception exception)
+            {
+
+            }
+            return;
+        }
+        private void ShowPicon2ModuleInfo(string moduleFirmwareVersion, string modemVersion, string modemFirmwareVersion, string modemIMEI)
+        {
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                sb.AppendLine("Версия прошивки модуля: " + moduleFirmwareVersion.Remove(moduleFirmwareVersion.Count() - 1));
+                sb.AppendLine("Модель модема: " + modemVersion.Remove(modemVersion.Count() - 1));
+                sb.AppendLine("Версия прошивки модема: " + modemFirmwareVersion.Remove(modemFirmwareVersion.Count() - 1));
+                sb.AppendLine("IMEI модема: " + modemIMEI.Remove(modemIMEI.Count() - 1));
+            }
+            catch (Exception ex)
+            {
+
+            }
+            ShowMessage(sb.ToString(), "Информация по модулю связи", MessageBoxImage.Information);
         }
 
 

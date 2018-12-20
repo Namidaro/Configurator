@@ -41,9 +41,9 @@ C:\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.dll
 C:\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.pdb
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\bin\Debug\net45\NModbus4.dll
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\bin\Debug\net45\NModbus4.pdb
-D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.csprojResolveAssemblyReference.cache
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.csproj.CoreCompileInputs.cache
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.AssemblyInfoInputs.cache
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.AssemblyInfo.cs
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.dll
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.pdb
+D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4\obj\Debug\net45\NModbus4.csprojResolveAssemblyReference.cache

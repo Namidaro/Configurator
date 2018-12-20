@@ -1,22 +1,28 @@
-﻿using System;
+﻿using Prism.Commands;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using UniconGS.Source;
+using UniconGS.UI.Schedule.SolarSchedule;
 
 namespace UniconGS.UI.Schedule
 {
     /// <summary>
     /// Interaction logic for Schedule.xaml
     /// </summary>
-    public partial class Schedule
+    public partial class Schedule : INotifyPropertyChanged
     {
         #region Events
         public delegate object OpenFromFileEventHandler(Type type);
         public event OpenFromFileEventHandler OpenFromFile;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public delegate void SaveInFileEventHandler(object value, Type type);
         public event SaveInFileEventHandler SaveInFile;
@@ -32,6 +38,13 @@ namespace UniconGS.UI.Schedule
 
         private delegate void ReadComplete(ushort[] res);
         private delegate void WriteComplete(bool res);
+
+        private double _latitude;
+        private double _longitude;
+        private ICommand _calculateSchedule;
+        private Dictionary<string, CityCoordinates> _coordinatesDictionary;
+        private List<string> _cityList;
+        private string _selectedCity;
         #endregion
 
         #region Globals
@@ -44,8 +57,131 @@ namespace UniconGS.UI.Schedule
             InitializeComponent();
             this._value = new GraphicValue(this.InitializeGraphic());
             this.uiMonther.SelectedIndex = 0;
+            this.CityList = new List<string>();
+            this.CoordinatesDictionary = new Dictionary<string, CityCoordinates>();
+            InitializeCityDictionary();
+            this.SelectedCity = CityList.First();
             this.UpdateBinding();
 
+
+            this.uiLatitude.Text = Latitude.ToString();
+            this.uiLongitude.Text = Longitude.ToString();
+            this.uiCityList.ItemsSource = CityList.ToList();
+            this.uiCityList.SelectedItem = CityList.First();
+            this.uiCalculateButton.Command = CalculateScheduleCommand;
+
+            if(Name== "uiLightingSchedule")
+            {
+                uiSolarExpander.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                uiSolarExpander.Visibility = Visibility.Collapsed;
+            }
+
+        }
+
+        /// <summary>
+        /// Список городов
+        /// </summary>
+        public List<string> CityList
+        {
+            get { return _cityList; }
+            set
+            {
+                _cityList = value;
+                OnPropertyChanged("CityList");
+            }
+        }
+
+        public string SelectedCity
+        {
+            get { return _selectedCity; }
+            set
+            {
+                _selectedCity = value;
+                //CityCoordinates cc = CoordinatesDictionary.ElementAt(GetCityIndex(value)).Value;
+                //Latitude = cc.Latitude;
+                //Longitude = cc.Longitude;
+                OnPropertyChanged("SelectedCity");
+            }
+        }
+        /// <summary>
+        /// Библиотека городов и их координат
+        /// </summary>
+        public Dictionary<string, CityCoordinates> CoordinatesDictionary
+        {
+            get { return _coordinatesDictionary; }
+            set
+            {
+                _coordinatesDictionary = value;
+                OnPropertyChanged("CoordinatesDictionary");
+            }
+        }
+        /// <summary>
+        /// Широта местности
+        /// </summary>
+        public double Latitude
+        {
+            get { return this._latitude; }
+            set
+            {
+                this._latitude = value;
+                OnPropertyChanged("Latitude");
+            }
+        }
+        /// <summary>
+        /// Долгота местности
+        /// </summary>
+        public double Longitude
+        {
+            get { return this._longitude; }
+            set
+            {
+                this._longitude = value;
+                OnPropertyChanged("Longitude");
+            }
+        }
+        public ICommand CalculateScheduleCommand
+        {
+            get
+            {
+                return this._calculateSchedule ??
+                    (this._calculateSchedule = new DelegateCommand(OnCalculateScheduleCommand));
+            }
+        }
+        private void InitializeCityDictionary()
+        {
+
+
+            CityList.Add("Минск");
+            CityList.Add("Брест");
+            CityList.Add("Гродно");
+            CityList.Add("Гомель");
+            CityList.Add("Витебск");
+            CityList.Add("Могилев");
+            CityList.Add("Бобруйск");
+            CityList.Add("Барановичи");
+            CityList.Add("Орша");
+            CityList.Add("Лида");
+
+            CoordinatesDictionary.Add("Минск", new CityCoordinates(53.902, 27.561));
+            CoordinatesDictionary.Add("Брест", new CityCoordinates(52.093, 23.718));
+            CoordinatesDictionary.Add("Гродно", new CityCoordinates(53.675, 23.864));
+            CoordinatesDictionary.Add("Гомель", new CityCoordinates(52.435, 30.998));
+            CoordinatesDictionary.Add("Витебск", new CityCoordinates(55.183, 30.201));
+            CoordinatesDictionary.Add("Могилев", new CityCoordinates(53.898, 30.328));
+            CoordinatesDictionary.Add("Бобруйск", new CityCoordinates(53.140, 29.220));
+            CoordinatesDictionary.Add("Барановичи", new CityCoordinates(53.131, 26.015));
+            CoordinatesDictionary.Add("Орша", new CityCoordinates(54.50, 30.411));
+            CoordinatesDictionary.Add("Лида", new CityCoordinates(53.885, 25.289));
+        }
+        private int GetCityIndex(string _name)
+        {
+            for (int i = 0; i < CityList.Count; i++)
+                if (CityList[i].Equals(_name)) return i;
+
+            return 0;
         }
 
         public GraphicValue ScheduleValue
@@ -61,6 +197,7 @@ namespace UniconGS.UI.Schedule
                 this.UpdateBinding();
             }
         }
+
         public Visibility HasEconomy
         {
             get
@@ -448,6 +585,13 @@ namespace UniconGS.UI.Schedule
 
                 this.uiSaving.DataContext = this._value;
 
+
+
+                //this.uiLatitude.DataContext = this.Latitude;
+                //this.uiLongitude.DataContext = this.Longitude;
+                //this.uiCityList.DataContext = this.CityList;
+                //this.uiCityList.SelectedValue = this.SelectedCity;
+                //this.uiCalculateButton.DataContext = this.CalculateScheduleCommand;
                 //if (this.StopWork != null)
                 //    this.StopWork();
             }
@@ -538,7 +682,9 @@ namespace UniconGS.UI.Schedule
 
         private async void uiClearAll_Click(object sender, RoutedEventArgs e)
         {
+
             await ClearAll();
+
             if (this.ShowMessage != null)
             {
 
@@ -574,5 +720,26 @@ namespace UniconGS.UI.Schedule
         }
 
 
+        private void OnCalculateScheduleCommand()
+        {
+            this._value = GraphicValue.SetSolarValue(this.InitializeGraphic(), Latitude, Longitude);
+            this.UpdateBinding();
+        }
+
+
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        private void uiCityList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cb = e.Source as ComboBox;
+            CityCoordinates cc = CoordinatesDictionary.ElementAt(GetCityIndex(cb.SelectedValue.ToString())).Value;
+            Latitude = cc.Latitude;
+            Longitude = cc.Longitude;
+            uiLatitude.Text = cc.Latitude.ToString();
+            uiLongitude.Text = cc.Longitude.ToString();
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NModbus4.Data;
 using NModbus4.IO;
 using NModbus4.Message;
+using NModBus4.Message.Function12;
 
 namespace NModbus4.Device
 {
@@ -177,6 +178,25 @@ namespace NModbus4.Device
 
             return PerformReadRegistersAsync(request);
         }
+        public Task<byte[]> ExecuteFunction12Async(byte slaveAddress, byte moduleNumber, byte queryId,
+           byte numberOfBytes)
+        {
+            var request = new Function12Request(
+                Modbus.Function12,
+                slaveAddress, moduleNumber, queryId, numberOfBytes);
+            return PerformFunction12Request(request);
+        }
+
+        private async Task<byte[]> PerformFunction12Request(Function12Request request)
+        {
+            Function12Response response = null;
+            await Task.Factory.StartNew((() =>
+            {
+                response = Transport.UnicastMessage<Function12Response>(request);
+            }));
+            return response?.BytesResult.ToArray();
+        }
+
 
         /// <summary>
         ///    Writes a single coil value.

@@ -1,2 +1,2 @@
-C:\Users\Юрий\Desktop\Cfg_Ur\Setup UC\bin\Release\ru-ru\Setup_UC.msi
-C:\Users\Юрий\Desktop\Cfg_Ur\Setup UC\bin\Release\ru-ru\Setup_UC.wixpdb
+D:\Work\#Git\Cfg_Ur\Setup UC\bin\Release\ru-ru\Setup_UC.msi
+D:\Work\#Git\Cfg_Ur\Setup UC\bin\Release\ru-ru\Setup_UC.wixpdb

@@ -77,8 +77,8 @@ D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\bin\Debug\Prism.Unity.Wpf.xml
 D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\bin\Debug\Prism.Wpf.xml
 D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\bin\Debug\XAMLMarkupExtensions.pdb
 D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\bin\Debug\XAMLMarkupExtensions.xml
-D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\obj\Debug\Unicon2.Infrastructure.csprojResolveAssemblyReference.cache
 D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\obj\Debug\Unicon2.Infrastructure.csproj.CoreCompileInputs.cache
 D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\obj\Debug\Unicon2.Infrastructure.csproj.CopyComplete
 D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\obj\Debug\Unicon2.Infrastructure.dll
 D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\obj\Debug\Unicon2.Infrastructure.pdb
+D:\Work\#Git\Cfg_Ur\Unicon2.Infrastructure\obj\Debug\Unicon2.Infrastructure.csprojResolveAssemblyReference.cache
