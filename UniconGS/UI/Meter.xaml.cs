@@ -6,28 +6,45 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using UniconGS.Interfaces;
 using UniconGS.Source;
+using UniconGS.Enums;
+using System.Text;
+using UniconGS.UI.Picon2;
 
 namespace UniconGS.UI
 {
     /// <summary>
     /// Interaction logic for Meter.xaml
     /// </summary>
-    public partial class Meter : UserControl, IUpdatableControl 
+    public partial class Meter : UserControl, IUpdatableControl
     {
         #region Globals
         private ushort[] _value;
         public delegate void StartWorkEventHandler();
         public delegate void StopWorkEventHandler();
-       public delegate void ShowMessageEventHandler(string message, string caption, MessageBoxImage image);
-       #endregion
+        public delegate void ShowMessageEventHandler(string message, string caption, MessageBoxImage image);
+        #endregion
 
         public Meter()
         {
             InitializeComponent();
+            if(DeviceSelection.SelectedDevice==(int)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                uiEnergyM.Visibility = Visibility.Collapsed;
+                uiEnergyD.Visibility = Visibility.Collapsed;
+                EnM.Visibility = Visibility.Collapsed;
+                EnD.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                uiEnergyM.Visibility = Visibility.Visible;
+                uiEnergyD.Visibility = Visibility.Visible;
+                EnM.Visibility = Visibility.Visible;
+                EnD.Visibility = Visibility.Visible;
+            }
         }
 
-        
-      private void DisableAll()
+
+        private void DisableAll()
         {
             foreach (var item in this.PART_DATAHOLDER.Children)
             {
@@ -37,13 +54,13 @@ namespace UniconGS.UI
                 }
             }
         }
-      
+
         private void SetAll(Label lable, ushort[] value, int sourceIndex)
         {
             //var valFromMeter = await ReadAll();
             //SetAll(valFromMeter);
             ushort[] tmp = new ushort[16];
-            
+
 
             if (value[0] == 0)
             {
@@ -54,6 +71,43 @@ namespace UniconGS.UI
                 Array.Copy(value, sourceIndex, tmp, 0, 8);
                 lable.Content = Converter.GetStringFromWords(tmp);
             }
+        }
+
+
+        private void SetAllPicon2(Label lable, byte[] value, int sourceIndex, int length, Picon2MeterFormatterSelector formatterSelector)
+        {
+
+            byte[] tmp = new byte[length];
+            Array.Copy(value, sourceIndex, tmp, 0, length);
+            switch (formatterSelector)
+            {
+                case  Picon2MeterFormatterSelector.SELECTOR_VOLTAGE:
+                    {
+                        lable.Content = Converter.BytesToIntVoltageFormatterPicon2(tmp).ToString();
+
+                        break;
+                    }
+                case Picon2MeterFormatterSelector.SELECTOR_CURRENT:
+                    {
+                        lable.Content = Converter.BytesToIntCurrentFormatterPicon2(tmp).ToString();
+
+                        break;
+                    }
+                case Picon2MeterFormatterSelector.SELECTOR_POWER:
+                    {
+                        lable.Content = Converter.BytesToIntPowerFormatterPicon2(tmp).ToString();
+
+                        break;
+                    }
+                case Picon2MeterFormatterSelector.SELECTOR_ENERGY:
+                    {
+                        lable.Content = Converter.BytesToLongEnergyFormatterPicon2(tmp).ToString();
+
+                        break;
+                    }
+            }
+            
+
         }
         private void SetAll(ushort[] value)
         {
@@ -72,6 +126,24 @@ namespace UniconGS.UI
             this.SetAll(this.uiEnergyO, value, 120);
             this.SetAll(this.uiEnergyM, value, 128);
             this.SetAll(this.uiEnergyD, value, 136);
+        }
+
+        private void SetAllPicon2(ushort[] value)
+        {
+            byte[] bytesValue = ArrayExtension.UshortArrayToByteArray(value);
+
+            this.SetAllPicon2(this.uiVoltageA, bytesValue, 0, 2, Picon2MeterFormatterSelector.SELECTOR_VOLTAGE);
+            this.SetAllPicon2(this.uiVoltageB, bytesValue, 2, 2, Picon2MeterFormatterSelector.SELECTOR_VOLTAGE);
+            this.SetAllPicon2(this.uiVoltageC, bytesValue, 4, 2, Picon2MeterFormatterSelector.SELECTOR_VOLTAGE);
+            this.SetAllPicon2(this.uiCurrentA, bytesValue, 6, 2, Picon2MeterFormatterSelector.SELECTOR_CURRENT);
+            this.SetAllPicon2(this.uiCurrentB, bytesValue, 8, 2, Picon2MeterFormatterSelector.SELECTOR_CURRENT);
+            this.SetAllPicon2(this.uiCurrentC, bytesValue, 10, 2, Picon2MeterFormatterSelector.SELECTOR_CURRENT);
+            this.SetAllPicon2(this.uiPowerA, bytesValue, 12, 2, Picon2MeterFormatterSelector.SELECTOR_POWER);
+            this.SetAllPicon2(this.uiPowerB, bytesValue, 14, 2, Picon2MeterFormatterSelector.SELECTOR_POWER);
+            this.SetAllPicon2(this.uiPowerC, bytesValue, 16, 2, Picon2MeterFormatterSelector.SELECTOR_POWER);
+            this.SetAllPicon2(this.uiEnergyO, bytesValue, 18, 4, Picon2MeterFormatterSelector.SELECTOR_ENERGY);
+            //this.SetAllPicon2(this.uiEnergyM, bytesValue, 26, 4, Picon2MeterFormatterSelector.SELECTOR_ENERGY);
+            //this.SetAllPicon2(this.uiEnergyD, bytesValue, 30, 4, Picon2MeterFormatterSelector.SELECTOR_ENERGY);
         }
 
         void ReadCompleted(ushort[] value)
@@ -100,18 +172,49 @@ namespace UniconGS.UI
 
             }
         }
-  
+
         public async Task Update()
         {
+            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                ushort[] value = await ReadAll();
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    SetAll(value);
-                });
+                    ushort[] value = await ReadAllPicon2();
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetAllPicon2(value);
+                    });
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
-           
-    }
+            else
+            {
+
+                try
+                {
+                    ushort[] value = await ReadAll();
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetAll(value);
+                    });
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+        }
+
+        private async Task<ushort[]> ReadAllPicon2()
+        {
+            List<ushort> ushorts = new List<ushort>();
+            ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x000E), 20));
+            return ushorts.ToArray();
+        }
 
         private async Task<ushort[]> ReadAll()
         {
