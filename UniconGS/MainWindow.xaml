@@ -16,7 +16,6 @@
     xmlns:time="clr-namespace:UniconGS.UI.Time"
     xmlns:uniconGsUi="clr-namespace:UniconGS.UI"
     xmlns:picon2="clr-namespace:UniconGS.UI.Picon2"
-    xmlns:moduleRequests="clr-namespace:UniconGS.UI.Picon2.ModuleRequests"
     Title="БЭМН Конфигуратор Минск ГОРСВЕТ"
     Width="1020"
     Height="822.05"
@@ -88,16 +87,12 @@
                         IsSelected="True">
 
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="263*"/>
-                                <ColumnDefinition Width="737*"/>
-                            </Grid.ColumnDefinitions>
                             <Border
                                 x:Name="uiHider"
                                 Margin="0"
                                 Background="#FFD2D2D2"
                                 BorderBrush="Black"
-                                BorderThickness="1" Grid.ColumnSpan="2">
+                                BorderThickness="1">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
@@ -272,7 +267,6 @@
                                         Margin="0"/>
                                 </Grid>
                             </GroupBox>
-                            <!-- Тут поменял все visibility Hidden на Collapsed, т.к. мешали нажимать на скроллы -->
                             <GroupBox
                                 Grid.Row="0"
                                 Grid.RowSpan="3"
@@ -289,78 +283,49 @@
                                         <ColumnDefinition Width="0*" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
 
                                     <ScrollViewer
                                         x:Name="uiScrollViewer"
                                         Grid.Column="3"
                                         Grid.ColumnSpan="2"
-                                        Grid.Row="0"
-                                        Grid.RowSpan="2"
                                         HorizontalScrollBarVisibility="Auto"
                                         VerticalScrollBarVisibility="Disabled"
-                                        Visibility="Collapsed">
-                                        <uniconGsUi:PiconGSDiagnostics x:Name="uiPiconDiagnostics" 
-                                                                       Visibility="Collapsed" />
+                                        Visibility="Visible">
+                                        <uniconGsUi:PiconGSDiagnostics x:Name="uiPiconDiagnostics" Visibility="Hidden" />
+
                                     </ScrollViewer>
 
                                     <ScrollViewer
                                         x:Name="uiScrollViewerPicon2"
-                                        Grid.Column="2"
-                                        Grid.ColumnSpan="5"
-                                        Grid.Row="0"
-                                        Grid.RowSpan="2"
-                                        HorizontalScrollBarVisibility="Auto"
-                                        VerticalScrollBarVisibility="Disabled"
-                                        Visibility="Collapsed" Margin="100,0,0,0">
-                                        <uniconGsUi:Picon2Diagnostic x:Name="uiPicon2Diagnostics" 
-                                                                     Visibility="Collapsed" 
-                                                                     Width="410" 
-                                                                     Height="267" 
-                                                                     />
-                                    </ScrollViewer>
-                                    
-                                    <uniconGsUi:Picon2DiagnosticsErrors
-                                        x:Name="uiPicon2DiagnosticsErrors"
-                                        Visibility="Collapsed"
-                                        VerticalAlignment="Top"
                                         Grid.Column="1"
                                         Grid.ColumnSpan="4"
-                                        Grid.Row="0"
-                                        Grid.RowSpan="2"
-                                        Margin="-4,0,395,0"
-                                        />
-                                    
-                                    
+                                        HorizontalScrollBarVisibility="Auto"
+                                        VerticalScrollBarVisibility="Disabled"
+                                        Visibility="Visible" Margin="68,0,0,0">
+                                        <uniconGsUi:Picon2Diagnostic x:Name="uiPicon2Diagnostics" Visibility="Hidden" Width="410" Height="267" />
+
+                                    </ScrollViewer>
 
                                     <uniconGsUi:DiagnosticsErrors
                                         x:Name="uiDiagnosticsErrors"
                                         Grid.Column="1"
                                         Grid.ColumnSpan="4"
                                         Margin="-4,16,395,-16"
-                                        Visibility="Collapsed" 
-                                        Grid.Row="0"
-                                        Grid.RowSpan="2"
-                                        />
+                                        Visibility="Hidden " />
 
                                     <ScrollViewer
                                         x:Name="uiScroll"
                                         Grid.Column="2"
                                         Grid.ColumnSpan="3"
                                         Margin="0,-24,0,-36"
-                                        Grid.Row="0"
-                                        Grid.RowSpan="2"
                                         HorizontalScrollBarVisibility="Auto"
                                         VerticalScrollBarVisibility="Disabled"
-                                        Visibility="Collapsed">
+                                        Visibility="Visible">
                                         <uniconGsUi:Runo3Diagnostics
                                             x:Name="uiRuno3Diagnostics"
                                             Width="700"
                                             Height="301"
-                                            Visibility="Collapsed" />
+                                            Visibility="Hidden" />
                                     </ScrollViewer>
 
                                 </Grid>
@@ -392,8 +357,6 @@
                             </GroupBox>
                         </Grid>
                     </TabItem>
-                    
-
                     <TabItem
                         Name="LogicTab"
                         Margin="0"
@@ -495,26 +458,17 @@
                         </Grid>
                     </TabItem>
                     <TabItem   Margin="0"
-                               IsEnabled="False" 
-                               x:Name="uiPicon2ConfigurationViewTab" 
-                               Header="Конфигурация Пикон2" 
-                               Height="27" 
-                               VerticalAlignment="Top">
+                              IsEnabled="False" x:Name="uiPicon2ConfigurationViewTab" Header="Конфигурация" Height="27" VerticalAlignment="Top">
                         <picon2:Picon2ConfigurationView x:Name="uiPicon2ConfigurationView"></picon2:Picon2ConfigurationView>
-
+                      
                     </TabItem>
-                    <TabItem x:Name="uiLogicConfigTab" 
-                             Header="Конфигурация" 
-                             IsEnabled="False">
-                        
+                    <TabItem x:Name="uiLogicConfigTab" Header="Конфигурация" IsEnabled="False">
+                        <Grid>
                             <configuration:LogicConfig
                                 x:Name="uiLogicConfig"
                                 Margin="0"
-                                Grid.Column="0"
-                                />
-
-
-                        
+                                 />
+                        </Grid>
                     </TabItem>
                     <TabItem x:Name="picon2ScheduleTab" Header="Графики" IsEnabled="False">
                         <picon2:Picon2LightingSheduleView x:Name="picon2LightingSheduleView"></picon2:Picon2LightingSheduleView>
@@ -578,22 +532,13 @@
                         Name="MrNetwork"
                         Header="МР-сеть"
                         IsEnabled="False">
+
+
                         <Grid>
                             <mrNetworking:MRNetwork
                                 x:Name="uiMrNetwork"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
-                        </Grid>
-                    </TabItem>
-                    <TabItem
-                        Name="uiPicon2ModuleRequests"
-                        Header="Запросы к модулям"
-                        IsEnabled="False">
-                        <Grid>
-                            <moduleRequests:Picon2ModuleRequestsView
-                                x:Name="Picon2ModuleRequest"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"/>
                         </Grid>
                     </TabItem>
                 </TabControl>

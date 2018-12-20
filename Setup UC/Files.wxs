@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
-	  <DirectoryRef Id="INSTALLFOLDER" FileSource="d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug"> 
+	  <DirectoryRef Id="INSTALLFOLDER" FileSource="C:\Users\Юрий\Desktop\Cfg_Ur\UniconGS\bin\Debug"> 
 
 	    <Component Id="ProductComponent" Guid="65F5390D-A2DF-4BB4-A7B3-BE1F5C1D99E4">
 	      <File Id='PicGSConfig' DiskId='1' Name='PicGSConfig.exe'/>
@@ -21,9 +21,7 @@
 	      <File Id='Prismdll' DiskId='1' Name='Prism.dll'/>
 	      <File Id='MicrosoftPracticesServiceLocationdll' DiskId='1' Name='Microsoft.Practices.ServiceLocation.dll'/>
         <File Id='Minsk2chm' DiskId='1' Name='Minsk2.chm'/>
-
-        <File Id='InnovativeGeometryAngle' DiskId='1' Name='Innovative.Geometry.Angle.dll' />
-        <File Id='InnovativeSolarCalculator' DiskId='1' Name='Innovative.SolarCalculator.dll' />
+        
        
 	      <!--<File Id='PicGSConfigexeconfig' DiskId='1' Name='PicGSConfig.exe.config'/>-->
 	      <!--<File Id='PicGSConfigvshostexeconfig' DiskId='1' Name='PicGSConfig.vshost.exe.config'/>-->

@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using UniconGS.Interfaces;
 using UniconGS.Source;
 using System.Threading.Tasks;
-using UniconGS.Enums;
 
 namespace UniconGS.UI
 {
@@ -33,21 +32,9 @@ namespace UniconGS.UI
         private void SetErrors(ushort[] value)
         {
             var tmp = Converter.GetBitsFromWord(value[0]).OfType<bool>().ToList();
-            if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
+            for (int i = 0; i < 5; i++)
             {
-                (this.uiErrors.Children[0] as BitViewer).Value = tmp[0];//неисправность питания
-                (this.uiErrors.Children[1] as BitViewer).Value = tmp[3];//неисправность цепей управления
-                (this.uiErrors.Children[2] as BitViewer).Value = tmp[2];//неисправность охраны
-                (this.uiErrors.Children[3] as BitViewer).Value = tmp[1];//неисправность управления
-                (this.uiErrors.Children[4] as BitViewer).Value = tmp[4];//неисправность предохранителей
-
-            }
-            else
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    (this.uiErrors.Children[i] as BitViewer).Value = tmp[i];
-                }
+                (this.uiErrors.Children[i] as BitViewer).Value = tmp[i];
             }
         }
 
@@ -88,27 +75,13 @@ namespace UniconGS.UI
         //}
         public async Task Update()
         {
-            if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
+            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0004, 1);
+            //var res = DataTransfer.ReadWords(this._query);new Slot(0x0004, 1, "Errors");
+            //this.Dispatcher.BeginInvoke(new ReadComplete(RunWorkerCompleted), DispatcherPriority.SystemIdle,res);
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0004, 1);
-                //var res = DataTransfer.ReadWords(this._query);new Slot(0x0004, 1, "Errors");
-                //this.Dispatcher.BeginInvoke(new ReadComplete(RunWorkerCompleted), DispatcherPriority.SystemIdle,res);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetErrors(value);
-                });
-            }
-            else
-            {
-
-                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0004, 1);
-                //var res = DataTransfer.ReadWords(this._query);new Slot(0x0004, 1, "Errors");
-                //this.Dispatcher.BeginInvoke(new ReadComplete(RunWorkerCompleted), DispatcherPriority.SystemIdle,res);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetErrors(value);
-                });
-            }
+                SetErrors(value);
+            });
         }
         //public bool WriteContext()
         //{

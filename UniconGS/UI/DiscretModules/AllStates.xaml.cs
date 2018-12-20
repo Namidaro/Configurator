@@ -21,8 +21,6 @@ using UniconGS.UI.Journal;
 using UniconGS.UI.Schedule;
 using UniconGS.UI.Settings;
 using UniconGS.UI.Time;
-using UniconGS.Enums;
-using UniconGS.UI.Picon2;
 using TabControl = System.Windows.Controls.TabControl;
 
 namespace UniconGS.UI.DiscretModules
@@ -30,57 +28,41 @@ namespace UniconGS.UI.DiscretModules
     /// <summary>
     /// Interaction logic for AllStates.xaml
     /// </summary>
-    public partial class AllStates : UserControl, IUpdatableControl
+    public partial class AllStates : UserControl, IUpdatableControl 
     {
         #region Globals
-        private ushort[] _value;
-        private delegate void ReadComplete(ushort[] res);
+       private ushort[] _value;
+       private delegate void ReadComplete(ushort[] res);
         #endregion
 
         public AllStates()
         {
             InitializeComponent();
-
-            //todo: переделеать это дерьмо на binding'и
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
+            if (DeviceSelection.SelectedDevice == 1)
             {
-                uiGroupBox1.Visibility = Visibility.Visible;
-                uiGroupBox3.Visibility = Visibility.Collapsed;
-                uiGroupBox4.Visibility = Visibility.Collapsed;
-                uiGroupBox2.Visibility = Visibility.Collapsed;
-
+                uiGroupBox3.Visibility = Visibility.Hidden;
+                uiGroupBox4.Visibility = Visibility.Hidden;
+                uiGroupBox2.Visibility = Visibility.Hidden;
+                
             }
-            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
+            else if (DeviceSelection.SelectedDevice == 2)
             {
-                uiGroupBox1.Visibility = Visibility.Visible;
-                uiGroupBox3.Visibility = Visibility.Collapsed;
-                uiGroupBox4.Visibility = Visibility.Collapsed;
-                uiGroupBox2.Visibility = Visibility.Collapsed;
-            }
-            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
-            {
-                uiGroupBox1.Visibility = Visibility.Visible;
                 uiGroupBox3.Visibility = Visibility.Visible;
                 uiGroupBox4.Visibility = Visibility.Visible;
                 uiGroupBox2.Visibility = Visibility.Visible;
-
-                uiState1.Visibility = Visibility.Collapsed;
-                uiState2.Visibility = Visibility.Collapsed;
-                uiState3.Visibility = Visibility.Collapsed;
-                uiState4.Visibility = Visibility.Collapsed;
-
-                uiPicon2State1.Visibility = Visibility.Visible;
-                uiPicon2State2.Visibility = Visibility.Visible;
-                uiPicon2State3.Visibility = Visibility.Visible;
-                uiPicon2State4.Visibility = Visibility.Visible;
-
+            }
+            else if (DeviceSelection.SelectedDevice == 3)
+            {
+                //uiGroupBox3.Visibility = Visibility.Visible;
+                //uiGroupBox4.Visibility = Visibility.Visible;
+                //uiGroupBox2.Visibility = Visibility.Visible;
             }
         }
 
+      
+     
 
-
-
-        #region Privates
+        #region Privtaes
         private void SetDefault()
         {
             this.uiState1.Value = null;
@@ -92,24 +74,15 @@ namespace UniconGS.UI.DiscretModules
         private void SetStates(ushort[] value)
         {
             /*Т.к. дискретных модулей 4*/
-            this.uiState1.Value = new ushort[] { value[0], value[1] };
+            this.uiState1.Value = new ushort[] {value[0], value[1]};
             this.uiState2.Value = new ushort[] { value[2], value[3] };
             this.uiState3.Value = new ushort[] { value[4], value[5] };
             this.uiState4.Value = new ushort[] { value[6], value[7] };
         }
-        private void SetPicon2States(ushort[] value)
-        {
-            /*Т.к. дискретных модулей 4*/
-            byte[] workBytes = ArrayExtension.UshortArrayToByteArray(value);
-            this.uiPicon2State1.Value = new byte[] { workBytes[1], workBytes[0] };
-            this.uiPicon2State2.Value = new byte[] { workBytes[3], workBytes[2] };
-            this.uiPicon2State3.Value = new byte[] { workBytes[5], workBytes[4] };
-            this.uiPicon2State4.Value = new byte[] { workBytes[7], workBytes[6] };
-        }
         #endregion
 
         #region IQueryMember
-
+      
         public ushort[] Value
         {
             get
@@ -127,38 +100,18 @@ namespace UniconGS.UI.DiscretModules
                     this._value = value;
                     this.SetStates(value);
                 }
-
+                
             }
         }
 
         public async Task Update()
         {
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+
+            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0005, 8);
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                try
-                {
-                    ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0005, 4);
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetPicon2States(value);
-                    });
-                }
-                catch (Exception ex)
-                { }
-            }
-            else
-            {
-                try
-                {
-                    ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0005, 8);
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetStates(value);
-                    });
-                }
-                catch (Exception ex)
-                { }
-            }
+                SetStates(value);
+            });
         }
 
         private void ReadCompleted(ushort[] res)

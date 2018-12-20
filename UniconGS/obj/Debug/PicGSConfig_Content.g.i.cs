@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ui/picon2/modulerequests/images/image_ms915l.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/picon2.png")]
 
 

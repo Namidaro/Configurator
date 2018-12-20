@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using Innovative.SolarCalculator;
-using Innovative.Geometry;
-using UniconGS.UI.Schedule.SolarSchedule;
-using System.Collections.ObjectModel;
 
 namespace UniconGS.UI.Schedule
 {
@@ -53,7 +49,7 @@ namespace UniconGS.UI.Schedule
 
                 if (month.MonthName.Contains("Январь"))
                 {
-
+                    
                 }
 
                 foreach (var day in month.Days)
@@ -65,7 +61,7 @@ namespace UniconGS.UI.Schedule
                 {
                     /*Заглушка для экономии*/
                     tmp.Add(BitConverter.ToUInt16(new byte[2] { Convert.ToByte(/*month*/this.MonthSaving.TurnOffTime.Minute), Convert.ToByte(this.MonthSaving.TurnOffTime.Hour) }, 0));
-                    tmp.Add(BitConverter.ToUInt16(new byte[2] { Convert.ToByte(/*month*/this.MonthSaving.TurnOnTime.Minute), Convert.ToByte(this.MonthSaving.TurnOnTime.Hour) }, 0));
+                    tmp.Add(BitConverter.ToUInt16(new byte[2] { Convert.ToByte(/*month*/this.MonthSaving.TurnOnTime.Minute), Convert.ToByte(this.MonthSaving.TurnOnTime.Hour) },0));
                 }
                 else
                 {
@@ -74,7 +70,7 @@ namespace UniconGS.UI.Schedule
             }
             if (this.IsSavingTurnOn)
             {
-                tmp.Add(BitConverter.ToUInt16(new byte[2] { Convert.ToByte(this.YearSaving.TurnOffDay), Convert.ToByte(this.YearSaving.TurnOffMonth) }, 0));
+                tmp.Add(BitConverter.ToUInt16(new byte[2] { Convert.ToByte(this.YearSaving.TurnOffDay), Convert.ToByte(this.YearSaving.TurnOffMonth) },0));
                 tmp.Add(BitConverter.ToUInt16(new byte[2] { Convert.ToByte(this.YearSaving.TurnOnDay), Convert.ToByte(this.YearSaving.TurnOnMonth) }, 0));
             }
             else
@@ -121,7 +117,7 @@ namespace UniconGS.UI.Schedule
             }
             else
             {
-                tmp.IsSavingTurnOn = true;
+                tmp.IsSavingTurnOn = true ;
                 tmp.YearSaving.TurnOffMonth = yearSavingValue[1];
                 tmp.YearSaving.TurnOffDay = yearSavingValue[0];
                 yearSavingValue = BitConverter.GetBytes(value[tmpCounter + 1]);
@@ -132,76 +128,5 @@ namespace UniconGS.UI.Schedule
             }
             return tmp;
         }
-
-        public static GraphicValue SetSolarValue(List<GraphicMonth> months, double Latitude, double Longitude)
-        {
-            GraphicValue tmp = new GraphicValue(months);
-            SolarTimes solarTimes = new SolarTimes();
-            TimeSpan sunriseTime = new TimeSpan();
-            TimeSpan sunsetTime = new TimeSpan();
-            TimeSpan civilDuskM = new TimeSpan();
-            TimeSpan civilDuskE = new TimeSpan();
-            int monthIndex = 0;
-            int dayindex = 0;
-
-
-            foreach (var month in tmp.Month)
-            {
-                dayindex = 0;
-                foreach (var day in month.Days)
-                {
-                    //ебаные гении, кто блять додумался делать коллекцию дней в феврале в 31 элемент, но блять последние делать НЕВИДИМЫМИ
-                    //ОНИ ТАМ БЛЯТЬ СОВСЕМ ДВИНУТЫЕ, ИЛИ ЧТО? КАК МНЕ ТЕПЕРЬ С ЭТИМ РАБОТАТЬ ЕБАНЫВРОТБЛЯТЬ
-                    //НАХУЯ ДЕЛАТЬ ТАКИЕ КОСТЫЛИ? 
-                    //мне это блять в кошмарах сниться будет теперь, ну вот зачеееееееееееееееем? просто зачем, блять?
-                    try
-                    {
-                        solarTimes = new SolarTimes(new DateTime(DateTime.Today.Year, monthIndex + 1, dayindex + 1), Latitude, Longitude);
-                        sunriseTime = solarTimes.Sunrise.TimeOfDay;
-                        sunsetTime = solarTimes.Sunset.TimeOfDay;
-
-                        Solar solar = new Solar(Latitude, solarTimes.SolarDeclination);
-
-                        TimeSpan civilDelta = new TimeSpan((int)Math.Abs(Math.Floor(solar.TCivil)),
-                                                           (int)Math.Abs((solar.TCivil - Math.Truncate(solar.TCivil)) * 60),
-                                                           0);
-
-                        civilDuskM = (sunriseTime - civilDelta);
-                        civilDuskE = (sunsetTime + civilDelta);
-
-
-                        day.TurnOffTime.Hour = civilDuskM.Hours;
-                        day.TurnOffTime.Minute = civilDuskM.Minutes;
-                        day.TurnOnTime.Hour = civilDuskE.Hours;
-                        day.TurnOnTime.Minute = civilDuskE.Minutes;
-
-                        dayindex++;
-                    }
-                    catch ( Exception ex)
-                    {
-                        //
-                    }
-                }
-                month.MonthSaving.TurnOffTime.Hour = 0;
-                month.MonthSaving.TurnOffTime.Minute = 0;
-                month.MonthSaving.TurnOnTime.Hour = 0;
-                month.MonthSaving.TurnOnTime.Minute = 0;
-                monthIndex++;
-            }
-
-            tmp.IsSavingTurnOn = false;
-            tmp.YearSaving.TurnOffMonth = 1;
-            tmp.YearSaving.TurnOffDay = 1;
-            tmp.YearSaving.TurnOnDay = 1;
-            tmp.YearSaving.TurnOnMonth = 1;
-            /*Заглушка для экономии*/
-            tmp.MonthSaving = new GraphicMonthSaveing();
-
-
-            return tmp;
-        }
-
-
-
     }
 }

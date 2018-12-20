@@ -152,31 +152,6 @@ namespace UniconGS.UI.Picon2
                     arrayToClear[i] = default(T);
             return arrayToClear;
         }
-        /// <summary>
-        /// Попарно меняет местами элементы массива 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        public static void SwapArrayItems<T>(ref T[] array)
-        {
-            T temp;
-            try
-            {
-                for (int i = 0; i < array.Length; i += 2)
-                {
-                    temp = array[i];
-                    array[i] = array[i + 1];
-                    array[i + 1] = temp;
-                }
-            }
-            catch (IndexOutOfRangeException)
-            {
-                return;
-            }
-
-
-        }
-
 
         #region BlockCopy
         /// <summary>

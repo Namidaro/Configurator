@@ -78,10 +78,6 @@ namespace NModbus4.IO
                 case Modbus.Diagnostics:
                     numBytes = 4;
                     break;
-                case Modbus.Function12:
-                    numBytes = frameStart[2];
-                    break;
-
                 default:
                     string msg = $"Function code {functionCode} not supported.";
                     Debug.WriteLine(msg);

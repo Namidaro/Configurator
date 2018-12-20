@@ -84,17 +84,11 @@ namespace UniconGS.UI.MRNetworking.ViewModel
             get { return _baseAdress.ToString("X"); }
             set
             {
-                try
-                {
-                    _baseAdress = int.Parse(value, NumberStyles.HexNumber);
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(BaseAdressDec));
-                    ModbusMemorySettingsChanged?.Invoke(GetModbusMemorySettings());
-                }
-                catch(Exception ex)
-                {
+                _baseAdress = int.Parse(value, NumberStyles.HexNumber);
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(BaseAdressDec));
+                ModbusMemorySettingsChanged?.Invoke(GetModbusMemorySettings());
 
-                }
             }
         }
 

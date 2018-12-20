@@ -27,8 +27,8 @@
             <Label Content="Pb(кВт):" />
             <Label Content="Pc(кВт):" />
             <Label Content="A(кВт/ч):" />
-            <Label Name="EnM" Content="Aм(кВт/ч)" />
-            <Label Name="EnD" Content="Aд(кВт/ч)" />
+            <Label Content="Aм(кВт/ч)" />
+            <Label Content="Aд(кВт/ч)" />
 
         </StackPanel>
         <StackPanel

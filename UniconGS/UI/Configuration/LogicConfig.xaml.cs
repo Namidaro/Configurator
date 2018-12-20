@@ -7,7 +7,6 @@ using System.Windows.Threading;
 using UniconGS.Annotations;
 using UniconGS.Interfaces;
 using UniconGS.Source;
-using UniconGS.Enums;
 
 namespace UniconGS.UI.Configuration
 {
@@ -52,15 +51,15 @@ namespace UniconGS.UI.Configuration
             this.SetComboBoxItems();
             this.UpdateBinding();
             this.InitializeEvents();
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
+            if (DeviceSelection.SelectedDevice == 1)
             {
                 Mask.Height = 70.333;
             }
-            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
+            else if (DeviceSelection.SelectedDevice == 2)
             {
                 Mask.Height = 125.333;
             }
-            else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            else if (DeviceSelection.SelectedDevice == 3)
             {
                 Mask.Height = 125.333;
             }
@@ -94,8 +93,8 @@ namespace UniconGS.UI.Configuration
             };
         }
 
-
-
+        
+       
         public void SetAutonomous()
         {
             this.uiLogicExport.IsEnabled = false;
@@ -124,8 +123,8 @@ namespace UniconGS.UI.Configuration
             return result;
         }
 
-
-
+      
+       
 
         void uiKU_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -217,7 +216,7 @@ namespace UniconGS.UI.Configuration
                         {
                             this.MatrixUpdate();
 
-                            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
+                            if (DeviceSelection.SelectedDevice == 1)
                             {
                                 for (int i = 0; i < 11; i++)
                                 {
@@ -232,7 +231,7 @@ namespace UniconGS.UI.Configuration
                                 }
                             }
 
-                            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
+                            if (DeviceSelection.SelectedDevice == 2)
                             {
                                 for (int i = 0; i < 44; i++)
                                 {
@@ -246,7 +245,7 @@ namespace UniconGS.UI.Configuration
                                     }
                                 }
                             }
-                            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                            if (DeviceSelection.SelectedDevice == 3)
                             {
                                 for (int i = 0; i < 11; i++)
                                 {
@@ -297,7 +296,11 @@ namespace UniconGS.UI.Configuration
             }
             else
             {
-                if (!result)
+                if (result)
+                {
+
+                }
+                else
                 {
                     foreach (var item in this._maswks)
                     {
@@ -322,16 +325,16 @@ namespace UniconGS.UI.Configuration
             uiLogicConfigOpen.IsEnabled =
                 uiLogicConfigSave.IsEnabled = uiLogicExport.IsEnabled = uiLogicImport.IsEnabled = true;
         }
-        public async void uiLogicImport_Click(object sender, RoutedEventArgs e)
+      public async void uiLogicImport_Click(object sender, RoutedEventArgs e)
         {
-            await UpdateState();
+           await UpdateState();
             if (this.ShowMessage != null)
             {
                 this.ShowMessage("Чтение конфигурации логики прошло успешно",
                        "Чтение конфигурации логики", MessageBoxImage.Information);
             }
 
-
+           
         }
 
         private void ImportComplete(ushort[] value)
@@ -342,7 +345,7 @@ namespace UniconGS.UI.Configuration
                 this._value.SetData(value);
                 this.UpdateBinding();
                 this.MatrixUpdate();
-                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
+                if (DeviceSelection.SelectedDevice == 1)
                 {
                     for (int i = 0; i < 11; i++)
                     {
@@ -356,7 +359,7 @@ namespace UniconGS.UI.Configuration
                         }
                     }
                 }
-                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
+                else if (DeviceSelection.SelectedDevice == 2)
                 {
 
                     for (int i = 0; i < 44; i++)
@@ -371,7 +374,7 @@ namespace UniconGS.UI.Configuration
                         }
                     }
                 }
-                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                else if (DeviceSelection.SelectedDevice == 3)
                 {
 
                     for (int i = 0; i < 44; i++)
@@ -399,7 +402,7 @@ namespace UniconGS.UI.Configuration
             uiLogicConfigOpen.IsEnabled =
                 uiLogicConfigSave.IsEnabled = uiLogicExport.IsEnabled = uiLogicImport.IsEnabled = true;
         }
-        public async void uiLogicExport_Click(object sender, RoutedEventArgs e)
+       public async void uiLogicExport_Click(object sender, RoutedEventArgs e)
         {
 
             await WriteAll();
@@ -442,7 +445,7 @@ namespace UniconGS.UI.Configuration
         {
             if (res)
             {
-
+              
             }
             else
             {
@@ -476,14 +479,14 @@ namespace UniconGS.UI.Configuration
             if (MainWindow.isAutonomus == true)
             {
                 uiLogicConfigOpen.IsEnabled = uiLogicConfigSave.IsEnabled = true;
-                uiLogicExport.IsEnabled = uiLogicImport.IsEnabled = false;
+                    uiLogicExport.IsEnabled = uiLogicImport.IsEnabled = false;
             }
             else
             {
                 uiLogicConfigOpen.IsEnabled =
                     uiLogicConfigSave.IsEnabled = uiLogicExport.IsEnabled = uiLogicImport.IsEnabled = true;
             }
-
+           
         }
 
         private void uiLogicConfigOpen_Click(object sender, RoutedEventArgs e)
@@ -501,7 +504,7 @@ namespace UniconGS.UI.Configuration
                     this._value = (ChannelManagment)result;
                     this.UpdateBinding();
                     this.MatrixUpdate();
-                    if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
+                    if (DeviceSelection.SelectedDevice == 1)
                     {
                         for (int i = 0; i < 11; i++)
                         {
@@ -515,7 +518,7 @@ namespace UniconGS.UI.Configuration
                             }
                         }
                     }
-                    else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
+                    else if (DeviceSelection.SelectedDevice == 2)
                     {
                         for (int i = 0; i < 44; i++)
                         {
@@ -529,7 +532,7 @@ namespace UniconGS.UI.Configuration
                             }
                         }
                     }
-                    else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                    else if (DeviceSelection.SelectedDevice == 3)
                     {
 
                         for (int i = 0; i < 44; i++)
@@ -691,10 +694,10 @@ namespace UniconGS.UI.Configuration
             this.uiKU7.ItemsSource = ComboBoxItemStr.Control;
             this.uiKU8.ItemsSource = ComboBoxItemStr.Control;
         }
-
+        
 
         public ushort[] Value
-        {
+        { 
             get
             {
                 return this._value.GetValue();

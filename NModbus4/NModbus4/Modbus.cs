@@ -17,7 +17,6 @@
         public const byte WriteMultipleCoils = 15;
         public const byte WriteMultipleRegisters = 16;
         public const byte ReadWriteMultipleRegisters = 23;
-        public const byte Function12 = 18;
 
         public const int MaximumDiscreteRequestResponseSize = 2040;
         public const int MaximumRegisterRequestResponseSize = 127;

@@ -53,7 +53,6 @@ namespace NModbus4.Message
                 return frame.ToArray();
             }
         }
-        public byte[] CustomBytesInRequest { get; set; }
 
         public byte[] ProtocolDataUnit
         {
@@ -87,14 +86,12 @@ namespace NModbus4.Message
                 {
                     pdu.Add(ByteCount.Value);
                 }
+
                 if (Data != null)
                 {
                     pdu.AddRange(Data.NetworkBytes);
                 }
-                if (CustomBytesInRequest != null)
-                {
-                    pdu.AddRange(CustomBytesInRequest);
-                }
+
                 return pdu.ToArray();
             }
         }

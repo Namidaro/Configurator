@@ -1262,7 +1262,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             DeInitFaultPropertyChanged(FaultManagement);
             DeInitFaultPropertyChanged(FaultSecurity);
             FaultPower = InitailizeMaskUnit(0x3030, data);
-            FaultManagement = InitailizeMaskUnit(0x3034, data);                                                            
+            FaultManagement = InitailizeMaskUnit(0x3034, data);
             FaultSecurity = InitailizeMaskUnit(0x3038, data);
 
             for (int i = 0; i < 8; i++)

@@ -10,7 +10,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using UniconGS.Enums;
 
 namespace UniconGS
 {
@@ -42,11 +41,10 @@ namespace UniconGS
         #endregion
 
         public Result ResultDialog { get; set; }
-        DateTime _dt = new DateTime();
+        DateTime _dt = DateTime.Now;
 
         public NewTimeDialog()
         {
-            _dt = DateTime.Now;
             InitializeComponent();
         }
 
@@ -58,15 +56,16 @@ namespace UniconGS
 
         void NewTimeDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            if(DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            if(DeviceSelection.SelectedDevice == 3)
             {
-                this.uiYear.Text = _dt.Year.ToString();
+                this.uiYear.Text = "2018";
                 this.uiMonth.SelectedIndex = _dt.Month - 1;
                 this.uiDay.SelectedIndex = _dt.Day - 1;
                 this.uiHour.SelectedIndex = _dt.Hour +1;
                 this.uiMinute.SelectedIndex = _dt.Minute;
                 this.uiSecond.SelectedIndex = _dt.Second;
             }
+
             else
             {
                 this.uiYear.Text = _dt.Year.ToString();

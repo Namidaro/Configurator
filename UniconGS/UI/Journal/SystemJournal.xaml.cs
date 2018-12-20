@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using UniconGS.Interfaces;
 using UniconGS.Source;
-using UniconGS.Enums;
 
 namespace UniconGS.UI.Journal
 {
@@ -24,20 +23,12 @@ namespace UniconGS.UI.Journal
         public delegate void StartWorkEventHandler();
         public delegate void StopWorkEventHandler();
 
-        private delegate void ReadComplete(ushort[] res);
+             private delegate void ReadComplete(ushort[] res);
         #endregion
-
-        #region [CONST]
-        private const ushort PICON2_JOURNAL_RECORD_COUNT_ADDRESS = 0x6000;
-        //private const ushort PICON2_JOURNAL_
-        private const ushort PICON2_JOURNAL_STRING_SIZE = 0x0;//?????????????????????? 
-
-        #endregion
-
 
         #region Globals
         private ObservableCollection<EventJournalItem> _eventJournal = new ObservableCollection<EventJournalItem>();
-
+      
         #endregion
 
         public void SetAutonomous()
@@ -65,56 +56,43 @@ namespace UniconGS.UI.Journal
         public SystemJournal()
         {
             InitializeComponent();
-            //if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
-            //{
-            //    uiImport.IsEnabled = false;
-
-            //}
-
-            //else
-            //{
-            //    uiImport.IsEnabled = true;
-
-            //}
-        }
-
-        private void uiImport_Click(object sender, RoutedEventArgs e)
-        {
-            ImportJournal();
-        }
-
-        private async void ImportJournal()
-        {
-            if (DeviceSelection.SelectedDevice != (int)DeviceSelectionEnum.DEVICE_PICON2)
+            if (DeviceSelection.SelectedDevice == 3)
             {
-                try
-                {
-                    uiImport.IsEnabled = false;
-                    var valFromDevice = await ReadJournalValue();
-                    SetJournalValue(valFromDevice);
-                }
-
-
-
-                //var result = RTUConnectionGlobal.ModbusMaster.ReadInputRegistersAsync(1, 0x2001, 3910);
-                catch (SystemException ex)
-                {
-
-                }
-                finally
-                {
-                    uiImport.IsEnabled = true;
-                }
+                uiImport.IsEnabled = false;
+               
             }
+
             else
             {
-
-                var valFromDevice = await ReadJournalValue();
-                SetJournalValue(valFromDevice);
-                //ShowMessage("Функция не реализована!", "Внимание", MessageBoxImage.Information);
+                uiImport.IsEnabled = true;
+               
             }
         }
 
+        private async void uiImport_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                uiImport.IsEnabled = false;
+              var valFromDevice=  await ReadJournalValue();
+                SetJournalValue(valFromDevice);
+            }
+
+
+
+            //var result = RTUConnectionGlobal.ModbusMaster.ReadInputRegistersAsync(1, 0x2001, 3910);
+            catch (SystemException ex)
+            {
+
+            }
+            finally
+            {
+                uiImport.IsEnabled = true;
+            }
+
+        }
+        
         #region Privtaes
 
         public async Task<ushort[]> ReadJournalValue()
@@ -133,38 +111,14 @@ namespace UniconGS.UI.Journal
             //}
             //}
             //this.Dispatcher.BeginInvoke(new Action(() => uiImport.IsEnabled = true));
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            List<ushort> ushorts = new List<ushort>();
+            for(ushort i = 0; i < 3900; i += 100)
             {
-
-                //видимо надо как-то чекать версию процессора и там будут разные адреса на журнал
-                // но это уже завтра
-                ushort[] Picon2JournalReportCountUshort = new ushort[1];
-                Picon2JournalReportCountUshort = await RTUConnectionGlobal.GetDataByAddress(1, (ushort)0x4000, 1);
-                byte Picon2JournalReportCountLOByte = LOBYTE(Picon2JournalReportCountUshort[0]);
-                byte Picon2JournalReportCountHIByte = HIBYTE(Picon2JournalReportCountUshort[0]);
-
-                //
-                List<ushort> ushorts = new List<ushort>();
-                for (ushort i = 0; i < 640; i++)
-                {
-                    ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x6000 + i), 1));
-                }
-                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x4100), 1));
-                return ushorts.ToArray();
+                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001+i), 100));
             }
-            else
-            {
+            ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, 0x2001 + 3900, 10));
 
-
-                List<ushort> ushorts = new List<ushort>();
-                for (ushort i = 0; i < 3900; i += 100)
-                {
-                    ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + i), 100));
-                }
-                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, 0x2001 + 3900, 10));
-
-                return ushorts.ToArray();
-            }
+            return ushorts.ToArray();
             //}
         }
 
@@ -181,13 +135,13 @@ namespace UniconGS.UI.Journal
                 {
                     tmp.Add(new EventJournalItem(new String(longMessage.GetRange(i * 46, 46).ToArray())));
                 }
-                tmp.Sort(delegate (EventJournalItem first, EventJournalItem second)
+                tmp.Sort(delegate(EventJournalItem first, EventJournalItem second)
                 {
-                    if ((double)first.JournalDateTime.Ticks / TimeSpan.TicksPerSecond >
-                        (double)second.JournalDateTime.Ticks / TimeSpan.TicksPerSecond)
+                    if ((double) first.JournalDateTime.Ticks/TimeSpan.TicksPerSecond >
+                        (double) second.JournalDateTime.Ticks/TimeSpan.TicksPerSecond)
                         return -1;
-                    if ((double)first.JournalDateTime.Ticks / TimeSpan.TicksPerSecond <
-                        (double)second.JournalDateTime.Ticks / TimeSpan.TicksPerSecond)
+                    if ((double) first.JournalDateTime.Ticks/TimeSpan.TicksPerSecond <
+                        (double) second.JournalDateTime.Ticks/TimeSpan.TicksPerSecond)
                         return 1;
                     else
                         return 0;
@@ -220,65 +174,21 @@ namespace UniconGS.UI.Journal
         }
         #endregion
 
-        /// <summary>
-        /// Возвращает младший байт слова
-        /// </summary>
-        /// <param name="v">Слово.</param>
-        /// <returns>Мл.байт</returns>
-        public static byte LOBYTE(int v)
-        {
-            return (byte)(v & 0xff);
-        }
-        /// <summary>
-        /// Возвращает старший байт слова.
-        /// </summary>
-        /// <param name="v">Слово.</param>
-        /// <returns>Ст.байт</returns>
-        public static byte HIBYTE(int v)
-        {
-            return (byte)(v >> 8);
-        }
 
-        public ushort[] Value { get; set; }
+        public ushort[] Value { get ; set;}
 
         public async Task Update()
         {
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            
             {
-                try
+                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2001, 3910);
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    //ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x6000, 2);
-                    //Application.Current.Dispatcher.Invoke(() =>
-                    //{
-                    //    SetJournalValue(value);
-
-                    //});
-
-                    //this.ReadJournalValue();
-                }
-                catch (Exception ex)
-                {
-                    ShowMessage(ex.Message, "Error", MessageBoxImage.Error);
-                }
-            }
-            else
-            {
-                try
-                {
-                    ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2001, 3910);
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SetJournalValue(value);
-
-                    });
-
-                    this.ReadJournalValue();
-                }
-                catch (Exception ex)
-                {
-                    ShowMessage(ex.Message, "Error", MessageBoxImage.Error);
-                }
-            }
+                    SetJournalValue(value);
+                    
+                });
+            }  
+            this.ReadJournalValue();
             //if (this.StopWork != null)
             //{
             //    this.Dispatcher.BeginInvoke(DispatcherPriority.SystemIdle, new Action(() =>
@@ -287,12 +197,7 @@ namespace UniconGS.UI.Journal
             //        StateTextBlock.Text = string.Empty;
             //    }));
             //}
-
-            
-
         }
-
+     
     }
-
 }
-

@@ -186,7 +186,5 @@ namespace NModbus4.Device
             ushort numberOfPointsToRead,
             ushort startWriteAddress,
             ushort[] writeData);
-        Task<byte[]> ExecuteFunction12Async(byte slaveAddress, byte moduleNumber, byte queryId, byte numberOfBytes);
-
     }
 }

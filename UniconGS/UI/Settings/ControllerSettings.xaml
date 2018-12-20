@@ -4,12 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="clr-namespace:UniconGS.Converters"
     mc:Ignorable="d" Height ="Auto" Width ="Auto">
-    <UserControl.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <converters:BooleanToVisibilityRevertConverter x:Key="BoolToVisibilityRevertConverter"/>
-    </UserControl.Resources>
     <Grid>
         <GroupBox Header="Настройки устройства">
             <Grid Margin="0">
@@ -58,21 +53,11 @@
                         Content="Сброс устройства"
                         ToolTip="Сбросить устройство" />
                     <Button
-                        Grid.Row="1"
                         x:Name="uiSignature"
                         Height="21"  Margin="1"
                         Click="uiSignature_Click"
                         Content="Сигнатура устройства"
-                        ToolTip="Получить сигнатуру устройства" 
-                        Visibility="{Binding IsPicon2, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <Button
-                        Grid.Row="1"
-                        x:Name="uiPicon2ModuleInfo"
-                        Height="21"  Margin="1"
-                        Click="uiPicon2ModuleInfo_Click"
-                        Content="Инф. по модулю связи"
-                        ToolTip="Получить информацию по модулю связи" 
-                        Visibility="{Binding IsPicon2, Converter={StaticResource BoolToVisibilityRevertConverter}}"/>
+                        ToolTip="Получить сигнатуру устройства" />
                     <Button
                         x:Name="uiWriteAll"
                         Height="21"  Margin="1"

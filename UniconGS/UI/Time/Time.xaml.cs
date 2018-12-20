@@ -11,7 +11,6 @@ using UniconGS.Annotations;
 using UniconGS.Interfaces;
 using UniconGS.Source;
 using UniconGS.UI.Schedule;
-using UniconGS.Enums;
 
 namespace UniconGS.UI.Time
 {
@@ -50,7 +49,7 @@ namespace UniconGS.UI.Time
         public async Task Update()
 
         {
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            if (DeviceSelection.SelectedDevice == 3)
             {
 
 
@@ -189,12 +188,12 @@ namespace UniconGS.UI.Time
         //    var timeToWritePicon = 
         //}
 
-        public void DateTimeTypePicon2()
+        public void DateTimeTypePicon2( )
         {
 
-            timeUshorts = new[]
+             timeUshorts = new[]
 
-           {
+            {
                    
                 //Picon2.Converters.BytesToInt16FormatterForPicon2(this._clock[1].Year),
                 Convert.ToUInt16(0),
@@ -207,9 +206,9 @@ namespace UniconGS.UI.Time
                 Convert.ToUInt16(this._clock[1].Minute),
                 Convert.ToUInt16(this._clock[1].Second),
                 Convert.ToUInt16(this._clock[1].Millisecond)
-
+                
             };
-
+            
         }
 
         public void DateTimeType()
@@ -244,7 +243,7 @@ namespace UniconGS.UI.Time
             else
             {
                 var timeToWrite =
-                    (InnerTime)this.Dispatcher.Invoke(new WriteTimeEventHandler(WriteTime), this._clock[0]);
+                    (InnerTime)this.Dispatcher.Invoke(new WriteTimeEventHandler(WriteTime), this._clock[1]);
                 if (timeToWrite == null)
                 {
                     uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
@@ -262,7 +261,7 @@ namespace UniconGS.UI.Time
 
             }
 
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            if (DeviceSelection.SelectedDevice == 3)
             {
                 DateTimeTypePicon2();
             }
@@ -275,34 +274,34 @@ namespace UniconGS.UI.Time
 
 
             bool res = true;
-
+           
             try
             {
-
-                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
-                {
-
-
-                    //await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x2100, timeUshorts);
-                    for (ushort i = 0; i < 7; i += 1)
+                
+                    if (DeviceSelection.SelectedDevice == 3)
                     {
-                        var r = timeUshorts.Skip(i).Take(1).ToArray();
-                        await RTUConnectionGlobal.SendDataByAddressAsync(1,
-                            (ushort)(0x2100 + i), r);
-                    }
 
 
-                }
-                //await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x2100, timeUshorts);
+                        //await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x2100, timeUshorts);
+                        for (ushort i = 0; i< 7; i += 1)
+                        {
+                            var r = timeUshorts.Skip(i).Take(1).ToArray();
+        await RTUConnectionGlobal.SendDataByAddressAsync(1,
+            (ushort)(0x2100 + i), r);
+                        }
 
 
+}
+                    //await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x2100, timeUshorts);
+
+                
 
                 else
                 {
-                    await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x1000, timeUshorts);
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x1000, timeUshorts );
                 }
 
-
+               
 
             }
             catch (Exception e)
@@ -317,120 +316,120 @@ namespace UniconGS.UI.Time
         #endregion
 
         private void RunWorkerCompleted(ushort[] value)
+{
+    this.Value = value;
+}
+
+//private void WriteTimeComplete(bool res)
+//{
+//    if (res)
+//    {
+//        if (_isSystemTime)
+//        {
+//            this.ShowMessage("Установка системного времени прошла успешно", "Установка времени",
+//                MessageBoxImage.Asterisk);
+//        }
+//        else
+//        {
+//            this.ShowMessage("Установка времени прошла успешно", "Установка времени",
+//                MessageBoxImage.Information);
+//        }
+//    }
+//    else
+//    {
+//        this.ShowMessage("В процессе установки времени произошла ошибка", "Установка времени",
+//            MessageBoxImage.Error);
+//    }
+//    this.Dispatcher.BeginInvoke(new Action(() => uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true));
+//}
+
+//public void SetAutonomous()
+//{
+//    this.uiChangeTime.IsEnabled = false;
+//    this.uiLocalDate.Content = "Неизвестно";
+//    this.uiLocalTime.Content = "Неизвестно";
+//    this.uiRealTime.Content = "Неизвестно";
+//    this.uiRealDate.Content = "Неизвестно";
+//    this.uiSystemTime.IsEnabled = false;
+//}
+
+//public void DisableAutonomous()
+//{
+//    this.uiChangeTime.IsEnabled = true;
+//    this.uiSystemTime.IsEnabled = true;
+//}
+
+private void SetDefault()
+{
+    this.uiLocalDate.Content = "Ошибка";
+    this.uiLocalDate.ToolTip = "Ошибка при попытке чтения из устройства";
+    this.uiLocalTime.Content = "Ошибка";
+    this.uiLocalTime.ToolTip = "Ошибка при попытке чтения из устройства";
+    this.uiRealTime.Content = "Ошибка";
+    this.uiRealTime.ToolTip = "Ошибка при попытке чтения из устройства";
+    this.uiRealDate.Content = "Ошибка";
+    this.uiRealDate.ToolTip = "Ошибка при попытке чтения из устройства";
+}
+
+private async void uiChangeTime_Click(object sender, RoutedEventArgs e)
+{
+    try
+    {
+        _isSystemTime = false;
+
+        if (await WriteContext())
         {
-            this.Value = value;
-        }
-
-        //private void WriteTimeComplete(bool res)
-        //{
-        //    if (res)
-        //    {
-        //        if (_isSystemTime)
-        //        {
-        //            this.ShowMessage("Установка системного времени прошла успешно", "Установка времени",
-        //                MessageBoxImage.Asterisk);
-        //        }
-        //        else
-        //        {
-        //            this.ShowMessage("Установка времени прошла успешно", "Установка времени",
-        //                MessageBoxImage.Information);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        this.ShowMessage("В процессе установки времени произошла ошибка", "Установка времени",
-        //            MessageBoxImage.Error);
-        //    }
-        //    this.Dispatcher.BeginInvoke(new Action(() => uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true));
-        //}
-
-        //public void SetAutonomous()
-        //{
-        //    this.uiChangeTime.IsEnabled = false;
-        //    this.uiLocalDate.Content = "Неизвестно";
-        //    this.uiLocalTime.Content = "Неизвестно";
-        //    this.uiRealTime.Content = "Неизвестно";
-        //    this.uiRealDate.Content = "Неизвестно";
-        //    this.uiSystemTime.IsEnabled = false;
-        //}
-
-        //public void DisableAutonomous()
-        //{
-        //    this.uiChangeTime.IsEnabled = true;
-        //    this.uiSystemTime.IsEnabled = true;
-        //}
-
-        private void SetDefault()
-        {
-            this.uiLocalDate.Content = "Ошибка";
-            this.uiLocalDate.ToolTip = "Ошибка при попытке чтения из устройства";
-            this.uiLocalTime.Content = "Ошибка";
-            this.uiLocalTime.ToolTip = "Ошибка при попытке чтения из устройства";
-            this.uiRealTime.Content = "Ошибка";
-            this.uiRealTime.ToolTip = "Ошибка при попытке чтения из устройства";
-            this.uiRealDate.Content = "Ошибка";
-            this.uiRealDate.ToolTip = "Ошибка при попытке чтения из устройства";
-        }
-
-        private async void uiChangeTime_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _isSystemTime = false;
-
-                if (await WriteContext())
-                {
-                    uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = false;
-                }
-
-
-
-            }
-
-            catch (Exception ex)
-            {
-            }
-
-
-
-
-        }
-
-        private async void uiSystemTime_Click(object sender, RoutedEventArgs e)
-        {
-            _isSystemTime = true;
             uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = false;
-            if (await WriteContext())
-            {
-                uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = false;
-            }
-
-        }
-
-        private InnerTime WriteTime(DateTime curPLCDateTime)
-        {
-            NewTimeDialog ntd = new NewTimeDialog(curPLCDateTime);
-            //ntd.Owner = Application.Current.MainWindow;
-
-            ntd.ShowDialog();
-
-            if (ntd.ResultDialog != null)
-            {
-                return new InnerTime(ntd.ResultDialog.Year,
-                    ntd.ResultDialog.Month, ntd.ResultDialog.Day,
-                    ntd.ResultDialog.Hour, ntd.ResultDialog.Minute,
-                    ntd.ResultDialog.Second);
-            }
-            else
-                return null;
         }
 
 
-        public void SetAutonomus()
-        {
-            this.uiChangeTime.IsEnabled = false;
-            this.uiSystemTime.IsEnabled = false;
-            SetDefault();
-        }
+
+    }
+
+    catch (Exception ex)
+    {
+    }
+
+
+
+
+}
+
+private async void uiSystemTime_Click(object sender, RoutedEventArgs e)
+{
+    _isSystemTime = true;
+    uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = false;
+    if (await WriteContext())
+    {
+        uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = false;
+    }
+
+}
+
+private InnerTime WriteTime(DateTime curPLCDateTime)
+{
+    NewTimeDialog ntd = new NewTimeDialog(curPLCDateTime);
+    //ntd.Owner = Application.Current.MainWindow;
+
+    ntd.ShowDialog();
+
+    if (ntd.ResultDialog != null)
+    {
+        return new InnerTime(ntd.ResultDialog.Year,
+            ntd.ResultDialog.Month, ntd.ResultDialog.Day,
+            ntd.ResultDialog.Hour, ntd.ResultDialog.Minute,
+            ntd.ResultDialog.Second);
+    }
+    else
+        return null;
+}
+
+
+public void SetAutonomus()
+{
+    this.uiChangeTime.IsEnabled = false;
+    this.uiSystemTime.IsEnabled = false;
+    SetDefault();
+}
     }
 }

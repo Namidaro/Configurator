@@ -22,7 +22,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="92*" />
             <ColumnDefinition Width="250*" />
-            <ColumnDefinition Width="250*" />
+            <ColumnDefinition Width="250" />
             <ColumnDefinition Width="250*"/>
             <ColumnDefinition Width="91*" />
         </Grid.ColumnDefinitions>
@@ -51,30 +51,28 @@
             x:Name="uiRunoSelection"
             Grid.Row="2"
             Grid.Column="1"
-            Margin="8,8,8,8"
+            Margin="8,8,9,8"
             VerticalContentAlignment="Center"
             ToolTip="РУНО-3">
             <Image
                 Grid.Row="2"
                 Grid.Column="1"
-                Margin="8,8,8,8"
+                Margin="40.942,5,40.739,9.999"
                 RenderTransformOrigin="0.494,0.233"
                 Source="Images/R3.png" />
         </Button>
-        <!--Margin="40.942,5,40.739,9.999"-->
+
         <Button
             x:Name="uiPiconGSSelection"
             Grid.Row="2"
             Grid.RowSpan="1"
             Grid.Column="2"
-            Margin="8,8,8,8"
+            Margin="8"
             ToolTip="ПИКОН ГС-2" Grid.ColumnSpan="1">
             <Image
                 Grid.Row="2"
                 Grid.Column="3"
-                Margin="8,8,8,8"
-                RenderTransformOrigin="0.494,0.233"
-                Source="Images/MLKGS.png"  />
+                Source="Images/MLKGS.png" Height="123" Width="198" />
         </Button>
         <!--<Button
             x:Name="uiLuxometr"
@@ -94,13 +92,11 @@
             Grid.Row="2"
             Grid.Column="3"
             Margin="8,8,8,8"
-            ToolTip="ПИКОН2">
+            ToolTip="ПИКОН ГС-2">
         <Image
             Grid.Row="2"
             Grid.Column="3"
-            Margin="8,8,8,8"
-            RenderTransformOrigin="0.494,0.233"
-            Source="Images/picon2.png" />
+            Source="Images/picon2.png" Height="123" Width="198" />
         </Button>
     </Grid>
 </Window>

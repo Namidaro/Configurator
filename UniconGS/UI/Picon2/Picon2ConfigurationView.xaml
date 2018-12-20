@@ -96,10 +96,13 @@
             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                 <TextBlock
                     VerticalAlignment="Center"
-                    Text="   Конфигурация Picon2" />
-                <!--<TextBlock
+                    Text="   Конфигурация &quot;" />
+                <TextBlock
                     VerticalAlignment="Center"
-                    Text="{Binding DeviceName}" />-->
+                    Text="{Binding DeviceName}" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Text="&quot;" />
             </StackPanel>
         </StackPanel>
 

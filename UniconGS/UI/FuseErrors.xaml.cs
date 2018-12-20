@@ -15,7 +15,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UniconGS.Interfaces;
 using UniconGS.Source;
-using UniconGS.Enums;
 
 namespace UniconGS.UI
 {
@@ -43,7 +42,7 @@ namespace UniconGS.UI
             {
                 (item as BitViewer).Value = null;
             }
-
+           
         }
 
         private void SetAllFlags(ushort value)
@@ -53,15 +52,6 @@ namespace UniconGS.UI
             for (int i = 0; i < this.uiFuseErrors.Children.Count; i++)
             {
                 (this.uiFuseErrors.Children[i] as BitViewer).Value = array[i];
-            }
-        }
-        private void SetAllFlagsPicon2(ushort value)
-        {
-            BitArray array = Converter.GetBitsFromWord(value);
-
-            for (int i = 0; i < this.uiFuseErrors.Children.Count; i++)
-            {
-                (this.uiFuseErrors.Children[i] as BitViewer).Value = array[i + 8];//сдвиг на 8, т.к. нужны биты 8-15
             }
         }
 
@@ -85,29 +75,17 @@ namespace UniconGS.UI
                 }
             }
         }
-
+    
         public async Task Update()
         {
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+
+
+            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0303, 1);
+            Application.Current.Dispatcher.Invoke(() =>
             {
-
-                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0004, 1);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetAllFlagsPicon2(value[0]);
-                });
-            }
-            else
-            {
-
-                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0303, 1);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetAllFlags(value[0]);
-                });
-            }
-
-
+                SetAllFlags(value[0]);
+            });
+           
         }
         #endregion
 

@@ -87,7 +87,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-
+           
 
             <StackPanel
                 Grid.Column="1"
@@ -96,15 +96,15 @@
                 <TextBlock
                     VerticalAlignment="Center"
                     Text="{Binding Title}" />
-                <!--<TextBlock
+                <TextBlock
                     VerticalAlignment="Center"
-                    Text="&quot;" />-->
-                <!--<TextBlock
+                    Text="&quot;" />
+                <TextBlock
                     VerticalAlignment="Center"
-                    Text="{Binding DeviceName}" />-->
-                <!--<TextBlock
+                    Text="{Binding DeviceName}" />
+                <TextBlock
                     VerticalAlignment="Center"
-                    Text="&quot;" />-->
+                    Text="&quot;" />
             </StackPanel>
 
             <UniformGrid
@@ -135,52 +135,12 @@
             VerticalAlignment="Top">
             <GroupBox Header="Месяц" Template="{StaticResource GroupBoxTemplate}">
                 <ListBox
-                    IsEnabled="{Binding IsMonthsEnabled}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
                     ItemsSource="{Binding MonthCollection}"
                     SelectedIndex="{Binding CurrentMothIndex}"
                     SelectedItem="{Binding CurrentMonthName, Mode=TwoWay}" />
             </GroupBox>
-            <Expander Margin="5,2" Header="Расчетный график">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Введите координаты" Margin="1,1,1,1"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Широта" Margin="1,1,1,1"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Долгота" Margin="1,1,1,1"/>
-                    <TextBox Grid.Row="1" 
-                             Grid.Column="1" 
-                             Text="{Binding Latitude,Mode=TwoWay}" 
-                             Margin="1,1,1,1"/>
-                    <TextBox Grid.Row="2" 
-                             Grid.Column="1" 
-                             Text="{Binding Longitude,Mode=TwoWay}" 
-                             Margin="1,1,1,1"/>
-                    <ComboBox Grid.Row="3" 
-                              Grid.Column="0" 
-                              Grid.ColumnSpan="2"   
-                              ItemsSource="{Binding CityList,Mode=TwoWay}" 
-                              SelectedItem="{Binding SelectedCity,Mode=TwoWay}" />
-
-                    <Button Grid.Row="4" 
-                            Grid.Column="0" 
-                            Grid.ColumnSpan="2" 
-                            Margin="1,1,1,1" 
-                            Content="Рассчитать" 
-                            Command="{Binding CalculateScheduleCommand}"/>
-                </Grid>
-            </Expander>
             <!--<StackPanel Margin="3"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
@@ -345,55 +305,43 @@
         </StackPanel>
 
         <!--  Дни  -->
-        <ScrollViewer
-            VerticalScrollBarVisibility="Auto"
-            Grid.Row="2" 
-            Grid.Column="1" 
-            Margin="3" 
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch">
-            <GroupBox
+        <GroupBox
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="3"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Header="День"
-            
             Template="{StaticResource GroupBoxTemplate}">
-                <ItemsControl
+            <ItemsControl
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 ItemsSource="{Binding CurrentMonthDayCollection}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                            <!--<UniformGrid />-->
-
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <picon2:DaySheduleView  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <!--<ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel></WrapPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <picon2:DaySheduleView  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <!--<ItemsControl.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Focusable" Value="False" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>-->
-                </ItemsControl>
-            </GroupBox>
-        </ScrollViewer>
+            </ItemsControl>
+        </GroupBox>
         <UniformGrid
             Grid.Row="3"
             Grid.Column="1"
             Margin="15,3"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
-            Columns="5"
+            Columns="4"
             Rows="1">
-            <Button
-               Margin="3"
-                Command="{Binding ClearSchedule}"
-                Content="Очистить график" />
             <Button
                Margin="3"
                 Command="{Binding GetSheduleFromFileCommand}"

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UniconGS.Enums;
 
 namespace UniconGS.UI.Configuration
 {
@@ -31,7 +30,7 @@ namespace UniconGS.UI.Configuration
         {
             get
             {
-                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
+                if (DeviceSelection.SelectedDevice == 1)
                 {
                     return new List<string>
                     {
@@ -47,7 +46,7 @@ namespace UniconGS.UI.Configuration
                     };
                 }
                 
-                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
+                else if (DeviceSelection.SelectedDevice == 2)
                 {
                     return new List<string>
                     {
@@ -62,7 +61,7 @@ namespace UniconGS.UI.Configuration
                         "Реле №8"
                     };
                 }
-                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                else if (DeviceSelection.SelectedDevice == 3)
                 {
                     return new List<string>
                     {
@@ -90,7 +89,7 @@ namespace UniconGS.UI.Configuration
         {
             get
             {
-                if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
+                if (DeviceSelection.SelectedDevice == 1)
                 {
                     return new List<string>
                     {
@@ -110,7 +109,7 @@ namespace UniconGS.UI.Configuration
                 }
                 
 
-                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
+                else if (DeviceSelection.SelectedDevice == 2)
                 {
                     return new List<string>
                     {
@@ -161,7 +160,7 @@ namespace UniconGS.UI.Configuration
                         "Модуль №4, дискрет №11"
                     };
                 }
-                else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+                else if (DeviceSelection.SelectedDevice == 3)
                 {
                     return new List<string>
                     {
