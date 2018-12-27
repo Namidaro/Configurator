@@ -103,6 +103,8 @@ namespace UniconGS
 
                 uiPicon2ModuleRequests.Visibility = Visibility.Visible;
                 Picon2ModuleRequest.DataContext = new Picon2ModuleRequestsViewModel();
+
+                uiFuseErrors.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -111,6 +113,7 @@ namespace UniconGS
                 uiPicon2ConfigurationView.Visibility = Visibility.Collapsed;
                 uiPicon2ModuleRequests.Visibility = Visibility.Collapsed;
 
+                uiFuseErrors.Visibility = Visibility.Visible;
             }
             InitSlots();
 
