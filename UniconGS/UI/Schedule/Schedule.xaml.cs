@@ -70,7 +70,14 @@ namespace UniconGS.UI.Schedule
             this.uiCityList.SelectedItem = CityList.First();
             this.uiCalculateButton.Command = CalculateScheduleCommand;
 
-
+            //if(Name== "uiLightingSchedule")
+            //{
+            //    uiSolarExpander.Visibility = Visibility.Visible;
+            //}
+            //else
+            //{
+            //    uiSolarExpander.Visibility = Visibility.Collapsed;
+            //}
 
         }
 

@@ -9,6 +9,17 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter1"/>
         <converters:IndexToValueConverter x:Key="IndexToValueConverter"/>
+        <Style x:Key="ExpanderToogleHeightStyle" TargetType="Expander">
+            <Style.Triggers>
+                <Trigger Property="IsExpanded" Value="True">
+                    <Setter Property="Height" Value="200"/>
+                </Trigger>
+                <Trigger Property="IsExpanded" Value="False">
+                    <Setter Property="Height" Value="25"/>
+                </Trigger>
+            </Style.Triggers>
+
+        </Style>
         <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
@@ -317,12 +328,13 @@
         </Style>
         <SolidColorBrush x:Key="BorderBrush" Color="#FF2C628B"/>
     </UserControl.Resources>
+
     <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="283"/>
             <RowDefinition Height="21"/>
-            <RowDefinition Height="120"/>
+            <RowDefinition Height="200"/>
             <RowDefinition/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
@@ -330,6 +342,7 @@
             <ColumnDefinition Width="204"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+
         <ListBox x:Name="uiMonther" BorderThickness="1" Margin="5" SelectedIndex="-1" SelectionChanged="uiMonther_SelectionChanged">
             <ListBoxItem Content="Январь"/>
             <ListBoxItem Content="Февраль"/>
@@ -350,46 +363,52 @@
                 работает - не трогай
         
         обожаю пещерных людей-->
-        <Expander Margin="5,2" 
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled" 
+                      Grid.Row="3"
+                      >
+
+            <Expander Margin="5,2" 
                   Header="Расчетный график" 
                   VerticalAlignment="Top" 
-                  Grid.Row="3"
-                  Height="200" 
-                  
+                  Name="uiSolarExpander"
+                  Style="{StaticResource ExpanderToogleHeightStyle}"
                   >
-            <Grid >
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" 
+
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" 
                            Grid.Column="0" 
                            Grid.ColumnSpan="2" 
                            Text="Введите координаты" 
                            Margin="1,1,1,1"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Широта" Margin="1,1,1,1"/>
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Долгота" Margin="1,1,1,1"/>
-                <TextBox Grid.Row="1" 
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Широта" Margin="1,1,1,1"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Долгота" Margin="1,1,1,1"/>
+                    <TextBox Grid.Row="1" 
                              Grid.Column="1" 
                              Name="uiLatitude"
                              DataContext="{Binding}"
                              Text="{Binding Path=Latitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              Margin="1,1,1,1"/>
-                <TextBox Grid.Row="2" 
+                    <TextBox Grid.Row="2" 
                              Grid.Column="1" 
                              Name="uiLongitude"
                              DataContext="{Binding}"
                              Text="{Binding Path=Longitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              Margin="1,1,1,1"/>
-                <ComboBox Grid.Row="3" 
+                    <ComboBox Grid.Row="3" 
                               Grid.Column="0" 
                               Grid.ColumnSpan="2"  
                               Name="uiCityList"
@@ -399,7 +418,7 @@
                               SelectionChanged="uiCityList_SelectionChanged"
                             />
 
-                <Button Grid.Row="4" 
+                    <Button Grid.Row="4" 
                             Name="uiCalculateButton"
                             Grid.Column="0" 
                             Grid.ColumnSpan="2" 
@@ -407,8 +426,9 @@
                             Content="Рассчитать" 
                             DataContext="{Binding}"
                             Command="{Binding Path=CalculateScheduleCommand, Mode=TwoWay}"/>
-            </Grid>
-        </Expander>
+                </Grid>
+            </Expander>
+        </ScrollViewer>
         <CheckBox x:Name="uiSaving" DataContext="{Binding}"  
                   IsChecked="{Binding IsSavingTurnOn, Mode=TwoWay}" 
                   HorizontalAlignment="Left" 
@@ -417,6 +437,7 @@
                   Grid.Row="1" 
                   Margin="20,0,0,0" 
                   Visibility ="Visible" />
+
 
 
 
