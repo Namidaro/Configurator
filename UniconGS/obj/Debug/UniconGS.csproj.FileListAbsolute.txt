@@ -695,3 +695,5 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ModuleErrors.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ModuleErrors.baml
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ChannelManagement.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ChannelManagement.baml
