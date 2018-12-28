@@ -227,6 +227,9 @@
     <Compile Include="UI\Picon2\ViewModel\Picon2LightingSheduleViewModel.cs" />
     <Compile Include="UI\Schedule\SolarSchedule\CityCoordinates.cs" />
     <Compile Include="UI\Schedule\SolarSchedule\Solar.cs" />
+    <Compile Include="UI\Picon2ChannelManagement.xaml.cs">
+      <DependentUpon>Picon2ChannelManagement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\TurnOnError.xaml.cs">
       <DependentUpon>TurnOnError.xaml</DependentUpon>
     </Compile>
@@ -445,6 +448,10 @@
     <Page Include="UI\Time\Time.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Picon2ChannelManagement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

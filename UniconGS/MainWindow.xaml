@@ -430,6 +430,11 @@
                                 Grid.Row="1"
                                 Grid.RowSpan="2"
                                 Grid.Column="0" />
+                            <uniconGsUi:Picon2ChannelManagement
+                                x:Name="uiPicon2ChannelManagement"
+                                Grid.Row="1"
+                                Grid.RowSpan="2"
+                                Grid.Column="0" />
                             <GroupBox
                                 Name="uiMeterGroup"
                                 Grid.Row="3"

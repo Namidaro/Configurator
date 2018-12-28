@@ -105,6 +105,8 @@ namespace UniconGS
                 Picon2ModuleRequest.DataContext = new Picon2ModuleRequestsViewModel();
 
                 uiFuseErrors.Visibility = Visibility.Collapsed;
+                uiTurnOnError.Visibility = Visibility.Collapsed;
+                uiPicon2ChannelManagement.Visibility = Visibility.Visible;
             }
             else
             {
@@ -114,6 +116,8 @@ namespace UniconGS
                 uiPicon2ModuleRequests.Visibility = Visibility.Collapsed;
 
                 uiFuseErrors.Visibility = Visibility.Visible;
+                uiTurnOnError.Visibility = Visibility.Visible;
+                uiPicon2ChannelManagement.Visibility = Visibility.Collapsed;
             }
             InitSlots();
 
@@ -314,10 +318,11 @@ namespace UniconGS
                     {
                         await uiChannelsManagment.Update();
                         await uiErrors.Update();
-                        await uiFuseErrors.Update();
-                        await uiTurnOnError.Update();
+                        //await uiFuseErrors.Update();
+                        //await uiTurnOnError.Update();
                         await uiStates.Update();
                         await uiMeter.Update();
+                        await uiPicon2ChannelManagement.Update();
                     }
 
                 }
