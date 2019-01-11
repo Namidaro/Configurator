@@ -33,6 +33,19 @@ namespace UniconGS.UI.Picon2
         {
             InitializeComponent();
         }
+
+        public byte[] GetConfig()
+        {
+            var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+            return vm.CreateDataPackage();
+        }
+
+        public void SetConfig(byte[] _config)
+        {
+            var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+            vm.InitializeFromSettings(_config);
+        }
+
         //TODO: make updateState for picon2
         public async Task UpdateState()
         {
@@ -99,7 +112,8 @@ namespace UniconGS.UI.Picon2
                 {
                     if (vm.TempManagmentCollection[i] != vm.ManagementKuSelected[i])
                     {
-                        vm.ManagementKuSelected[i] = vm.TempManagmentCollection[i];
+                        //vm.ManagementKuSelected[i] = vm.TempManagmentCollection[i];
+                        vm.TempManagmentCollection[i] = vm.ManagementKuSelected[i];
                         return;
                     }
                 }
@@ -119,7 +133,9 @@ namespace UniconGS.UI.Picon2
                 {
                     if (vm.TempOutputKuSelected[i] != vm.OutputsKuSelected[i])
                     {
-                        vm.OutputsKuSelected[i] = vm.TempOutputKuSelected[i];
+                        //                        vm.OutputsKuSelected[i] = vm.TempOutputKuSelected[i];
+
+                        vm.TempOutputKuSelected[i] = vm.OutputsKuSelected[i];
                         return;
                     }
 
@@ -136,7 +152,9 @@ namespace UniconGS.UI.Picon2
                 {
                     if (vm.TempOutputKuSelectedInv[i] != vm.OutputsKuSelectedInv[i])
                     {
-                        vm.OutputsKuSelectedInv[i] = vm.TempOutputKuSelectedInv[i];
+                        //vm.OutputsKuSelectedInv[i] = vm.TempOutputKuSelectedInv[i];
+                        vm.TempOutputKuSelectedInv[i] = vm.OutputsKuSelectedInv[i];
+
                         return;
                     }
                 }

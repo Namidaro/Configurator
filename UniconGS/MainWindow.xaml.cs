@@ -217,7 +217,9 @@ namespace UniconGS
             this.uiUsersGyde.Click += new RoutedEventHandler(uiUsersGyde_Click);
             this.uiAbout.Click += new RoutedEventHandler(uiAbout_Click);
             this.uiSettings.GetControlsValue += new ControllerSettings.GetControlsValueDelegate(GetControlsValue);
+            this.uiSettings.GetPicon2ControlsValue += new ControllerSettings.GetPicon2ControlsValueDelegate(GetControlsValuePicon2);
             this.uiSettings.SetControlsValue += new ControllerSettings.SetValueControlsDelegate(SetValueControls);
+            this.uiSettings.SetPicon2ControlsValue += new ControllerSettings.SetPicon2ValueControlsDelegate(SetPicon2ValueControls);
             this.uiSettings.GetPicon2ModuleInfo += new ControllerSettings.GetPicon2ModuleInfoDelegate(GetPicon2ModuleInfo);
             this.uiSettings.ShowMessage += new ControllerSettings.ShowMessageEventHandler(ShowMessage);
             this.uiSettings.IsAutonomous = this._isAutonomous;
@@ -618,9 +620,24 @@ namespace UniconGS
 
         private Settings GetControlsValue()
         {
+
+
             return new Settings(this.uiLogicConfig.Value, this.uiLightingSchedule.Value, this.uiBacklightSchedule.Value,
-                this.uiIlluminationSchedule.Value, this.uiEnergySchedule.Value, this.uiHeatingSchedule.Value,
-                this.uiGPRSConfig.Value);
+           this.uiIlluminationSchedule.Value, this.uiEnergySchedule.Value, this.uiHeatingSchedule.Value,
+           this.uiGPRSConfig.Value);
+
+
+        }
+        private Picon2Settings GetControlsValuePicon2()
+        {
+
+
+            return new Picon2Settings(this.uiPicon2ConfigurationView.GetConfig(),
+                this.picon2LightingSheduleView.GetSchedule("График 1"),
+                this.picon2LightingSheduleView.GetSchedule("График 2"),
+                this.picon2LightingSheduleView.GetSchedule("График 3"));
+
+
         }
 
         private void SetValueControls(Settings settings)
@@ -632,6 +649,15 @@ namespace UniconGS
             this.uiEnergySchedule.Value = settings.ConversationEnergy;
             this.uiHeatingSchedule.Value = settings.Heating;
             this.uiGPRSConfig.Value = settings.GPRS;
+
+        }
+
+        private void SetPicon2ValueControls(Picon2Settings settings)
+        {
+            this.uiPicon2ConfigurationView.SetConfig(settings.Picon2Config);
+            this.picon2LightingSheduleView.SetScheduleToCache("График 1", settings.LightningSchedule);
+            this.picon2LightingSheduleView.SetScheduleToCache("График 2", settings.IlluminationSchedule);
+            this.picon2LightingSheduleView.SetScheduleToCache("График 3", settings.BacklightSchedule);
 
         }
         private void GetPicon2ModuleInfo()

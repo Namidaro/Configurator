@@ -608,56 +608,57 @@ namespace UniconGS.UI.Picon2.ViewModel
                     }
                 }
 
-                this.RangeDaysEconomyStartMonth = new ObservableCollection<int>();
-                this.RangeDaysEconomyStopMonth = new ObservableCollection<int>();
+                InitializeMonthsCollection();
+                //this.RangeDaysEconomyStartMonth = new ObservableCollection<int>();
+                //this.RangeDaysEconomyStopMonth = new ObservableCollection<int>();
 
-                this._monthsCollection.Clear();
-                foreach (var mothName in this._mothNames)
-                {
-                    this._monthsCollection.Add(mothName, new ObservableCollection<DaySheduleViewModel>());
-                }
-                var monthLengthList = this._monthsLenghtDictionary.Values.ToArray();
-                for (int i = 0; i < MONTH_COUNT; i++)
-                {
-                    for (int j = 0; j < monthLengthList[i]; j++)
-                    {
-                        this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
-                        {
-                            Month = this._mothNames[i],
-                            DayNumber = j + 1
-                        });
-                    }
-                    this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
-                    {
-                        Month = this._mothNames[i],
-                        DayNumber = monthLengthList[i] + 1,
-                        IsEconomy = true
+                //this._monthsCollection.Clear();
+                //foreach (var mothName in this._mothNames)
+                //{
+                //    this._monthsCollection.Add(mothName, new ObservableCollection<DaySheduleViewModel>());
+                //}
+                //var monthLengthList = this._monthsLenghtDictionary.Values.ToArray();
+                //for (int i = 0; i < MONTH_COUNT; i++)
+                //{
+                //    for (int j = 0; j < monthLengthList[i]; j++)
+                //    {
+                //        this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                //        {
+                //            Month = this._mothNames[i],
+                //            DayNumber = j + 1
+                //        });
+                //    }
+                //    this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                //    {
+                //        Month = this._mothNames[i],
+                //        DayNumber = monthLengthList[i] + 1,
+                //        IsEconomy = true
 
-                    });
-                }
+                //    });
+                //}
 
 
-                this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
+                //this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
 
-                for (int i = 0; i < this.MonthCollection.Count; i++)
-                {
-                    string monthName = this._mothNames[i];
-                    for (int j = 0; j < this._monthsLenghtDictionary[monthName]; j++)
-                    {
-                        this._monthsCollection[monthName][j].StartHour = 0;
-                        this._monthsCollection[monthName][j].StartMinute = 0;
-                        this._monthsCollection[monthName][j].StopHour = 0;
-                        this._monthsCollection[monthName][j].StopMinute = 0;
-                    }
-                }
+                //for (int i = 0; i < this.MonthCollection.Count; i++)
+                //{
+                //    string monthName = this._mothNames[i];
+                //    for (int j = 0; j < this._monthsLenghtDictionary[monthName]; j++)
+                //    {
+                //        this._monthsCollection[monthName][j].StartHour = 0;
+                //        this._monthsCollection[monthName][j].StartMinute = 0;
+                //        this._monthsCollection[monthName][j].StopHour = 0;
+                //        this._monthsCollection[monthName][j].StopMinute = 0;
+                //    }
+                //}
 
-                for (int i = 0; i < CurrentMonthDayCollection.Count; i++)
-                {
-                    this.CurrentMonthDayCollection[i].StartHour = 0;
-                    this.CurrentMonthDayCollection[i].StartMinute = 0;
-                    this.CurrentMonthDayCollection[i].StopHour = 0;
-                    this.CurrentMonthDayCollection[i].StopMinute = 0;
-                }
+                //for (int i = 0; i < CurrentMonthDayCollection.Count; i++)
+                //{
+                //    this.CurrentMonthDayCollection[i].StartHour = 0;
+                //    this.CurrentMonthDayCollection[i].StartMinute = 0;
+                //    this.CurrentMonthDayCollection[i].StopHour = 0;
+                //    this.CurrentMonthDayCollection[i].StopMinute = 0;
+                //}
 
                 if (this._sheduleCache.ContainsKey(this.Title))
                 {
@@ -679,6 +680,61 @@ namespace UniconGS.UI.Picon2.ViewModel
         #endregion
 
         #region [Help members]
+
+        private void InitializeMonthsCollection()
+        {
+            this.RangeDaysEconomyStartMonth = new ObservableCollection<int>();
+            this.RangeDaysEconomyStopMonth = new ObservableCollection<int>();
+
+            this._monthsCollection.Clear();
+            foreach (var mothName in this._mothNames)
+            {
+                this._monthsCollection.Add(mothName, new ObservableCollection<DaySheduleViewModel>());
+            }
+            var monthLengthList = this._monthsLenghtDictionary.Values.ToArray();
+            for (int i = 0; i < MONTH_COUNT; i++)
+            {
+                for (int j = 0; j < monthLengthList[i]; j++)
+                {
+                    this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                    {
+                        Month = this._mothNames[i],
+                        DayNumber = j + 1
+                    });
+                }
+                this._monthsCollection[this._mothNames[i]].Add(new DaySheduleViewModel
+                {
+                    Month = this._mothNames[i],
+                    DayNumber = monthLengthList[i] + 1,
+                    IsEconomy = true
+
+                });
+            }
+
+
+            this.CurrentMonthName = this._mothNames[DateTime.Now.Month - 1];
+
+            for (int i = 0; i < this.MonthCollection.Count; i++)
+            {
+                string monthName = this._mothNames[i];
+                for (int j = 0; j < this._monthsLenghtDictionary[monthName]; j++)
+                {
+                    this._monthsCollection[monthName][j].StartHour = 0;
+                    this._monthsCollection[monthName][j].StartMinute = 0;
+                    this._monthsCollection[monthName][j].StopHour = 0;
+                    this._monthsCollection[monthName][j].StopMinute = 0;
+                }
+            }
+
+            for (int i = 0; i < CurrentMonthDayCollection.Count; i++)
+            {
+                this.CurrentMonthDayCollection[i].StartHour = 0;
+                this.CurrentMonthDayCollection[i].StartMinute = 0;
+                this.CurrentMonthDayCollection[i].StopHour = 0;
+                this.CurrentMonthDayCollection[i].StopMinute = 0;
+            }
+        }
+
 
         private void InitializeCityDictionary()
         {
@@ -1274,6 +1330,12 @@ namespace UniconGS.UI.Picon2.ViewModel
             {
                 string monthName = this._mothNames[i];
                 int monthStartIndex = MONTH_LENGHT_INDEX * i;
+                //инициализировать коллекцию месяцев
+                if (this._monthsCollection.Count == 0)
+                {
+                    InitializeMonthsCollection();
+                    IsMonthsEnabled = true;
+                }
                 DaySheduleViewModel economyDaySheduleViewModel = this._monthsCollection[monthName].Last();
 
                 economyDaySheduleViewModel.StartHour = deviceData[monthStartIndex + 1];
@@ -1296,7 +1358,28 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         }
 
+        public byte[] GetCachedSchedule(string _name)
+        {
+            byte[] _val;
+            _sheduleCache.TryGetValue(_name, out _val);
+            return _val;
+        }
 
+        public void SetCachedSchedule(string _name, byte[] _schedule)
+        {
+            if (this._sheduleCache.ContainsKey(_name))
+            {
+
+                this._sheduleCache.Remove(_name);
+                this._sheduleCache.Add(_name, _schedule);
+
+            }
+            else
+            {
+                this._sheduleCache.Add(_name, _schedule);
+            }
+            InitializeOnNavigateTo(_sheduleCache[_name]);
+        }
 
         private void InteractWithError(Exception error)
         {

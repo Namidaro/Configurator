@@ -230,6 +230,7 @@
     <Compile Include="UI\Picon2ChannelManagement.xaml.cs">
       <DependentUpon>Picon2ChannelManagement.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Settings\Picon2Settings.cs" />
     <Compile Include="UI\TurnOnError.xaml.cs">
       <DependentUpon>TurnOnError.xaml</DependentUpon>
     </Compile>

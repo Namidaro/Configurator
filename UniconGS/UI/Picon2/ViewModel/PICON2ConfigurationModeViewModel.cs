@@ -684,8 +684,8 @@ namespace UniconGS.UI.Picon2.ViewModel
         {
             get
             {
-                _managementKuCollection = new ObservableCollection<string>(_outputsNameValueDictionary.Keys);
-                return _managementKuCollection;
+                _outputsKuCollection = new ObservableCollection<string>(_outputsNameValueDictionary.Keys);
+                return _outputsKuCollection;
             }
         }
 
@@ -880,7 +880,8 @@ namespace UniconGS.UI.Picon2.ViewModel
                         new XElement("IsTurnOn", false),
                         new XElement("GraphicValue", this.DataKuCollection.IndexOf(this.DataKuSelected[i])),
                         new XElement("DiscretValue", this.ManagementKuCollection.IndexOf(this.ManagementKuSelected[i])),
-                        new XElement("ReleValue", this.OutputsKuCollection.IndexOf(this.OutputsKuSelected[i]))
+                        new XElement("ReleValue", this.OutputsKuCollection.IndexOf(this.OutputsKuSelected[i])),
+                        new XElement("ReleValueInv",this.OutputsKuCollection.IndexOf(this.OutputsKuSelectedInv[i]))
                     }));
                 }
 
@@ -961,6 +962,7 @@ namespace UniconGS.UI.Picon2.ViewModel
                 {
                     this.DataKuSelected[i] = this.DataKuCollection[0];
                     this.OutputsKuSelected[i] = this.OutputsKuCollection[0];
+                    this.OutputsKuSelectedInv[i] = this.OutputsKuCollection[0];
                     this.ManagementKuSelected[i] = this.ManagementKuCollection[0];
                     for (int j = 0; j < 64; j++)
                     {
@@ -1042,6 +1044,12 @@ namespace UniconGS.UI.Picon2.ViewModel
                             if (element.Name.ToString().Equals("ReleValue"))
                             {
                                 this.OutputsKuSelected[channelsCounter] =
+                                    this.OutputsKuCollection[
+                                        Int32.Parse(element.Value.ToString(CultureInfo.InvariantCulture))];
+                            }
+                            if (element.Name.ToString().Equals("ReleValueInv"))
+                            {
+                                this.OutputsKuSelectedInv[channelsCounter] =
                                     this.OutputsKuCollection[
                                         Int32.Parse(element.Value.ToString(CultureInfo.InvariantCulture))];
                             }
@@ -1249,6 +1257,19 @@ namespace UniconGS.UI.Picon2.ViewModel
             return result;
         }
 
+        public void InitializeFromSettings(byte[] sett)
+        {
+            this.InitializeFromReadingData(sett);
+            this.VersionDescription = "Picon-2 ";
+            if (this.TryInitializeFaultMask() != -1)
+            {
+                this.ResetFaultBoxs();
+                throw new Exception(
+                    @"Устройство сконфигурировано не верно. Пересечение масок неисправностей. 
+                                                    Маски неисправностей будут сброшены.");
+            }
+        }
+
         private void InitializeFromReadingData(byte[] data)
         {
             if (data.Length != LENGTH_WORD * 2)
@@ -1368,9 +1389,10 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         /// <summary>
         ///     Создает пакет данных из выбранных позиций на вьюке
+        ///     сделал пабликом для общего файла
         /// </summary>
         /// <returns>пакет данных для конфигурирования руно</returns>
-        private byte[] CreateDataPackage()
+        public byte[] CreateDataPackage()
         {
             var result = new byte[LENGTH_WORD * 2];
             for (int i = 0; i < result.Length; i++)
