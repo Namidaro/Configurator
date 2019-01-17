@@ -1257,6 +1257,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             return result;
         }
 
+
         public void InitializeFromSettings(byte[] sett)
         {
             this.InitializeFromReadingData(sett);

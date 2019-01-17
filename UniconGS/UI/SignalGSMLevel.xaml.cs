@@ -11,6 +11,8 @@ using System.Globalization;
 using System.Threading.Tasks;
 using UniconGS.Interfaces;
 using UniconGS.UI;
+using UniconGS.Enums;
+using UniconGS.UI.Picon2;
 using Brushes = System.Windows.Media.Brushes;
 
 namespace UniconGS.UI
@@ -42,7 +44,7 @@ namespace UniconGS.UI
                 uiNoLevelLabel.Visibility = Visibility.Visible;
                 uiSignalGSM.Background = System.Windows.Media.Brushes.White;
             }
-            if (SignalValue >0 && SignalValue <= 10)
+            if (SignalValue > 0 && SignalValue <= 10)
             {
                 uiSignalGSM.Content = value[0];
                 uiSignalGSM.Background = System.Windows.Media.Brushes.Red;
@@ -77,17 +79,41 @@ namespace UniconGS.UI
         {
             this.SetGsm(this.UiSignalGSM, value, 1);
             this.SignalLevelMapping.UpdateState(value[0]);
-         
+
+        }
+
+        private void SetGsmPicon2(byte[] value)
+        {
+            ArrayExtension.SwapArrayItems(ref value);
+            ushort[] _val = ArrayExtension.ByteArrayToUshortArray(value);
+            this.SetGsm(this.UiSignalGSM, _val, 1);
+            this.SignalLevelMapping.UpdateState(_val[0]);
+
         }
 
         public async Task Update()
         {
-            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x001F, 8);
-            Application.Current.Dispatcher.Invoke(() =>
+            if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                SetGsm(value);
-            });
+                ushort[] ConnectionModuleId;
+                {
+                    ConnectionModuleId = await RTUConnectionGlobal.GetDataByAddress(1, 0x3004, 1);
+                }
+                byte[] value = await RTUConnectionGlobal.ExecuteFunction12Async((byte)ConnectionModuleId[0], "Get Picon SignalLevel", 0x60);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetGsmPicon2(value);
+                });
+            }
+            else
+            {
 
+                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x001F, 8);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetGsm(value);
+                });
+            }
         }
 
      

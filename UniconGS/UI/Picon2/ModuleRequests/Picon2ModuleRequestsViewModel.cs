@@ -527,6 +527,15 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         private async void AnalyzeModulesFromDevice()
         {
+            byte _firstModulePos;
+            if (IsToggleCrate918Checked)
+            {
+                _firstModulePos = 0;
+            }
+            else
+            {
+                _firstModulePos = 1;
+            }
             /// читаем модуль с верхом
             try
             {
@@ -553,7 +562,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                         {
                             upperName = "MС911";
                         }
-                        this.ModuleListForUI[_addressUpper] = upperName;
+                        this.ModuleListForUI[_addressUpper - _firstModulePos] = upperName;
                     }
                 }
             }
@@ -579,7 +588,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                         {
                             lowerName = "Люксметр";
                         }
-                        this.ModuleListForUI[_addressLower] = lowerName;
+                        this.ModuleListForUI[_addressLower - _firstModulePos] = lowerName;
                     }
                 }
             }
@@ -588,15 +597,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 ShowMessage("При чтении запроса модуля связи с низом произошла ошибка.", "Внимание", MessageBoxImage.Warning);
             }
             ///модули
-            byte _firstModulePos;
-            if (IsToggleCrate918Checked)
-            {
-                _firstModulePos = 0;
-            }
-            else
-            {
-                _firstModulePos = 1;
-            }
+
             for (int i = 0; i < RequestsFromDevice.Count(); i++)
             {
                 this.ModuleListForUI[RequestsFromDevice[i].CrateAddress - _firstModulePos] = GetModuleNameFromType(RequestsFromDevice[i].Type, RequestsFromDevice[i].ParameterCount);

@@ -97,9 +97,14 @@ namespace UniconGS
                 uiSheduleEconomy.Visibility = Visibility.Collapsed;
                 uiSheduleHeating.Visibility = Visibility.Collapsed;
                 LogicTab.Visibility = Visibility.Visible;
+
+
                 uiGPRSConfig.Visibility = Visibility.Collapsed;
-                uiGSMConnection.IsEnabled = false;
+                uiGSMConnection.IsEnabled = true;
                 uiGPRSTab.Visibility = Visibility.Collapsed;
+
+
+
 
                 uiPicon2ModuleRequests.Visibility = Visibility.Visible;
                 Picon2ModuleRequest.DataContext = new Picon2ModuleRequestsViewModel();
@@ -141,26 +146,36 @@ namespace UniconGS
             };
             this.uiSettings.ReadAll += async (sender, args) =>
             {
-                await this.uiLightingSchedule.UpdateState();
-                await this.uiBacklightSchedule.UpdateState();
-                await this.uiIlluminationSchedule.UpdateState();
-                await this.uiEnergySchedule.UpdateState();
+                this.uiSettings.uiOpenSettings.IsEnabled = false;
+                this.uiSettings.uiSaveSettings.IsEnabled = false;
                 //TODO: make decision on what device connected and update uiLogicConfig or picon2LogicConfig
                 if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                 {
-                    await this.uiPicon2ConfigurationView.UpdateState();
+                    await this.uiPicon2ConfigurationView.GetAllConfig();
+                    await this.picon2LightingSheduleView.ReadAllSchedules();
                 }
                 else
                 {
+                    await this.uiLightingSchedule.UpdateState();
+                    await this.uiBacklightSchedule.UpdateState();
+                    await this.uiIlluminationSchedule.UpdateState();
+                    await this.uiEnergySchedule.UpdateState();
                     await this.uiLogicConfig.UpdateState();
-                }
-                await this.uiHeatingSchedule.UpdateState();
-                this.ShowMessage("Чтение настроек из устройства прошло успешно." + Environment.NewLine + "Чтение конфигурации прошло успешно." + Environment.NewLine +
+                    await this.uiHeatingSchedule.UpdateState();
+                    this.ShowMessage("Чтение настроек из устройства прошло успешно." + Environment.NewLine + "Чтение конфигурации прошло успешно." + Environment.NewLine +
                     "Чтение графика освещения прошло успешно." + Environment.NewLine + "Чтение графика подсветки прошло успешно." + Environment.NewLine + "Чтение графика иллюминации прошло успешно."
                     + Environment.NewLine + "Чтение графика энергосбережения прошло успешно." + Environment.NewLine + "Чтение графика обогрева прошло успешно.",
 
                            "Чтение настроек", MessageBoxImage.Information);
 
+                }
+                //this.ShowMessage("Чтение настроек из устройства прошло успешно." + Environment.NewLine + "Чтение конфигурации прошло успешно." + Environment.NewLine +
+                //    "Чтение графика освещения прошло успешно." + Environment.NewLine + "Чтение графика подсветки прошло успешно." + Environment.NewLine + "Чтение графика иллюминации прошло успешно."
+                //    + Environment.NewLine + "Чтение графика энергосбережения прошло успешно." + Environment.NewLine + "Чтение графика обогрева прошло успешно.",
+
+                //           "Чтение настроек", MessageBoxImage.Information);
+                this.uiSettings.uiOpenSettings.IsEnabled = true;
+                this.uiSettings.uiSaveSettings.IsEnabled = true;
             };
             this.uiSettings.WriteAll += async (sender, args) =>
             {
@@ -662,6 +677,9 @@ namespace UniconGS
         }
         private void GetPicon2ModuleInfo()
         {
+            this.uiSettings.uiPicon2ModuleInfo.IsEnabled = false;
+            this.uiSettings.uiPicon2ModuleInfo.Content = "Ожидайте";
+
             TryReadPicon2ModuleInfo();
         }
 
@@ -1189,7 +1207,10 @@ namespace UniconGS
                 string ModemVersion = null;
                 string ModemFirmwareVersion = null;
                 string ModemIMEI = null;
-
+                if ((byte)ConnectionModuleId[0] != 0xE0 && (byte)ConnectionModuleId[0] != 0xE1)
+                {
+                    ShowMessage("Неверный модуль связи", "Ошибка", MessageBoxImage.Error);
+                }
                 var data = await RTUConnectionGlobal.ExecuteFunction12Async(
                        (byte)ConnectionModuleId[0], "GetModuleFirmwareVersion", 0xF0);
                 if (data != null)
@@ -1227,16 +1248,24 @@ namespace UniconGS
             StringBuilder sb = new StringBuilder();
             try
             {
-                sb.AppendLine("Версия прошивки модуля: " + moduleFirmwareVersion.Remove(moduleFirmwareVersion.Count() - 1));
-                sb.AppendLine("Модель модема: " + modemVersion.Remove(modemVersion.Count() - 1));
-                sb.AppendLine("Версия прошивки модема: " + modemFirmwareVersion.Remove(modemFirmwareVersion.Count() - 1));
-                sb.AppendLine("IMEI модема: " + modemIMEI.Remove(modemIMEI.Count() - 1));
+                if (moduleFirmwareVersion.Length < 3) { sb.AppendLine("Версия прошивки модуля: нет данных"); }
+                else { sb.AppendLine("Версия прошивки модуля: " + moduleFirmwareVersion); }
+                if (modemVersion.Length < 3) { sb.AppendLine("Модель модема: нет данных"); }
+                else { sb.AppendLine("Модель модема: " + modemVersion); }
+                if (modemFirmwareVersion.Length < 3) { sb.AppendLine("Версия прошивки модема: нет данных"); }
+                else { sb.AppendLine("Версия прошивки модема: " + modemFirmwareVersion); }
+                if (modemIMEI.Length < 3) { sb.AppendLine("IMEI модема: нет данных"); }
+                else { sb.AppendLine("IMEI модема: " + modemIMEI); }
             }
             catch (Exception ex)
             {
 
             }
             ShowMessage(sb.ToString(), "Информация по модулю связи", MessageBoxImage.Information);
+
+            this.uiSettings.uiPicon2ModuleInfo.IsEnabled = true;
+            this.uiSettings.uiPicon2ModuleInfo.Content = "Инф. по модулю связи";
+
         }
 
 

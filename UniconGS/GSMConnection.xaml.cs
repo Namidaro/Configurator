@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using UniconGS.Source;
+using UniconGS.Enums;
 
 
 namespace UniconGS
@@ -26,6 +27,16 @@ namespace UniconGS
             uiiPTex.PreviewTextInput += new System.Windows.Input.TextCompositionEventHandler(ip_PreviewTextImput);
             uiiPTex.PreviewKeyUp += UiiPTex_PreviewKeyUp;
            
+            if(DeviceSelection.SelectedDevice==(byte)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                uiPortNumberGSM.Text = "502";
+            }
+            else
+            {
+                uiPortNumberGSM.Text = "4444";
+            }
+
+
             if (ConfiguratorSettings.Default.ipSettings == null)
             {
                 uiiPTex.Text = "127.0.0.1";

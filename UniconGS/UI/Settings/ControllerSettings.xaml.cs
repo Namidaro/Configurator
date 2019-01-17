@@ -68,7 +68,7 @@ namespace UniconGS.UI.Settings
                 uiSignature.Visibility = Visibility.Collapsed;
                 uiPicon2ModuleInfo.Visibility = Visibility.Visible;
                 uiWriteAll.IsEnabled = false;
-                uiReadAll.IsEnabled = false;
+                uiReadAll.IsEnabled = true;
                 IsPicon2 = true;
             }
             else
@@ -464,6 +464,8 @@ namespace UniconGS.UI.Settings
         {
             this.uiPLCReset.IsEnabled = false;
             this.uiSignature.IsEnabled = false;
+            //            this.uiReadAll.IsEnabled = false;
+
             this.uiReadAll.IsEnabled = false;
             this.uiWriteAll.IsEnabled = false;
         }

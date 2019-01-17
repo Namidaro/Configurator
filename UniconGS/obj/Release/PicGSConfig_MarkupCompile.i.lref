@@ -3,10 +3,15 @@
 FD:\Work\#Git\Cfg_Ur\UniconGS\GSMConnection.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\Luxmetr.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Configuration\ErrorMaskMark.xaml;;
+FD:\Work\#Git\Cfg_Ur\UniconGS\UI\DiscretModules\Picon2States.xaml;;
+FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2ModuleErrors.xaml;;
+FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2DiagnosticsErrors.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\FuseErrors.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\MRNetworking\MRNetwork.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\MRNetworking\MRNetworkingEditingViewxaml.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2Diagnostic.xaml;;
+FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2\ModuleRequests\Picon2CommunicationModule910SeriesView.xaml;;
+FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2\ModuleRequests\Picon2CommunicationModule915SeriesView.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2\Picon2ConfigurationView.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2\Picon2LightingSheduleView.xaml;;
@@ -25,6 +30,7 @@ FD:\Work\#Git\Cfg_Ur\UniconGS\UI\SignalGSMLevel.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\SignalLevelMapping.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Spinner\Spinner.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\DiscretModules\States.xaml;;
+FD:\Work\#Git\Cfg_Ur\UniconGS\UI\Picon2ChannelManagement.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\UI\TurnOnError.xaml;;
 FD:\Work\#Git\Cfg_Ur\UniconGS\MainWindow.xaml;;
 

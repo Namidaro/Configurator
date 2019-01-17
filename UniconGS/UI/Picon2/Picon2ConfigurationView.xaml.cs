@@ -45,6 +45,11 @@ namespace UniconGS.UI.Picon2
             var vm = this.DataContext as PICON2ConfigurationModeViewModel;
             vm.InitializeFromSettings(_config);
         }
+        public async Task GetAllConfig()
+        {
+            var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+            vm.GetConfiguration.Execute(null);
+        }
 
         //TODO: make updateState for picon2
         public async Task UpdateState()

@@ -220,6 +220,7 @@
     <Compile Include="UI\Picon2\Picon2LightingSheduleView.xaml.cs">
       <DependentUpon>Picon2LightingSheduleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Picon2\ValidationRules\Picon2ConfigIntValidationRules.cs" />
     <Compile Include="UI\Picon2\ViewModel\DateEnterFieldViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\DaySheduleViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\PICON2ConfigCheckBoxControlViewModel.cs" />

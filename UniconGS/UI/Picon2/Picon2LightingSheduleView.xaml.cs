@@ -37,5 +37,13 @@ namespace UniconGS.UI.Picon2
             var vm = this.DataContext as Picon2LightingSheduleViewModel;
             vm.SetCachedSchedule(_name, _schedule);
         }
+
+        public async Task ReadAllSchedules()
+        {
+            var vm = this.DataContext as Picon2LightingSheduleViewModel;
+            vm.GetLightingShedule.Execute(null);
+            //await vm.ReadAllSchedules();
+
+        }
     }
 }
