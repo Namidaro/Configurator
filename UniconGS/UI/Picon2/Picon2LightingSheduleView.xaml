@@ -403,15 +403,16 @@
                 Command="{Binding SaveToFileCommand}"
                 Content="Сохранить в файл" />
             <Button
-                x:Name ="uiReadPicon2Schdule"
-                Margin="3"
-                Command="{Binding GetLightingShedule}"
-                Content="Прочитать" />
-            <Button
                 x:Name ="uiWritePicon2Schdule"
                 Margin="3"
                 Command="{Binding SendLightingShedule}"
                 Content="Записать" />
+            <Button
+                x:Name ="uiReadPicon2Schdule"
+                Margin="3"
+                Command="{Binding GetLightingShedule}"
+                Content="Прочитать" />
+            
         </UniformGrid>
 
     </Grid>

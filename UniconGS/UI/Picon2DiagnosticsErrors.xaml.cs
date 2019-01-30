@@ -246,12 +246,21 @@ namespace UniconGS.UI
 
         public async Task Update()
         {
-            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1100, 1);
-            BitArray d = new BitArray(new int[] { value[0] });
-            Application.Current.Dispatcher.Invoke(() =>
+            try
             {
-                SetIndicators(d);
-            });
+                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1100, 1);
+                if (value == null)
+                    return;
+                BitArray d = new BitArray(new int[] { value[0] });
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetIndicators(d);
+                });
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void SetAutonomus()

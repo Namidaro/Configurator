@@ -53,13 +53,22 @@ namespace UniconGS.UI.Time
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
 
-
-                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2100, 8);
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    SetTimeForPicon2(value);
-                    uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
-                });
+
+                    ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2100, 8);
+                    if (value == null)
+                        return;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetTimeForPicon2(value);
+                        uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
+                    });
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
 
 
@@ -67,10 +76,10 @@ namespace UniconGS.UI.Time
             {
                 ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1000, 16);
                 Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetTime(value);
-                    uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
-                });
+                        {
+                            SetTime(value);
+                            uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
+                        });
             }
 
         }

@@ -136,12 +136,7 @@ namespace UniconGS
                 //}
                 //else
                 //{
-
                 //}
-
-
-
-
 
             };
             this.uiSettings.ReadAll += async (sender, args) =>
@@ -291,11 +286,11 @@ namespace UniconGS
                     {
                         await uiPicon2DiagnosticsErrors.Update();
 
-                        await uiPiconDiagnostics.Update();
+                        //await uiPiconDiagnostics.Update();
                         await uiTime.Update();
                         await uiSignalGSMLevel.Update();
-                        await uiRuno3Diagnostics.Update();
-                        await uiDiagnosticsErrors.Update();
+                        //await uiRuno3Diagnostics.Update();
+                        //await uiDiagnosticsErrors.Update();
                     }
                     else
                     {
@@ -518,6 +513,9 @@ namespace UniconGS
             ResultGSM resultgsm = null;
             GSMConnection ngc = new GSMConnection();
             ngc.Owner = this;
+
+            TcpClient _tcpClient = new TcpClient();
+
             if (Convert.ToBoolean(ngc.ShowDialog()))
             {
 
@@ -529,7 +527,11 @@ namespace UniconGS
                         MessageBox.Show("Не удалось подключиться по GSM-каналу. Введен неправильный IP-адрес.", "Ошибка");
                         return;
                     }
+
+
                     TcpClient client = new TcpClient(ResultGSM.IPAdress, ResultGSM.PortNumber);
+                    client.ReceiveTimeout = 10000;
+                    client.SendTimeout = 10000;
                     ModbusIpMaster.CreateIp(client);
                     _uiUpdateTimer = new Timer((obj) =>
                     {
@@ -540,12 +542,18 @@ namespace UniconGS
                     this.uiConnect.IsEnabled = false;
                     RTUConnectionGlobal.Initialize(ModbusIpMaster.CreateIp(client));
 
+
+
+
                 }
 
-                catch (Exception ex)
+                catch (SocketException ex)
 
                 {
-                    MessageBoxResult res = MessageBox.Show("Не удалось подключиться по GSM-каналу", "Ошибка");
+                    //MessageBoxResult res = MessageBox.Show("Не удалось подключиться по GSM-каналу", "Ошибка");
+                    MessageBoxResult res = MessageBox.Show(ex.Message + Environment.NewLine +
+                                                            "Ошибка сокета: " + ex.SocketErrorCode.ToString() + Environment.NewLine +
+                                                            "Код ошибки: " + ex.ErrorCode.ToString(), "Ошибка");
 
                 }
 

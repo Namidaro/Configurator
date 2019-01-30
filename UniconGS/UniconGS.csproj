@@ -161,6 +161,7 @@
     <Compile Include="UI\DiscretModules\Picon2States.xaml.cs">
       <DependentUpon>Picon2States.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Journal\Picon2JournalEventRecord.cs" />
     <Compile Include="UI\Picon2ModuleErrors.xaml.cs">
       <DependentUpon>Picon2ModuleErrors.xaml</DependentUpon>
     </Compile>

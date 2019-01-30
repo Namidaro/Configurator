@@ -827,15 +827,15 @@
                 <Button
                     Width="Auto"
                     Margin="2"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding GetConfiguration}"
-                    Content="Прочитать" />
-                <Button
-                    Width="Auto"
-                    Margin="2"
                     HorizontalContentAlignment="Stretch"
                     Command="{Binding SendConfiguration}"
                     Content="         Записать" />
+                <Button
+                    Width="Auto"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding GetConfiguration}"
+                    Content="Прочитать" />
             </UniformGrid>
         </Grid>
 

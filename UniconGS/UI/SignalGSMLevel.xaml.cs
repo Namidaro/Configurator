@@ -100,6 +100,8 @@ namespace UniconGS.UI
                     ConnectionModuleId = await RTUConnectionGlobal.GetDataByAddress(1, 0x3004, 1);
                 }
                 byte[] value = await RTUConnectionGlobal.ExecuteFunction12Async((byte)ConnectionModuleId[0], "Get Picon SignalLevel", 0x60);
+                if (value == null)
+                    return;
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     SetGsmPicon2(value);
