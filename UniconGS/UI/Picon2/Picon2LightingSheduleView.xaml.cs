@@ -45,5 +45,21 @@ namespace UniconGS.UI.Picon2
             //await vm.ReadAllSchedules();
 
         }
+        public void SetAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as Picon2LightingSheduleViewModel;
+                    vm.IsAutonomus=true;
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

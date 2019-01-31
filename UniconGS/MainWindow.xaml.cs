@@ -993,8 +993,10 @@ namespace UniconGS
                     //picon2LightingSheduleView.uiReadPicon2Schdule.IsEnabled = true;
                     //picon2LightingSheduleView.uiWritePicon2Schdule.IsEnabled = true;
 
+
                 }
                 //this.uiTime.SetAutonomous();
+                
                 this.uiSettings.IsAutonomous = _isAutonomous;
                 this.uiTime.SetAutonomus();
                 this.uiPiconDiagnostics.SetAutonomus();
@@ -1014,6 +1016,7 @@ namespace UniconGS
                 this.uiSettings.SetAutonomus();
 
                 this.Picon2ModuleRequest.SetAutonomus();
+                this.picon2LightingSheduleView.SetAutonomus();
                 //Dispatcher.CurrentDispatcher.InvokeShutdown();
                 //this.uiStatePresenter.Text = "Автономный режим";
 

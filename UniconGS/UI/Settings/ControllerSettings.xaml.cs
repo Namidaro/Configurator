@@ -464,6 +464,7 @@ namespace UniconGS.UI.Settings
         {
             this.uiPLCReset.IsEnabled = false;
             this.uiSignature.IsEnabled = false;
+            this.uiPicon2ModuleInfo.IsEnabled = false;
             //            this.uiReadAll.IsEnabled = false;
 
             this.uiReadAll.IsEnabled = false;

@@ -126,6 +126,8 @@ namespace UniconGS.UI.Picon2.ViewModel
         private ushort _startAddress; // адрес начала блока данных на устройстве
 
         private string _title = String.Empty;
+
+        private bool _isAutonomus;
         #endregion
 
         #region [Ctor's]
@@ -245,7 +247,15 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
         }
 
-
+        public bool IsAutonomus
+        {
+            get { return _isAutonomus; }
+            set
+            {
+                _isAutonomus = value;
+                RaisePropertyChanged();
+            }
+        }
         /// <summary>
         ///     Свойство для представления текущего месяца(выбранного на вьюшке)
         /// </summary>
@@ -1045,7 +1055,7 @@ namespace UniconGS.UI.Picon2.ViewModel
                 int countMainWritePachage = 12;
                 ushort lenghtMainPackage = 0x40;
                 var tasks = new Task[countMainWritePachage + 1];
-                
+
 
                 byte[] initializingData = this.GetDeviceDataFromView();
                 for (int i = 0; i < countMainWritePachage; i++)
