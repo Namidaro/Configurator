@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows;
 using UniconGS.UI.Configuration;
 using UniconGS.UI.GPRS;
 
@@ -18,10 +19,12 @@ namespace UniconGS.UI.Settings
 
         public Picon2Settings(byte[] _picon2Config, byte[] _lightningSchedule, byte[] _illuminationSchedule, byte[] _backlightSchedule)
         {
+
             this.Picon2Config = _picon2Config;
             this.LightningSchedule = _lightningSchedule;
             this.IlluminationSchedule = _illuminationSchedule;
             this.BacklightSchedule = _backlightSchedule;
+
         }
 
         public static Picon2Settings Open(string path)
@@ -57,6 +60,9 @@ namespace UniconGS.UI.Settings
             Stream stream = null;
             try
             {
+                if (this.Picon2Config == null || this.LightningSchedule == null || this.IlluminationSchedule == null || this.BacklightSchedule == null)
+                { throw new Exception(); }
+
                 IFormatter formatter = new BinaryFormatter();
                 stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
                 formatter.Serialize(stream, this);
@@ -64,6 +70,7 @@ namespace UniconGS.UI.Settings
             }
             catch (Exception)
             {
+                MessageBox.Show("Файл поврежден! Проверьте правильность данных конфигурации и графиков.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 // игнорим ошибки или проверяем их
                 result = false;
             }

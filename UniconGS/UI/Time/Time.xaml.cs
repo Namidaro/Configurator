@@ -245,7 +245,7 @@ namespace UniconGS.UI.Time
 
         public async Task<bool> WriteContext()
         {
-
+            //todo: посмотреть отображение времени в окне (отображает на час больше, чем реально), может зимнее время или еще чего
             if (_isSystemTime)
             {
                 this._clock[1] = DateTime.Now;

@@ -1070,6 +1070,8 @@ namespace UniconGS.UI.Picon2.ViewModel
                 }
 
                 MessageBox.Show("Запись графиков прошла успешно", "Запись графиков", MessageBoxButtons.OK);
+                //запись графика в кэш
+                SetCachedSchedule(Title, initializingData);
 
             }
             catch (Exception error)
