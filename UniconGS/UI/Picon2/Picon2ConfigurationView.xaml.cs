@@ -165,6 +165,39 @@ namespace UniconGS.UI.Picon2
                 }
             }
         }
+
+        public void SetAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+                    vm.IsAutonomus = true;
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void DisableAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+                    vm.IsAutonomus = false;
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }
 

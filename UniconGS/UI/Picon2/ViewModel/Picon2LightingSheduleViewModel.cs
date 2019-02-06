@@ -1071,7 +1071,7 @@ namespace UniconGS.UI.Picon2.ViewModel
 
                 MessageBox.Show("Запись графиков прошла успешно", "Запись графиков", MessageBoxButtons.OK);
                 //запись графика в кэш
-                SetCachedSchedule(Title, initializingData);
+                //SetCachedSchedule(Title, initializingData);
 
             }
             catch (Exception error)
@@ -1094,7 +1094,7 @@ namespace UniconGS.UI.Picon2.ViewModel
         private byte[] GetDeviceDataFromView()
         {
             byte[] result = new byte[1536];
-            //test кароч была какая-то херня, при пером прочтении графиков. Если в текущем месяце что=то поменять(не переходя на другие месяцы),
+            //test кароч была какая-то херня, при пером прочтении графиков. Если в текущем месяце что-то поменять(не переходя на другие месяцы),
             //      то текущий месяц не записывался, но если перейти на какой-то другой месяц - коллекции синхронизируются
             //      хз что это было, но пока пусть будет так, если будет не лень - поищу в чем была проблемы. пока такой костыль
             _monthsCollection[CurrentMonthName] = CurrentMonthDayCollection;

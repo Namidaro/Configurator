@@ -19,7 +19,7 @@ namespace UniconGS
         {
             _modbusMaster = modbusMaster;
             //todo: потестить отключение связи
-            _modbusMaster.Transport.RetryOnOldResponseThreshold = 5;
+            //_modbusMaster.Transport.RetryOnOldResponseThreshold = 5;
             _modbusMaster.Transport.Retries = 2;
             _modbusMaster.Transport.ReadTimeout = 10000;
             _modbusMaster.Transport.WriteTimeout = 10000;

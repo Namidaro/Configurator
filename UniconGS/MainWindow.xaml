@@ -240,7 +240,7 @@
                                         Margin="0,0,0,15.7"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom"
-                                        Text="г.Минск, 2018г"
+                                        Text="г.Минск, 2019г"
                                         TextWrapping="Wrap"
                                         d:LayoutOverrides="Width" />
                                 </Grid>

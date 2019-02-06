@@ -45,17 +45,17 @@ namespace UniconGS.UI.DiscretModules
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
             {
                 uiGroupBox1.Visibility = Visibility.Visible;
-                uiGroupBox3.Visibility = Visibility.Collapsed;
-                uiGroupBox4.Visibility = Visibility.Collapsed;
-                uiGroupBox2.Visibility = Visibility.Collapsed;
+                uiGroupBox3.Visibility = Visibility.Visible;
+                uiGroupBox4.Visibility = Visibility.Visible;
+                uiGroupBox2.Visibility = Visibility.Visible;
 
             }
             else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
             {
                 uiGroupBox1.Visibility = Visibility.Visible;
-                uiGroupBox3.Visibility = Visibility.Collapsed;
-                uiGroupBox4.Visibility = Visibility.Collapsed;
-                uiGroupBox2.Visibility = Visibility.Collapsed;
+                uiGroupBox3.Visibility = Visibility.Visible;
+                uiGroupBox4.Visibility = Visibility.Visible;
+                uiGroupBox2.Visibility = Visibility.Visible;
             }
             else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {

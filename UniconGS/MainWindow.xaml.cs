@@ -580,12 +580,13 @@ namespace UniconGS
 
                 // DataTransfer.InitConnector(new Connector(result.PortName, result.KNNumber, result.DeviceNumber,
                 //    result.PortSpeed, result.Timeout));
+                //todo: test timer trigger
                 try
                 {
                     _uiUpdateTimer = new Timer((obj) =>
                     {
                         UiUpdateTimerTriggered();
-                    }, null, 1000, 1000);
+                    }, null, 200, 200);
                 }
                 catch (Exception ex)
                 {
@@ -1017,6 +1018,7 @@ namespace UniconGS
 
                 this.Picon2ModuleRequest.SetAutonomus();
                 this.picon2LightingSheduleView.SetAutonomus();
+                this.uiPicon2ConfigurationView.SetAutonomus();
                 //Dispatcher.CurrentDispatcher.InvokeShutdown();
                 //this.uiStatePresenter.Text = "Автономный режим";
 
@@ -1060,6 +1062,12 @@ namespace UniconGS
             this.uiIlluminationSchedule.DisableAutonomous();
             this.uiEnergySchedule.DisableAutonomous();
             this.uiBacklightSchedule.DisableAutonomous();
+
+            //todo:disableautonomus
+            this.uiPicon2ConfigurationView.DisableAutonomus();
+            this.Picon2ModuleRequest.DisableAutonomus();
+            this.picon2LightingSheduleView.DisableAutonomus();
+
         }
         #endregion
 

@@ -51,6 +51,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         private bool _isToggleCrate918Checked;
         private string _crateID;
         private ObservableCollection<bool?> _moduleErrors;
+
+        private bool _isAutonomus;
         #endregion
 
         #region [CONST]
@@ -307,6 +309,16 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsAutonomus
+        {
+            get { return _isAutonomus; }
+            set
+            {
+                _isAutonomus = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region [NavigateCommands]
@@ -481,6 +493,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             {
                 ModuleErrors[i] = null;
             }
+            IsAutonomus = true;
         }
         #endregion
 
@@ -499,6 +512,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// </summary>
         private async void OnReadFromDeviceCommand()
         {
+            //херня, знаю, но смысл один и тот же. надо просто сделать недоступными кнопки на вермя чтения, а обращаться через имя я не хочу
+            IsAutonomus = true;
             try
             {
                 this.RequestsFromDevice.Clear();
@@ -521,6 +536,7 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             {
                 ShowMessage("При чтении запросов произошла ошибка.", "Внимание", MessageBoxImage.Warning);
             }
+            IsAutonomus = false;
         }
         /// <summary>
         /// Анализ модулей, прочитанных из устройства + их расстановка по местам

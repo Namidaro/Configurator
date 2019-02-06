@@ -320,6 +320,8 @@ namespace UniconGS.UI.Picon2.ViewModel
         private List<DateEnterFieldViewModel> _sheduleDates;
         private int _controllersNumber;
 
+        private bool _isAutonomus;
+
         #endregion [Private Fields]
 
         #region [Ctor's]
@@ -715,6 +717,16 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
         }
 
+
+        public bool IsAutonomus
+        {
+            get { return _isAutonomus; }
+            set
+            {
+                _isAutonomus = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion [Properties]
 
 
@@ -782,7 +794,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
         }
 
-   
+
 
         #endregion [IRunoConfigurationModeViewModel]
 
@@ -828,23 +840,23 @@ namespace UniconGS.UI.Picon2.ViewModel
         {
             Refresh();
             _navigationContext.Clear();
-        
-           
-                this.FaultManagement.PropertyChanged += FaultOnPropertyChanged;
-                this.FaultPower.PropertyChanged += FaultOnPropertyChanged;
-                this.FaultSecurity.PropertyChanged += FaultOnPropertyChanged;
-                foreach (var faultCanal in this.FaultCanals)
-                {
-                    faultCanal.PropertyChanged += FaultOnPropertyChanged;
-                }
-
-               // this.InitializingOnNavigateTo();
-                this.ManagementKuSelected.CollectionChanged += ManagementKuSelectedOnCollectionChanged;
-                this.OutputsKuSelected.CollectionChanged += OutputsKuSelectedOnCollectionChanged;
-                this.OutputsKuSelectedInv.CollectionChanged += OutputsKuSelectedOnCollectionChangedInv;
 
 
-            
+            this.FaultManagement.PropertyChanged += FaultOnPropertyChanged;
+            this.FaultPower.PropertyChanged += FaultOnPropertyChanged;
+            this.FaultSecurity.PropertyChanged += FaultOnPropertyChanged;
+            foreach (var faultCanal in this.FaultCanals)
+            {
+                faultCanal.PropertyChanged += FaultOnPropertyChanged;
+            }
+
+            // this.InitializingOnNavigateTo();
+            this.ManagementKuSelected.CollectionChanged += ManagementKuSelectedOnCollectionChanged;
+            this.OutputsKuSelected.CollectionChanged += OutputsKuSelectedOnCollectionChanged;
+            this.OutputsKuSelectedInv.CollectionChanged += OutputsKuSelectedOnCollectionChangedInv;
+
+
+
         }
 
 
@@ -1221,7 +1233,7 @@ namespace UniconGS.UI.Picon2.ViewModel
                 this.InteractWithError(error);
             }
         }
-   
+
         private async void OnSendConfiguration()
         {
             try
@@ -1250,10 +1262,10 @@ namespace UniconGS.UI.Picon2.ViewModel
             MessageBox.Show(error.Message);
         }
 
-      
+
         private async Task<byte[]> ReadConfigurationDataFromDevice()
         {
-            byte[] result = ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1,ADDRESS, LENGTH_WORD));
+            byte[] result = ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1, ADDRESS, LENGTH_WORD));
             return result;
         }
 
@@ -1284,7 +1296,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             DeInitFaultPropertyChanged(FaultManagement);
             DeInitFaultPropertyChanged(FaultSecurity);
             FaultPower = InitailizeMaskUnit(0x3030, data);
-            FaultManagement = InitailizeMaskUnit(0x3034, data);                                                            
+            FaultManagement = InitailizeMaskUnit(0x3034, data);
             FaultSecurity = InitailizeMaskUnit(0x3038, data);
 
             for (int i = 0; i < 8; i++)

@@ -93,7 +93,7 @@
                                 <ComboBoxItem Content="460800" />
                                 <ComboBoxItem Content="921600" />
                             </ComboBox>
-                            <Label Content="Время ожидания ответа" />
+                            <Label Content="Время ожидания ответа, мс" />
                             <TextBox
                                 x:Name="uiTimeout"
                                 Text="2000"

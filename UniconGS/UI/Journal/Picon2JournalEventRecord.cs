@@ -95,10 +95,6 @@ namespace UniconGS.UI.Journal
             byte LOErrorByte = _inputByteArray[1];
             _errorCode = (ushort)((HIErrorByte - 0x30) * 16 + (LOErrorByte - 0x30));
 
-            //string tempString = Encoding.UTF8.GetString(_inputByteArray);
-            //tempString.Remove(0, 2);
-            //tempString = _errorCode.ToString() + tempString;
-
             _year = Convert.ToUInt16(Encoding.UTF8.GetString(_inputByteArray.Skip(2).Take(2).ToArray()));
             _month = Convert.ToUInt16(Encoding.UTF8.GetString(_inputByteArray.Skip(4).Take(2).ToArray()));
             _day = Convert.ToUInt16(Encoding.UTF8.GetString(_inputByteArray.Skip(6).Take(2).ToArray()));
