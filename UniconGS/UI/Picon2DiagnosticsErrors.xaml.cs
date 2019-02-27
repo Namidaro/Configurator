@@ -7,6 +7,7 @@ using System.Collections;
 using System.Threading.Tasks;
 using System.Windows;
 using UniconGS.Interfaces;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -18,6 +19,7 @@ namespace UniconGS.UI
         #region Globals
 
         private ushort[] _value;
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
 
         private delegate void ReadComplete(ushort[] res);
@@ -27,6 +29,8 @@ namespace UniconGS.UI
         public Picon2DiagnosticsErrors()
         {
             InitializeComponent();
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
         }
 
         private void DisableAll()
@@ -246,6 +250,8 @@ namespace UniconGS.UI
 
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
             try
             {
                 ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1100, 1);
@@ -261,6 +267,10 @@ namespace UniconGS.UI
             {
 
             }
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
 
         public void SetAutonomus()

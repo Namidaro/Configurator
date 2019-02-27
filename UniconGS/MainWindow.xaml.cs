@@ -58,7 +58,7 @@ namespace UniconGS
         private Thread _work;
         //private int _updateRate = 1;
         public static bool isAutonomus = false;
-        private SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim _semaphoreSlim;
         private bool _b;
         public bool ConnectionLost = false;
         #endregion
@@ -80,6 +80,7 @@ namespace UniconGS
         {
 
             InitializeComponent();
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
             isAutonomus = false;
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
@@ -269,11 +270,11 @@ namespace UniconGS
             try
             {
 
-                if (_semaphoreSlim.CurrentCount == 0)
-                {
-                    return;
-                }
-                await _semaphoreSlim.WaitAsync();
+                //if (_semaphoreSlim.CurrentCount == 0)
+                //{
+                //    return;
+                //}
+                //await _semaphoreSlim.WaitAsync();
                 var isDiagTabSelected = false;
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -284,11 +285,18 @@ namespace UniconGS
                 {
                     if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                     {
+                        //await _semaphoreSlim.WaitAsync();
                         await uiPicon2DiagnosticsErrors.Update();
+                        //_semaphoreSlim.Release();
 
                         //await uiPiconDiagnostics.Update();
+                        //await _semaphoreSlim.WaitAsync();
                         await uiTime.Update();
+                        //_semaphoreSlim.Release();
+
+                        //await _semaphoreSlim.WaitAsync();
                         await uiSignalGSMLevel.Update();
+                        //_semaphoreSlim.Release();
                         //await uiRuno3Diagnostics.Update();
                         //await uiDiagnosticsErrors.Update();
                     }
@@ -308,6 +316,7 @@ namespace UniconGS
                 });
                 if (isLogicTabSelected)
                 {
+                    //_semaphoreSlim.Release(1);
                     if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
                     {
                         await uiChannelsManagment.Update();
@@ -328,13 +337,29 @@ namespace UniconGS
                     }
                     if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                     {
+                        //await _semaphoreSlim.WaitAsync();
                         await uiChannelsManagment.Update();
+                        //_semaphoreSlim.Release(1);
+
+                        //await _semaphoreSlim.WaitAsync();
                         await uiErrors.Update();
+                        //_semaphoreSlim.Release(1);
+
                         //await uiFuseErrors.Update();
                         //await uiTurnOnError.Update();
+
+
+                        //await _semaphoreSlim.WaitAsync();
                         await uiStates.Update();
+                        //_semaphoreSlim.Release(1);
+
+                        //await _semaphoreSlim.WaitAsync();
                         await uiMeter.Update();
+                        //_semaphoreSlim.Release(1);
+
+                        //await _semaphoreSlim.WaitAsync();
                         await uiPicon2ChannelManagement.Update();
+                        //_semaphoreSlim.Release(1);
                     }
 
                 }
@@ -346,7 +371,9 @@ namespace UniconGS
                 });
                 if (isModuleRequestsTabSelected)
                 {
+                    //await _semaphoreSlim.WaitAsync();
                     await Picon2ModuleRequest.Update();
+                    //_semaphoreSlim.Release();
                 }
                 //Application.Current.Dispatcher.Invoke(() =>
                 //{
@@ -365,10 +392,10 @@ namespace UniconGS
             {
                 try
                 {
-                    if (_semaphoreSlim.CurrentCount == 0)
-                    {
-                        _semaphoreSlim.Release(1);
-                    }
+                    //if (_semaphoreSlim.CurrentCount == 0)
+                    //{
+                    //    _semaphoreSlim.Release(1);
+                    //}
                 }
 
                 catch (Exception ex)
@@ -483,6 +510,7 @@ namespace UniconGS
         private void uiConnect_Click(object sender, RoutedEventArgs e)
         {
             this.uiConnectBtn_Click(sender, e);
+            this.DisableAutonomous();
         }
 
 
@@ -540,7 +568,7 @@ namespace UniconGS
                     this.Start();
                     this.uiDisconnect.IsEnabled = true;
                     this.uiConnect.IsEnabled = false;
-                    RTUConnectionGlobal.Initialize(ModbusIpMaster.CreateIp(client));
+                    RTUConnectionGlobal.Initialize(ModbusIpMaster.CreateIp(client), ResultGSM.ModbusReadTimeout, ResultGSM.ModbusWriteTimeout, ResultGSM.ModbusRetries, ResultGSM.ModbusWaitUntilRetry);
 
 
 
@@ -576,7 +604,7 @@ namespace UniconGS
 
                 IModbusMaster modbusSerialMaster = ModbusSerialMaster.CreateRtu(streamResource);
 
-                RTUConnectionGlobal.Initialize(modbusSerialMaster);
+                RTUConnectionGlobal.Initialize(modbusSerialMaster, result.ModbusReadTimeout, result.ModbusWriteTimeout, result.ModbusRetries, result.ModbusWaitUntilRetry);
 
                 // DataTransfer.InitConnector(new Connector(result.PortName, result.KNNumber, result.DeviceNumber,
                 //    result.PortSpeed, result.Timeout));
@@ -586,7 +614,7 @@ namespace UniconGS
                     _uiUpdateTimer = new Timer((obj) =>
                     {
                         UiUpdateTimerTriggered();
-                    }, null, 200, 200);
+                    }, null, 500, 500);
                 }
                 catch (Exception ex)
                 {
@@ -905,11 +933,13 @@ namespace UniconGS
             if (AutonomusCheck == 0)
             {
                 AutonomusCheck++;
-                RTUConnectionGlobal.CloseConnection();
+                
                 if (_uiUpdateTimer != null)
                 {
                     _uiUpdateTimer.Dispose();
+                    _semaphoreSlim.Dispose();
                 }
+                RTUConnectionGlobal.CloseConnection();
                 if (MessageBox.Show("Связь с устройством потеряна. Перейти в автономный режим?", "Внимание!", MessageBoxButton.YesNo,
                         MessageBoxImage.Information) == MessageBoxResult.Yes)
                 {
@@ -997,7 +1027,7 @@ namespace UniconGS
 
                 }
                 //this.uiTime.SetAutonomous();
-                
+
                 this.uiSettings.IsAutonomous = _isAutonomous;
                 this.uiTime.SetAutonomus();
                 this.uiPiconDiagnostics.SetAutonomus();
@@ -1062,6 +1092,9 @@ namespace UniconGS
             this.uiIlluminationSchedule.DisableAutonomous();
             this.uiEnergySchedule.DisableAutonomous();
             this.uiBacklightSchedule.DisableAutonomous();
+            this.uiChannelsManagment.DisableAutonomus();
+
+            this.uiSettings.DisableAutonomus();
 
             //todo:disableautonomus
             this.uiPicon2ConfigurationView.DisableAutonomus();
@@ -1179,7 +1212,6 @@ namespace UniconGS
             this.uiDisconnectBtn_Click(this, new RoutedEventArgs());
 
             RTUConnectionGlobal.CloseConnection();
-
         }
         #endregion Common
 
@@ -1193,7 +1225,6 @@ namespace UniconGS
         {
             try
             {
-
                 if (MrNetwork.IsSelected)
                 {
                     var modbusMemoryViewModel = uiMrNetwork.DataContext as ModbusMemoryViewModel;

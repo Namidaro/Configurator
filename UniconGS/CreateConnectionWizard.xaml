@@ -98,14 +98,36 @@
                                 x:Name="uiTimeout"
                                 Text="2000"
                                 TextWrapping="Wrap" />
-                        </StackPanel>
-                        <StackPanel Margin="5">
-                            <!--<Label Content="Номер КН"/>
-                            <TextBox x:Name="uiKNNumber" Text="0" TextWrapping="Wrap"/>-->
                             <Label Content="Номер устройства" />
                             <TextBox
                                 x:Name="uiDeviceNumber"
                                 Text="1"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <!--<Label Content="Номер КН"/>
+                            <TextBox x:Name="uiKNNumber" Text="0" TextWrapping="Wrap"/>-->
+                            <Label Content="Ожидание чтения, мс"/>
+                            <TextBox
+                                x:Name="uiReadTimeout"
+                                Text="5000"
+                                TextWrapping="Wrap" />
+                            <Label Content="Ожидание записи, мс"/>
+                            <TextBox
+                                x:Name="uiWriteTimeout"
+                                Text="5000"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <Label Content="Повторов"/>
+                            <TextBox
+                                x:Name="uiRetries"
+                                Text="3"
+                                TextWrapping="Wrap" />
+                            <Label Content="Задержка повтора, мс"/>
+                            <TextBox
+                                x:Name="uiWaitUntilRetry"
+                                Text="250"
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </StackPanel>

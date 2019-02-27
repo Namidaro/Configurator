@@ -52,7 +52,7 @@ namespace UniconGS.UI.MRNetworking.ViewModel
 
         private async void OnQueryTimerTriggered(object state)
         {
-            if (!IsQueriesAllowed)return;
+            if (!IsQueriesAllowed) return;
             if (!_isQueriesStarted) return;
             if (_queriesSemaphoreSlim.CurrentCount == 0) return;
             await _queriesSemaphoreSlim.WaitAsync();
@@ -73,7 +73,7 @@ namespace UniconGS.UI.MRNetworking.ViewModel
             MRNetworkingEditingViewxaml window = new MRNetworkingEditingViewxaml();
             window.DataContext = modbusEntityEditingViewModel;
             window.ShowDialog();
-            
+
         }
 
 
@@ -175,10 +175,10 @@ namespace UniconGS.UI.MRNetworking.ViewModel
             {
                 IsQueriesStarted = true;
                 var res = await RTUConnectionGlobal.GetDataByAddress(1,
-                    (ushort)modbusMemorySettings.BaseAdress, (ushort)modbusMemorySettings.NumberOfPoints,false);
+                    (ushort)modbusMemorySettings.BaseAdress, (ushort)modbusMemorySettings.NumberOfPoints, false);
                 if (res == null)
                 {
-                 return;
+                    return;
                 }
                 int index = 0;
                 foreach (var modbusMemoryEntityViewModel in ModbusMemoryEntityViewModels)
@@ -201,7 +201,7 @@ namespace UniconGS.UI.MRNetworking.ViewModel
                 }
                 return;
             }
-  
+
         }
 
         public bool WriteContext()

@@ -12,6 +12,7 @@ using UniconGS.Interfaces;
 using UniconGS.Source;
 using UniconGS.UI.Schedule;
 using UniconGS.Enums;
+using System.Threading;
 
 namespace UniconGS.UI.Time
 {
@@ -34,6 +35,9 @@ namespace UniconGS.UI.Time
 
         #endregion
 
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
+
         private DateTime[] _clock = new DateTime[2];
 
         private ushort[] _value;
@@ -43,6 +47,8 @@ namespace UniconGS.UI.Time
         public Time()
         {
             InitializeComponent();
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
         }
 
         #region IQueryMember
@@ -50,6 +56,8 @@ namespace UniconGS.UI.Time
         public async Task Update()
 
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
 
@@ -70,8 +78,6 @@ namespace UniconGS.UI.Time
 
                 }
             }
-
-
             else
             {
                 ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1000, 16);
@@ -81,6 +87,10 @@ namespace UniconGS.UI.Time
                             uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
                         });
             }
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
 
         }
 

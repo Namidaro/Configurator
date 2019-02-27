@@ -22,20 +22,18 @@
             <RowDefinition Height="160*"/>
         </Grid.RowDefinitions>
         <Image
-           
             Margin="0"
-            Source="/PicGSConfig;Component/Images/picon2.png" Grid.RowSpan="7" Grid.ColumnSpan="3" />
+            Source="/PicGSConfig;Component/Images/picon2.png"
+            Grid.RowSpan="7" 
+            Grid.ColumnSpan="3" />
         <StackPanel x:Name ="uiPicon2IsOnline" Grid.Row ="1" Grid.Column ="1">
-            <local:Lightning
-                              Margin="14,0,20,0" Height="12" />
+            <local:Lightning Margin="14,0,20,0" Height="12" />
         </StackPanel>
         <StackPanel x:Name ="uiPicon2Unusable" Grid.Row ="3" Grid.Column ="1">
-            <local:Lightning
-                Margin="14,0,20,0" Height="12" />
+            <local:Lightning Margin="14,0,20,0" Height="12" />
         </StackPanel>
         <StackPanel x:Name ="uiPicon2Unusable1" Grid.Row ="5" Grid.Column ="1">
-            <local:Lightning
-                Margin="14,0,20,0" Height="12" />
+            <local:Lightning Margin="14,0,20,0" Height="12" />
         </StackPanel>
     </Grid>
 </UserControl>

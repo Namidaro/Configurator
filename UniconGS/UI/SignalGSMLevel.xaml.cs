@@ -14,6 +14,7 @@ using UniconGS.UI;
 using UniconGS.Enums;
 using UniconGS.UI.Picon2;
 using Brushes = System.Windows.Media.Brushes;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -24,11 +25,15 @@ namespace UniconGS.UI
     {
         private Slot _query;
         internal SignalGSMLevel.ShowMessageEventHandler ShowMessage;
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
 
         //private delegate void ReadComplete(ushort[] res);
         public SignalGSMLevel()
         {
             InitializeComponent();
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
         }
 
 
@@ -93,6 +98,8 @@ namespace UniconGS.UI
 
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
             if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 ushort[] ConnectionModuleId;
@@ -116,6 +123,10 @@ namespace UniconGS.UI
                     SetGsm(value);
                 });
             }
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
 
      

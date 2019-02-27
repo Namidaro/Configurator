@@ -134,8 +134,8 @@ namespace UniconGS.UI.Journal
             }
             else
             {
-                    await ReadJournalPicon2();
                 
+                await ReadJournalPicon2();
                 //ShowMessage("Функция не реализована!", "Внимание", MessageBoxImage.Information);
             }
         }
@@ -144,6 +144,7 @@ namespace UniconGS.UI.Journal
 
         public async Task ReadJournalPicon2()
         {
+
             Picon2EventsCollection.Clear();
             ushort[] Picon2JournalReportCountUshort = new ushort[1];
             Picon2JournalReportCountUshort = await RTUConnectionGlobal.GetDataByAddress(1, (ushort)0x4000, 1);

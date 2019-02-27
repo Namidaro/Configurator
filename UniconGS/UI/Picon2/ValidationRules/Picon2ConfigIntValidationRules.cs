@@ -25,7 +25,7 @@ namespace UniconGS.UI.Picon2.ValidationRules
             else
                 IsValid = false;
 
-            return IsValid ? new ValidationResult(true, null) : new ValidationResult(false, $"Число должно быть в проделах [0..1000]");
+            return IsValid ? new ValidationResult(true, null) : new ValidationResult(false, $"Число должно быть в пределах [0..1000]");
 
 
         }

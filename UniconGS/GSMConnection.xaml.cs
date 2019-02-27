@@ -26,8 +26,8 @@ namespace UniconGS
             uiSettingsCancel.Click += uiSettingsCancel_Click;
             uiiPTex.PreviewTextInput += new System.Windows.Input.TextCompositionEventHandler(ip_PreviewTextImput);
             uiiPTex.PreviewKeyUp += UiiPTex_PreviewKeyUp;
-           
-            if(DeviceSelection.SelectedDevice==(byte)DeviceSelectionEnum.DEVICE_PICON2)
+
+            if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiPortNumberGSM.Text = "502";
             }
@@ -63,10 +63,7 @@ namespace UniconGS
                 uiApply.IsEnabled = true;
             }
 
-            else
-            {
 
-            }
         }
 
         private void ip_PreviewTextImput(object sender, TextCompositionEventArgs e)
@@ -81,12 +78,50 @@ namespace UniconGS
         private void uiApply_Click(object sender, RoutedEventArgs e)
         {
 
-            ResultGSM.IPAdress = uiiPTex.Text;
-            ResultGSM.PortNumber = int.Parse(uiPortNumberGSM.Text);
-            ConfiguratorSettings.Default.ipSettings = uiiPTex.Text;
-            ConfiguratorSettings.Default.Save();
-            DialogResult = true;
-            Close();
+            try
+            {
+                if (!Validator.ValidateTextBox(uiReadTimeout, 1, 10000))
+                {
+                    MessageBox.Show("Не верно задано время ожидания чтения", "Ошибка", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    throw new ArgumentException();
+                }
+                if (!Validator.ValidateTextBox(uiWriteTimeout, 1, 10000))
+                {
+                    MessageBox.Show("Не верно задано время ожидания записи", "Ошибка", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    throw new ArgumentException();
+                }
+                if (!Validator.ValidateTextBox(uiRetries, 0, 5))
+                {
+                    MessageBox.Show("Не верно задано значение повторов", "Ошибка", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    throw new ArgumentException();
+                }
+                if (!Validator.ValidateTextBox(uiWaitUntilRetry, 0, 1000))
+                {
+                    MessageBox.Show("Не верно задано значение задержки повторов", "Ошибка", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    throw new ArgumentException();
+                }
+                ResultGSM.IPAdress = uiiPTex.Text;
+                ResultGSM.PortNumber = int.Parse(uiPortNumberGSM.Text);
+                ConfiguratorSettings.Default.ipSettings = uiiPTex.Text;
+                ConfiguratorSettings.Default.Save();
+                
+                ResultGSM.ModbusReadTimeout= int.Parse(uiReadTimeout.Text);
+                ResultGSM.ModbusWriteTimeout= int.Parse(uiWriteTimeout.Text);
+                ResultGSM.ModbusRetries= int.Parse(uiRetries.Text);
+                ResultGSM.ModbusWaitUntilRetry= int.Parse(uiWaitUntilRetry.Text);
+
+                DialogResult = true;
+                Close();
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show("Введено не верное значение", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+           
 
 
         }
@@ -105,11 +140,20 @@ namespace UniconGS
                 PortNumber = 0;
                 IPAdress = String.Empty;
 
+                ModbusReadTimeout = 0;
+                ModbusWriteTimeout = 0;
+                ModbusRetries = 0;
+                ModbusWaitUntilRetry = 0;
             }
 
 
             public static int PortNumber { get; set; }
             public static string IPAdress { get; set; }
+
+            public static int ModbusReadTimeout { get; set; }
+            public static int ModbusWriteTimeout { get; set; }
+            public static int ModbusRetries { get; set; }
+            public static int ModbusWaitUntilRetry { get; set; }
         }
 
 

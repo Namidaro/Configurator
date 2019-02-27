@@ -471,6 +471,17 @@ namespace UniconGS.UI.Settings
             this.uiWriteAll.IsEnabled = false;
         }
 
+        public void DisableAutonomus()
+        {
+            this.uiPLCReset.IsEnabled = true;
+            this.uiSignature.IsEnabled = true;
+            this.uiPicon2ModuleInfo.IsEnabled = true;
+            //            this.uiReadAll.IsEnabled = false;
+
+            this.uiReadAll.IsEnabled = true;
+            this.uiWriteAll.IsEnabled = true;
+        }
+
         private void uiPicon2ModuleInfo_Click(object sender, RoutedEventArgs e)
         {
             GetPicon2ModuleInfo.Invoke();

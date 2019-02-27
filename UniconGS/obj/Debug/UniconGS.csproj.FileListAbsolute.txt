@@ -678,7 +678,6 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UniconGS.csproj.CoreCompileInputs.cache
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UniconGS.csproj.CopyComplete
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\PicGSConfig.exe
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\PicGSConfig.pdb
-D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.baml
@@ -697,3 +696,4 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.baml
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ChannelManagement.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ChannelManagement.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
