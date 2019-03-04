@@ -9,6 +9,7 @@
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BooleanToVisibilityRevertConverter x:Key="BoolToVisibilityRevertConverter"/>
+        <converters:BooleanReverseConverter x:Key="BooleanReverceConverter"/>
     </UserControl.Resources>
     <Grid>
         <GroupBox Header="Настройки устройства">

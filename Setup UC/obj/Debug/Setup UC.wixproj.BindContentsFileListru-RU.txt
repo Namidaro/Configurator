@@ -1,5 +1,7 @@
 d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\AttachedCommandBehavior.dll
 d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\BEMN.Errors.dll
+d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Innovative.Geometry.Angle.dll
+d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Innovative.SolarCalculator.dll
 d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\MahApps.Metro.dll
 d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Microsoft.Practices.ServiceLocation.dll
 d:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\Microsoft.Practices.Unity.Configuration.dll

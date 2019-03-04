@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NModbus4.Device;
 using NModbus4.Serial;
@@ -15,14 +16,27 @@ namespace UniconGS
         public static Action OnWritingCompleteAction { get; set; }
         public static Action ConnectionLostAction { get; set; }
 
-        public static void Initialize(IModbusMaster modbusMaster)
+        private static SemaphoreSlim _semaphoreSlim;
+
+        public static void Initialize(IModbusMaster modbusMaster, int _readTO, int _writeTO, int _retries, int _waitUntilRetry)
         {
             _modbusMaster = modbusMaster;
+            //todo: потестить отключение связи
+            //_modbusMaster.Transport.RetryOnOldResponseThreshold = 5;
+            //_modbusMaster.Transport.Retries = 2;
+           
+            _modbusMaster.Transport.ReadTimeout = _readTO;
+            _modbusMaster.Transport.WriteTimeout = _writeTO;
+            _modbusMaster.Transport.Retries = _retries;
+            _modbusMaster.Transport.WaitToRetryMilliseconds = _waitUntilRetry;
             //_modbusMaster.Transport.ReadTimeout = 10000;
+
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
 
         public static void CloseConnection()
         {
+            _semaphoreSlim?.Dispose();
             _modbusMaster?.Dispose();
         }
 
@@ -30,26 +44,32 @@ namespace UniconGS
         {
             if (_modbusMaster != null)
             {
-                OnWritingStartedAction?.Invoke();
+                //OnWritingStartedAction?.Invoke();
                 try
                 {
+                    await _semaphoreSlim.WaitAsync();
                     OnWritingStartedAction?.Invoke();
                     await _modbusMaster.WriteMultipleRegistersAsync(numOfDevice, address, value);
+                    _semaphoreSlim.Release();
                 }
                 catch (Exception e)
                 {
+                    _semaphoreSlim.Release();
                     ConnectionLostAction?.Invoke();
                     throw;
                 }
                 finally
                 {
+                    //_semaphoreSlim.Release();
                     OnWritingCompleteAction?.Invoke();
                 }
+                
             }
             else
             {
                 throw new Exception("Не инициализирован обЪект связи");
             }
+            
         }
 
 
@@ -58,15 +78,18 @@ namespace UniconGS
         {
             if (_modbusMaster != null)
             {
+                await _semaphoreSlim.WaitAsync();
                 OnWritingStartedAction?.Invoke();
                 try
                 {
                     ushort[] result;
                     result = await _modbusMaster.ReadHoldingRegistersAsync(numOfDevice, address, value);
+                    _semaphoreSlim.Release();
                     return result;
-                }
+                                    }
                 catch (Exception e)
                 {
+                    _semaphoreSlim.Release();
                     if (isQueryCritical)
                     {
                         ConnectionLostAction?.Invoke();
@@ -75,7 +98,7 @@ namespace UniconGS
                 }
                 finally
                 {
-
+                    //_semaphoreSlim.Release();
                     OnWritingCompleteAction?.Invoke();
                 }
             }
@@ -90,6 +113,7 @@ namespace UniconGS
             byte[] resultBytes = null;
             try
             {
+                await _semaphoreSlim.WaitAsync();
                 //TransactionCompleteAction?.Invoke();
                 var receivedBytes = await _modbusMaster.ExecuteFunction12Async(1, moduleNum, innerFunctionId, 0);
                 byte moduleByte = receivedBytes[0];
@@ -100,10 +124,12 @@ namespace UniconGS
                     throw new Exception();
                 }
                 resultBytes = receivedBytes.Skip(3).ToArray();
+                _semaphoreSlim.Release();
             }
             catch
                 (Exception j)
             {
+                _semaphoreSlim.Release();
                 //AddErrorInList(j, requestName);
                 //LastTransactionSucceed = false;
             }
@@ -114,19 +140,23 @@ namespace UniconGS
         {
             if (_modbusMaster != null)
             {
+                await _semaphoreSlim.WaitAsync();
                 OnWritingStartedAction?.Invoke();
                 try
                 {
                     OnWritingStartedAction?.Invoke();
                     await _modbusMaster.WriteMultipleCoilsAsync(numOfDevice, address, data);
+                    _semaphoreSlim.Release();
                 }
                 catch (Exception e)
                 {
+                    _semaphoreSlim.Release();
                     ConnectionLostAction?.Invoke();
                     throw;
                 }
                 finally
                 {
+                    _semaphoreSlim.Release();
                     OnWritingCompleteAction?.Invoke();
                 }
             }

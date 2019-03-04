@@ -320,6 +320,8 @@ namespace UniconGS.UI.Picon2.ViewModel
         private List<DateEnterFieldViewModel> _sheduleDates;
         private int _controllersNumber;
 
+        private bool _isAutonomus;
+
         #endregion [Private Fields]
 
         #region [Ctor's]
@@ -684,8 +686,8 @@ namespace UniconGS.UI.Picon2.ViewModel
         {
             get
             {
-                _managementKuCollection = new ObservableCollection<string>(_outputsNameValueDictionary.Keys);
-                return _managementKuCollection;
+                _outputsKuCollection = new ObservableCollection<string>(_outputsNameValueDictionary.Keys);
+                return _outputsKuCollection;
             }
         }
 
@@ -715,6 +717,16 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
         }
 
+
+        public bool IsAutonomus
+        {
+            get { return _isAutonomus; }
+            set
+            {
+                _isAutonomus = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion [Properties]
 
 
@@ -782,7 +794,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             }
         }
 
-   
+
 
         #endregion [IRunoConfigurationModeViewModel]
 
@@ -828,23 +840,23 @@ namespace UniconGS.UI.Picon2.ViewModel
         {
             Refresh();
             _navigationContext.Clear();
-        
-           
-                this.FaultManagement.PropertyChanged += FaultOnPropertyChanged;
-                this.FaultPower.PropertyChanged += FaultOnPropertyChanged;
-                this.FaultSecurity.PropertyChanged += FaultOnPropertyChanged;
-                foreach (var faultCanal in this.FaultCanals)
-                {
-                    faultCanal.PropertyChanged += FaultOnPropertyChanged;
-                }
-
-               // this.InitializingOnNavigateTo();
-                this.ManagementKuSelected.CollectionChanged += ManagementKuSelectedOnCollectionChanged;
-                this.OutputsKuSelected.CollectionChanged += OutputsKuSelectedOnCollectionChanged;
-                this.OutputsKuSelectedInv.CollectionChanged += OutputsKuSelectedOnCollectionChangedInv;
 
 
-            
+            this.FaultManagement.PropertyChanged += FaultOnPropertyChanged;
+            this.FaultPower.PropertyChanged += FaultOnPropertyChanged;
+            this.FaultSecurity.PropertyChanged += FaultOnPropertyChanged;
+            foreach (var faultCanal in this.FaultCanals)
+            {
+                faultCanal.PropertyChanged += FaultOnPropertyChanged;
+            }
+
+            // this.InitializingOnNavigateTo();
+            this.ManagementKuSelected.CollectionChanged += ManagementKuSelectedOnCollectionChanged;
+            this.OutputsKuSelected.CollectionChanged += OutputsKuSelectedOnCollectionChanged;
+            this.OutputsKuSelectedInv.CollectionChanged += OutputsKuSelectedOnCollectionChangedInv;
+
+
+
         }
 
 
@@ -880,7 +892,8 @@ namespace UniconGS.UI.Picon2.ViewModel
                         new XElement("IsTurnOn", false),
                         new XElement("GraphicValue", this.DataKuCollection.IndexOf(this.DataKuSelected[i])),
                         new XElement("DiscretValue", this.ManagementKuCollection.IndexOf(this.ManagementKuSelected[i])),
-                        new XElement("ReleValue", this.OutputsKuCollection.IndexOf(this.OutputsKuSelected[i]))
+                        new XElement("ReleValue", this.OutputsKuCollection.IndexOf(this.OutputsKuSelected[i])),
+                        new XElement("ReleValueInv",this.OutputsKuCollection.IndexOf(this.OutputsKuSelectedInv[i]))
                     }));
                 }
 
@@ -961,6 +974,7 @@ namespace UniconGS.UI.Picon2.ViewModel
                 {
                     this.DataKuSelected[i] = this.DataKuCollection[0];
                     this.OutputsKuSelected[i] = this.OutputsKuCollection[0];
+                    this.OutputsKuSelectedInv[i] = this.OutputsKuCollection[0];
                     this.ManagementKuSelected[i] = this.ManagementKuCollection[0];
                     for (int j = 0; j < 64; j++)
                     {
@@ -1042,6 +1056,12 @@ namespace UniconGS.UI.Picon2.ViewModel
                             if (element.Name.ToString().Equals("ReleValue"))
                             {
                                 this.OutputsKuSelected[channelsCounter] =
+                                    this.OutputsKuCollection[
+                                        Int32.Parse(element.Value.ToString(CultureInfo.InvariantCulture))];
+                            }
+                            if (element.Name.ToString().Equals("ReleValueInv"))
+                            {
+                                this.OutputsKuSelectedInv[channelsCounter] =
                                     this.OutputsKuCollection[
                                         Int32.Parse(element.Value.ToString(CultureInfo.InvariantCulture))];
                             }
@@ -1213,7 +1233,7 @@ namespace UniconGS.UI.Picon2.ViewModel
                 this.InteractWithError(error);
             }
         }
-   
+
         private async void OnSendConfiguration()
         {
             try
@@ -1242,11 +1262,25 @@ namespace UniconGS.UI.Picon2.ViewModel
             MessageBox.Show(error.Message);
         }
 
-      
+
         private async Task<byte[]> ReadConfigurationDataFromDevice()
         {
-            byte[] result = ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1,ADDRESS, LENGTH_WORD));
+            byte[] result = ArrayExtension.UshortArrayToByteArray(await RTUConnectionGlobal.GetDataByAddress(1, ADDRESS, LENGTH_WORD));
             return result;
+        }
+
+
+        public void InitializeFromSettings(byte[] sett)
+        {
+            this.InitializeFromReadingData(sett);
+            this.VersionDescription = "Picon-2 ";
+            if (this.TryInitializeFaultMask() != -1)
+            {
+                this.ResetFaultBoxs();
+                throw new Exception(
+                    @"Устройство сконфигурировано не верно. Пересечение масок неисправностей. 
+                                                    Маски неисправностей будут сброшены.");
+            }
         }
 
         private void InitializeFromReadingData(byte[] data)
@@ -1262,7 +1296,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             DeInitFaultPropertyChanged(FaultManagement);
             DeInitFaultPropertyChanged(FaultSecurity);
             FaultPower = InitailizeMaskUnit(0x3030, data);
-            FaultManagement = InitailizeMaskUnit(0x3034, data);                                                            
+            FaultManagement = InitailizeMaskUnit(0x3034, data);
             FaultSecurity = InitailizeMaskUnit(0x3038, data);
 
             for (int i = 0; i < 8; i++)
@@ -1368,9 +1402,10 @@ namespace UniconGS.UI.Picon2.ViewModel
 
         /// <summary>
         ///     Создает пакет данных из выбранных позиций на вьюке
+        ///     сделал пабликом для общего файла
         /// </summary>
         /// <returns>пакет данных для конфигурирования руно</returns>
-        private byte[] CreateDataPackage()
+        public byte[] CreateDataPackage()
         {
             var result = new byte[LENGTH_WORD * 2];
             for (int i = 0; i < result.Length; i++)

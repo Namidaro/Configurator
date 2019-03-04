@@ -7,6 +7,7 @@ using System.Collections;
 using System.Threading.Tasks;
 using System.Windows;
 using UniconGS.Interfaces;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -17,8 +18,9 @@ namespace UniconGS.UI
     {
         #region Globals
         private ushort[] _value = null;
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
-
+       
         private delegate void ReadComplete(ushort[] res);
         #endregion
 
@@ -37,17 +39,14 @@ namespace UniconGS.UI
             {
                 item.Value = null;
             }
-
             foreach (Lightning item in this.uiDiscretModule3.Children)
             {
                 item.Value = null;
             }
-
             foreach (Lightning item in this.uiDiscretModule4.Children)
             {
                 item.Value = null;
             }
-
             foreach (Lightning item in this.uiReleModule.Children)
             {
                 item.Value = null;
@@ -107,13 +106,19 @@ namespace UniconGS.UI
         }
         public async Task Update()
         {
-
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
 
             ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0200, 5);
             Application.Current.Dispatcher.Invoke(() =>
             {
                 SetValue(value);
             });
+
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
 
        public void SetAutonomus()

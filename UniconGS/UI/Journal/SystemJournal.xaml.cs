@@ -9,6 +9,8 @@ using System.Windows.Threading;
 using UniconGS.Interfaces;
 using UniconGS.Source;
 using UniconGS.Enums;
+using UniconGS.UI.Picon2;
+using System.Text;
 
 namespace UniconGS.UI.Journal
 {
@@ -37,7 +39,7 @@ namespace UniconGS.UI.Journal
 
         #region Globals
         private ObservableCollection<EventJournalItem> _eventJournal = new ObservableCollection<EventJournalItem>();
-
+        private ObservableCollection<Picon2JournalEventRecord> _picon2EventsCollection = new ObservableCollection<Picon2JournalEventRecord>();
         #endregion
 
         public void SetAutonomous()
@@ -61,10 +63,34 @@ namespace UniconGS.UI.Journal
                 this._eventJournal = value;
             }
         }
+        public ObservableCollection<Picon2JournalEventRecord> Picon2EventsCollection
+        {
+            get
+            {
+                return this._picon2EventsCollection;
+            }
+            set
+            {
+                this._picon2EventsCollection = value;
+            }
+        }
+
 
         public SystemJournal()
         {
+
+
             InitializeComponent();
+            if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                uiJournal.Visibility = Visibility.Collapsed;
+                uiPicon2Journal.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                uiJournal.Visibility = Visibility.Visible;
+                uiPicon2Journal.Visibility = Visibility.Collapsed;
+            }
             //if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             //{
             //    uiImport.IsEnabled = false;
@@ -108,64 +134,41 @@ namespace UniconGS.UI.Journal
             }
             else
             {
-
-                var valFromDevice = await ReadJournalValue();
-                SetJournalValue(valFromDevice);
+                
+                await ReadJournalPicon2();
                 //ShowMessage("Функция не реализована!", "Внимание", MessageBoxImage.Information);
             }
         }
 
         #region Privtaes
 
+        public async Task ReadJournalPicon2()
+        {
+
+            Picon2EventsCollection.Clear();
+            ushort[] Picon2JournalReportCountUshort = new ushort[1];
+            Picon2JournalReportCountUshort = await RTUConnectionGlobal.GetDataByAddress(1, (ushort)0x4000, 1);
+            byte Picon2JournalReportCountLOByte = LOBYTE(Picon2JournalReportCountUshort[0]);
+            byte Picon2JournalReportCountHIByte = HIBYTE(Picon2JournalReportCountUshort[0]);
+
+            for (int i = 0; i < Picon2JournalReportCountLOByte; i++)
+            {
+                this.Picon2EventsCollection.Add(new Picon2JournalEventRecord(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x4300 + i), 8)));
+            }
+            //todo: попробовать подогнать записи журнала под одни правила для всех устройств(не получится скорее всего)
+        }
+
+
         public async Task<ushort[]> ReadJournalValue()
         {
-            //if (this.uiJournal != null)
-            //{
-            //var result = RTUConnectionGlobal.ModbusMaster.ReadInputRegistersAsync(1, 0x2001, 3910);
-            //if (result != null)
-            //{
-
-            //}
-            //else if (this.ShowMessage != null)
-            //{
-            //    this.ShowMessage("Во время чтения журнала системы произошла ошибка", "Чтение журнала системы",
-            //        MessageBoxImage.Error);
-            //}
-            //}
-            //this.Dispatcher.BeginInvoke(new Action(() => uiImport.IsEnabled = true));
-            if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
+            List<ushort> ushorts = new List<ushort>();
+            for (ushort i = 0; i < 3900; i += 100)
             {
-
-                //видимо надо как-то чекать версию процессора и там будут разные адреса на журнал
-                // но это уже завтра
-                ushort[] Picon2JournalReportCountUshort = new ushort[1];
-                Picon2JournalReportCountUshort = await RTUConnectionGlobal.GetDataByAddress(1, (ushort)0x4000, 1);
-                byte Picon2JournalReportCountLOByte = LOBYTE(Picon2JournalReportCountUshort[0]);
-                byte Picon2JournalReportCountHIByte = HIBYTE(Picon2JournalReportCountUshort[0]);
-
-                //
-                List<ushort> ushorts = new List<ushort>();
-                for (ushort i = 0; i < 640; i++)
-                {
-                    ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x6000 + i), 1));
-                }
-                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x4100), 1));
-                return ushorts.ToArray();
+                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + i), 100));
             }
-            else
-            {
+            ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, 0x2001 + 3900, 10));
 
-
-                List<ushort> ushorts = new List<ushort>();
-                for (ushort i = 0; i < 3900; i += 100)
-                {
-                    ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + i), 100));
-                }
-                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, 0x2001 + 3900, 10));
-
-                return ushorts.ToArray();
-            }
-            //}
+            return ushorts.ToArray();
         }
 
         private void SetJournalValue(ushort[] value)
@@ -219,7 +222,17 @@ namespace UniconGS.UI.Journal
             }
         }
         #endregion
-
+        /// <summary>
+        /// Изменение последовательности байт с преобразованием в слова
+        /// </summary>
+        /// <param name="high"></param>
+        /// <param name="low"></param>
+        /// <returns></returns>
+        public static ushort TOWORD(byte high, byte low)
+        {
+            UInt16 ret = (UInt16)high;
+            return (ushort)((ushort)(ret << 8) + (ushort)low);
+        }
         /// <summary>
         /// Возвращает младший байт слова
         /// </summary>
@@ -238,6 +251,47 @@ namespace UniconGS.UI.Journal
         {
             return (byte)(v >> 8);
         }
+        /// <summary>
+        /// Форматирование строки даты и время счетчика
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private string ByteArrayToString(byte[] value)
+        {
+            ushort[] arr = new ushort[8];
+            byte[] values = new byte[16];
+            Array.ConstrainedCopy(value, 0, values, 0, 16);
+            var j = 0;
+            for (int i = 0; i < values.Length / 2; i++)
+            {
+                arr[i] = TOWORD(values[j], values[j + 1]);
+                j += 2;
+            }
+            string tmp = string.Empty;
+            int a = 0;
+            foreach (var item in arr)
+            {
+                foreach (var @byte in BitConverter.GetBytes(item))
+                {
+                    if (@byte == 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        tmp += Convert.ToChar(@byte);
+                    }
+                }
+                a++;
+            }
+            //if ((_index == 0) && (tmp.Length >= 4)) //Индекс даты
+            //{
+            //    tmp = tmp.Remove(0, 3);
+            //}
+            return tmp;
+        }
+
+
 
         public ushort[] Value { get; set; }
 
@@ -288,7 +342,7 @@ namespace UniconGS.UI.Journal
             //    }));
             //}
 
-            
+
 
         }
 

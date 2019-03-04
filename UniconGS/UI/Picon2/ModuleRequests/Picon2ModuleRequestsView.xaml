@@ -14,7 +14,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BooleanToVisibilityRevertConverter x:Key="BoolToVisibilityReverceConverter"/>
         <converters:BooleanToModuleErrorsColorConverter x:Key="BoolToModuleErrorsColorConverter"/>
-
+        <converters:BooleanReverseConverter x:Key="BooleanReverceConverter"/>
         <Style x:Key="ButtonFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -671,18 +671,18 @@
                 <Button 
                         Name="Read_from_file"
                         Grid.Row="2"
-                        Grid.Column="9"
-                        Grid.ColumnSpan="2"
+                        Grid.Column="7"
+                        Grid.ColumnSpan="3"
                         Margin="1,1,1,1"
-                        Content="Открыть"
+                        Content="Прочитать из файла"
                         Command="{Binding OpenFileCommand}" />
                 <Button 
                         Name="Save_file"
                         Grid.Row="2"
-                        Grid.Column="11"
-                        Grid.ColumnSpan="2"
+                        Grid.Column="10"
+                        Grid.ColumnSpan="3"
                         Margin="1,1,1,1"
-                        Content="Сохранить"
+                        Content="Сохранить в файл"
                         Command="{Binding SaveFileCommand}" />
 
                 <Button Name="Read_from_device" 
@@ -691,6 +691,7 @@
                         Grid.ColumnSpan="2"
                         Margin="1,1,1,1"
                         Content="Прочитать"
+                        IsEnabled="{Binding IsAutonomus,Converter={StaticResource BooleanReverceConverter}}"
                         Command="{Binding ReadFromDeviceCommand}" />
                 <Button Name="Write_request_to_device" 
                         Grid.Row="2"
@@ -698,6 +699,7 @@
                         Grid.ColumnSpan="2"
                         Margin="1,1,1,1"
                         Content="Записать"
+                        IsEnabled="{Binding IsAutonomus,Converter={StaticResource BooleanReverceConverter}}"
                         Command="{Binding WriteToDeviceCommand}" />
             </Grid>
         </Border>

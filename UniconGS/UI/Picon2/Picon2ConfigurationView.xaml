@@ -5,7 +5,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:picon2="clr-namespace:UniconGS.UI.Picon2"
     xmlns:converters="clr-namespace:UniconGS.UI.Picon2.Converters"
+    xmlns:converters1="clr-namespace:UniconGS.Converters"
     xmlns:userControl="clr-namespace:UniconGS.UI.Picon2.ViewModel"
+    xmlns:validators="clr-namespace:UniconGS.UI.Picon2.ValidationRules"
     d:DesignHeight="800"
     d:DesignWidth="1000"
     mc:Ignorable="d">
@@ -74,6 +76,8 @@
                 </Border>
             </Grid>
         </ControlTemplate>
+        <validators:Picon2ConfigIntValidationRules x:Key="Picon2ConfigIntValidationRule"/>
+        <converters1:BooleanReverseConverter x:Key="BooleanReverceConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -825,15 +829,17 @@
                 <Button
                     Width="Auto"
                     Margin="2"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding GetConfiguration}"
-                    Content="Прочитать" />
-                <Button
-                    Width="Auto"
-                    Margin="2"
+                    IsEnabled="{Binding IsAutonomus, Converter={StaticResource BooleanReverceConverter}}"
                     HorizontalContentAlignment="Stretch"
                     Command="{Binding SendConfiguration}"
                     Content="         Записать" />
+                <Button
+                    Width="Auto"
+                    Margin="2"
+                    IsEnabled="{Binding IsAutonomus, Converter={StaticResource BooleanReverceConverter}}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding GetConfiguration}"
+                    Content="Прочитать" />
             </UniformGrid>
         </Grid>
 
@@ -881,8 +887,21 @@
                             Margin="5,0"
                             LostFocus="TimeToStartTextBox_OnLostFocus"
                             PreviewTextInput="TimeToStartTextBox_OnPreviewTextInput"
-                            Text="{Binding ControllersNumber, Mode=TwoWay}"
-                            ToolTip="Значение должно быть в пределах от 0 до 65535" />
+                            ToolTip="Значение должно быть в пределах от 0 до 1000" >
+                            <!--Text="{Binding ControllersNumber, Mode=TwoWay}"-->
+
+                            <TextBox.Text>
+                                <Binding Path="ControllersNumber"
+                                         Mode="TwoWay"
+                                         ValidatesOnNotifyDataErrors="True"
+                                         ValidatesOnDataErrors="True"
+                                         NotifyOnValidationError="True">
+                                    <Binding.ValidationRules>
+                                        <validators:Picon2ConfigIntValidationRules />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </StackPanel>
                     <StackPanel Margin="5" Orientation="Horizontal">
                         <TextBlock Text="Время включения автоматики:" />
@@ -891,8 +910,21 @@
                             Margin="5,0"
                             LostFocus="TimeToStartTextBox_OnLostFocus"
                             PreviewTextInput="TimeToStartTextBox_OnPreviewTextInput"
-                            Text="{Binding TimeToStart, Mode=TwoWay}"
-                            ToolTip="Значение должно быть в пределах от 0 до 65535" />
+                            ToolTip="Значение должно быть в пределах от 0 до 1000"
+                            >
+                            <!--Text="{Binding TimeToStart, Mode=TwoWay}"-->
+                            <TextBox.Text>
+                                <Binding Path="TimeToStart"
+                                         Mode="TwoWay"
+                                         ValidatesOnNotifyDataErrors="True"
+                                         ValidatesOnDataErrors="True"
+                                         NotifyOnValidationError="True">
+                                    <Binding.ValidationRules>
+                                        <validators:Picon2ConfigIntValidationRules />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                         <TextBlock Text="c." />
                     </StackPanel>
                 </StackPanel>

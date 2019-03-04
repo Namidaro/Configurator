@@ -16,7 +16,7 @@ namespace UniconGS {
     internal sealed partial class ConfiguratorSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static ConfiguratorSettings defaultInstance = ((ConfiguratorSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ConfiguratorSettings())));
-        public string ipSettings;
+        //public string ipSettings;
 
         public static ConfiguratorSettings Default {
             get {
@@ -26,13 +26,13 @@ namespace UniconGS {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ipSettings")]
-        public string Setting {
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string ipSettings {
             get {
-                return ((string)(this["Setting"]));
+                return ((string)(this["ipSettings"]));
             }
             set {
-                this["Setting"] = value;
+                this["ipSettings"] = value;
             }
         }
     }

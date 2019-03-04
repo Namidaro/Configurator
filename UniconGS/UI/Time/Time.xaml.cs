@@ -12,6 +12,7 @@ using UniconGS.Interfaces;
 using UniconGS.Source;
 using UniconGS.UI.Schedule;
 using UniconGS.Enums;
+using System.Threading;
 
 namespace UniconGS.UI.Time
 {
@@ -34,6 +35,9 @@ namespace UniconGS.UI.Time
 
         #endregion
 
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
+
         private DateTime[] _clock = new DateTime[2];
 
         private ushort[] _value;
@@ -43,6 +47,8 @@ namespace UniconGS.UI.Time
         public Time()
         {
             InitializeComponent();
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
         }
 
         #region IQueryMember
@@ -50,28 +56,41 @@ namespace UniconGS.UI.Time
         public async Task Update()
 
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
 
-
-                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2100, 8);
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    SetTimeForPicon2(value);
-                    uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
-                });
+
+                    ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2100, 8);
+                    if (value == null)
+                        return;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SetTimeForPicon2(value);
+                        uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
+                    });
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
-
-
             else
             {
                 ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x1000, 16);
                 Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SetTime(value);
-                    uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
-                });
+                        {
+                            SetTime(value);
+                            uiChangeTime.IsEnabled = uiSystemTime.IsEnabled = true;
+                        });
             }
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
 
         }
 
@@ -236,7 +255,7 @@ namespace UniconGS.UI.Time
 
         public async Task<bool> WriteContext()
         {
-
+            //todo: посмотреть отображение времени в окне (отображает на час больше, чем реально), может зимнее время или еще чего
             if (_isSystemTime)
             {
                 this._clock[1] = DateTime.Now;

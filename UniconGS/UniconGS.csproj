@@ -161,6 +161,7 @@
     <Compile Include="UI\DiscretModules\Picon2States.xaml.cs">
       <DependentUpon>Picon2States.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Journal\Picon2JournalEventRecord.cs" />
     <Compile Include="UI\Picon2ModuleErrors.xaml.cs">
       <DependentUpon>Picon2ModuleErrors.xaml</DependentUpon>
     </Compile>
@@ -220,6 +221,7 @@
     <Compile Include="UI\Picon2\Picon2LightingSheduleView.xaml.cs">
       <DependentUpon>Picon2LightingSheduleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Picon2\ValidationRules\Picon2ConfigIntValidationRules.cs" />
     <Compile Include="UI\Picon2\ViewModel\DateEnterFieldViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\DaySheduleViewModel.cs" />
     <Compile Include="UI\Picon2\ViewModel\PICON2ConfigCheckBoxControlViewModel.cs" />
@@ -227,6 +229,10 @@
     <Compile Include="UI\Picon2\ViewModel\Picon2LightingSheduleViewModel.cs" />
     <Compile Include="UI\Schedule\SolarSchedule\CityCoordinates.cs" />
     <Compile Include="UI\Schedule\SolarSchedule\Solar.cs" />
+    <Compile Include="UI\Picon2ChannelManagement.xaml.cs">
+      <DependentUpon>Picon2ChannelManagement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Settings\Picon2Settings.cs" />
     <Compile Include="UI\TurnOnError.xaml.cs">
       <DependentUpon>TurnOnError.xaml</DependentUpon>
     </Compile>
@@ -445,6 +451,10 @@
     <Page Include="UI\Time\Time.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Picon2ChannelManagement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

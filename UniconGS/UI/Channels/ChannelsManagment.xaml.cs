@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using UniconGS.Interfaces;
 using UniconGS.Source;
 using UniconGS.Enums;
+using System.Threading;
 
 namespace UniconGS.UI.Channels
 {
@@ -18,9 +19,13 @@ namespace UniconGS.UI.Channels
     public partial class ChannelsManagment : UserControl, IUpdatableControl
 
     {
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         public ChannelsManagment()
         {
             InitializeComponent();
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
             _channelsList = new List<ChannelManagment>
             {
                 uiChannel1,
@@ -49,6 +54,18 @@ namespace UniconGS.UI.Channels
             uiChannel8.SetAutonomous();
         }
 
+        public void DisableAutonomus()
+        {
+            uiChannel1.DisableAutonomus();
+            uiChannel2.DisableAutonomus();
+            uiChannel3.DisableAutonomus();
+            uiChannel4.DisableAutonomus();
+            uiChannel5.DisableAutonomus();
+            uiChannel6.DisableAutonomus();
+            uiChannel7.DisableAutonomus();
+            uiChannel8.DisableAutonomus();
+        }
+
         private void DisableAll()
         {
             uiChannel1.Value = null;
@@ -63,10 +80,10 @@ namespace UniconGS.UI.Channels
 
         private void SetChannelsValue(ushort[] value)
         {
-            var outErrorsBits = Converter.GetBitsFromWords(new[] {value[2], value[3]});
-            var localCommandsBits = Converter.GetBitsFromWords(new[] {value[0], value[1]});
+            var outErrorsBits = Converter.GetBitsFromWords(new[] { value[2], value[3] });
+            var localCommandsBits = Converter.GetBitsFromWords(new[] { value[0], value[1] });
 
-            var controls = new BitArray(new[] {(byte) BitConverter.GetBytes(value[4]).GetValue(1)}).OfType<bool>()
+            var controls = new BitArray(new[] { (byte)BitConverter.GetBytes(value[4]).GetValue(1) }).OfType<bool>()
                 .ToArray();
 
             uiChannel1.Value = new List<bool>
@@ -155,6 +172,9 @@ namespace UniconGS.UI.Channels
         {
             if (IsEnabled)
             {
+                //if (_semaphoreSlim.CurrentCount == 0) return;
+                // await _semaphoreSlim.WaitAsync();
+
                 var tmp = new List<bool>();
                 if (sender.Equals(uiChannel1))
                 {
@@ -309,14 +329,17 @@ namespace UniconGS.UI.Channels
                     var val = value.GetRange(3, 3);
                     tmp.AddRange(new List<bool> { val[0], false, val[2], val[1] });
                 }
-
+                
 
                 await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x0000, Converter.GetWordsFromBits(tmp));
 
 
                 _writeValue = tmp;
 
-
+                //if (_semaphoreSlim.CurrentCount == 0)
+                //{
+                //    _semaphoreSlim.Release();
+                //}
                 //DataTransfer.SetTopInQueue(this, Accsess.Write, false);
             }
         }
@@ -364,6 +387,9 @@ namespace UniconGS.UI.Channels
 
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
+
             if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0000, 5);
@@ -388,6 +414,11 @@ namespace UniconGS.UI.Channels
                 });
 
             }
+
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
 
         public async Task<bool> WriteContext()
@@ -401,8 +432,8 @@ namespace UniconGS.UI.Channels
                 {
                     Value = Converter.GetWordsFromBits(_writeValue);
                 }
-                    await Dispatcher.BeginInvoke(new WriteComplete(CommandSetted), DispatcherPriority.SystemIdle, res);
-                } 
+                await Dispatcher.BeginInvoke(new WriteComplete(CommandSetted), DispatcherPriority.SystemIdle, res);
+            }
 
 
             catch (Exception e)

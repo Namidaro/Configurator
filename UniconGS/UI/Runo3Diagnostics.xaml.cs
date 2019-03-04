@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using UniconGS.Source;
 using UniconGS.Interfaces;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -27,7 +28,8 @@ namespace UniconGS.UI
     {
 
         private ushort[] _value = null;
-        
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
 
         private delegate void ReadComplete(ushort[] res);
         public Runo3Diagnostics()
@@ -120,7 +122,8 @@ namespace UniconGS.UI
         //}
         public async Task Update()
         {
-            
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
             ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0200, 5);
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -135,7 +138,10 @@ namespace UniconGS.UI
                 }
             });
 
-
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
 
         }
 

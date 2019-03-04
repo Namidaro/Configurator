@@ -351,3 +351,5 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2DiagnosticsErrors.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\DiscretModules\Picon2States.baml
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2ModuleErrors.baml
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2DiagnosticsErrors.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2ChannelManagement.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Release\UI\Picon2ChannelManagement.baml
