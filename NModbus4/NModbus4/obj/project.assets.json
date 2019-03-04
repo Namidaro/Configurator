@@ -3482,11 +3482,11 @@
   "project": {
     "version": "3.0.0-alpha2",
     "restore": {
-      "projectUniqueName": "D:\\Work\\#Git\\Cfg_Ur\\NModbus4\\NModbus4\\NModbus4.csproj",
+      "projectUniqueName": "c:\\#git\\Configurator\\NModbus4\\NModbus4\\NModbus4.csproj",
       "projectName": "NModbus4",
-      "projectPath": "D:\\Work\\#Git\\Cfg_Ur\\NModbus4\\NModbus4\\NModbus4.csproj",
+      "projectPath": "c:\\#git\\Configurator\\NModbus4\\NModbus4\\NModbus4.csproj",
       "packagesPath": "C:\\Users\\Гусачок\\.nuget\\packages\\",
-      "outputPath": "D:\\Work\\#Git\\Cfg_Ur\\NModbus4\\NModbus4\\obj\\",
+      "outputPath": "c:\\#git\\Configurator\\NModbus4\\NModbus4\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "fallbackFolders": [

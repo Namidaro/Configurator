@@ -63,3 +63,14 @@ D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.Ass
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.csproj.CopyComplete
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.dll
 D:\Work\#Git\Cfg_Ur\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.pdb
+c:\#git\Configurator\NModbus4\NModbus4.Serial\bin\Debug\net45\NModbus4.Serial.dll
+c:\#git\Configurator\NModbus4\NModbus4.Serial\bin\Debug\net45\NModbus4.Serial.pdb
+c:\#git\Configurator\NModbus4\NModbus4.Serial\bin\Debug\net45\NModbus4.dll
+c:\#git\Configurator\NModbus4\NModbus4.Serial\bin\Debug\net45\NModbus4.pdb
+c:\#git\Configurator\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.csprojResolveAssemblyReference.cache
+c:\#git\Configurator\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.csproj.CoreCompileInputs.cache
+c:\#git\Configurator\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.AssemblyInfoInputs.cache
+c:\#git\Configurator\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.AssemblyInfo.cs
+c:\#git\Configurator\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.csproj.CopyComplete
+c:\#git\Configurator\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.dll
+c:\#git\Configurator\NModbus4\NModbus4.Serial\obj\Debug\net45\NModbus4.Serial.pdb

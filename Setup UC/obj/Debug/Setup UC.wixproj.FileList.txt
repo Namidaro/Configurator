@@ -17,3 +17,5 @@ E:\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
 E:\Cfg_Ur\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb
 D:\Work\#Git\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
 D:\Work\#Git\Cfg_Ur\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb
+c:\#git\Configurator\Setup UC\bin\Debug\ru-RU\Setup_UC.msi
+c:\#git\Configurator\Setup UC\bin\Debug\ru-RU\Setup_UC.wixpdb
