@@ -38,7 +38,7 @@ namespace UniconGS.UI.Journal
             }
             else
             {
-                this.EventMessage = "Ошибка преобразования сообщения";
+                this.EventMessage = "null";
             }
         }
     }

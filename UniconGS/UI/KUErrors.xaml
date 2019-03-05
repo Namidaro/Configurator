@@ -11,7 +11,8 @@
         <StackPanel
             x:Name="uiErrors"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center"
+            >
             <local:BitViewer
                 Margin="0,2"
                 Text="Нет питания"
@@ -31,6 +32,11 @@
             <local:BitViewer
                 Margin="0,2"
                 Text="Неисправность предохранителей"
+                d:LayoutOverrides="Height" />
+
+            <local:BitViewer
+                Margin="0,2"
+                Text="Неисправность контроллера"
                 d:LayoutOverrides="Height" />
         </StackPanel>
 

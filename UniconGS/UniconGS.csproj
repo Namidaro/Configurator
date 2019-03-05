@@ -161,6 +161,9 @@
     <Compile Include="UI\DiscretModules\Picon2States.xaml.cs">
       <DependentUpon>Picon2States.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Journal\JournalPassword.xaml.cs">
+      <DependentUpon>JournalPassword.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Journal\Picon2JournalEventRecord.cs" />
     <Compile Include="UI\Picon2ModuleErrors.xaml.cs">
       <DependentUpon>Picon2ModuleErrors.xaml</DependentUpon>
@@ -273,6 +276,10 @@
     <Page Include="UI\DiscretModules\Picon2States.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Journal\JournalPassword.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Picon2ModuleErrors.xaml">
       <Generator>MSBuild:Compile</Generator>

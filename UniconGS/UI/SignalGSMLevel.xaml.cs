@@ -106,6 +106,8 @@ namespace UniconGS.UI
                 {
                     ConnectionModuleId = await RTUConnectionGlobal.GetDataByAddress(1, 0x3004, 1);
                 }
+                if ((byte)ConnectionModuleId[0] != 0xE0 && (byte)ConnectionModuleId[0] != 0xE1)
+                    return;
                 byte[] value = await RTUConnectionGlobal.ExecuteFunction12Async((byte)ConnectionModuleId[0], "Get Picon SignalLevel", 0x60);
                 if (value == null)
                     return;
@@ -129,11 +131,11 @@ namespace UniconGS.UI
             //}
         }
 
-     
+
 
         public void SetAutonomus()
         {
-            UiSignalGSM.Visibility = Visibility.Hidden;   
+            UiSignalGSM.Visibility = Visibility.Hidden;
             SignalLevelMapping.Visibility = Visibility.Hidden;
             this.uiLevelLabel.Visibility = Visibility.Hidden;
             uiNoLevelLabel.Visibility = Visibility.Visible;

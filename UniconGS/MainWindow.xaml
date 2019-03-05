@@ -403,9 +403,9 @@
                         SnapsToDevicePixels="True">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="165.04" />
-                                <RowDefinition Height="111" />
-                                <RowDefinition Height="99" />
+                                <RowDefinition Height="175" />
+                                <RowDefinition Height="110" />
+                                <RowDefinition Height="100" />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Threading;
@@ -80,6 +81,7 @@ namespace UniconGS
         {
 
             InitializeComponent();
+
             _semaphoreSlim = new SemaphoreSlim(1, 1);
             isAutonomus = false;
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
@@ -235,6 +237,9 @@ namespace UniconGS
             this.uiSettings.ShowMessage += new ControllerSettings.ShowMessageEventHandler(ShowMessage);
             this.uiSettings.IsAutonomous = this._isAutonomous;
             this.uiSettings.Config = this._config;
+
+            this.uiSystemJournal.ClearInProcess += new SystemJournal.ClearInProgressEventHandler(ClearInProgress);
+            this.uiSystemJournal.ClearCompleted += new SystemJournal.ClearCompletedEventHandler(ClearCompleted);
 
             if (_isAutonomous == false)
             {
@@ -719,6 +724,14 @@ namespace UniconGS
 
             TryReadPicon2ModuleInfo();
         }
+        private void ClearInProgress()
+        {
+            this.Cursor = Cursors.Wait;
+        }
+        private void ClearCompleted()
+        {
+            this.Cursor = Cursors.Arrow;
+        }
 
         #endregion
 
@@ -1113,6 +1126,7 @@ namespace UniconGS
             uiSettings.uiWriteAll.IsEnabled = true;
             uiSettings.uiReadAll.IsEnabled = true;
             uiSystemJournal.uiImport.IsEnabled = true;
+            uiSystemJournal.uiClear.IsEnabled = true;
             uiLightingSchedule.uiClearAll.IsEnabled = true;
             uiLightingSchedule.uiExport.IsEnabled = true;
             uiLightingSchedule.uiImport.IsEnabled = true;
