@@ -351,17 +351,17 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         /// <summary>
         /// Читает массив слов из устройства и обновляет UI
         /// </summary>
-        /// <param name="_configFormDevice"></param>
-        private void AnalyzeConfigFromDevice(ushort[] _configFormDevice)
+        /// <param name="_configFromDevice"></param>
+        private void AnalyzeConfigFromDevice(ushort[] _configFromDevice)
         {
-            if (_configFormDevice == null)
+            if (_configFromDevice == null)
                 return;
-            if (_configFormDevice.Count() == 5)
+            if (_configFromDevice.Count() == 5)
             {
-                byte[] byteArray = ArrayExtension.UshortArrayToByteArray(_configFormDevice);
+                byte[] byteArray = ArrayExtension.UshortArrayToByteArray(_configFromDevice);
                 IOTimeout = Converters.Convert.ConvertFromDecToHex(byteArray[0]);
                 TypeAddress = Converters.Convert.ConvertFromDecToHexStr(byteArray[1]);
-                ResponseAwait = _configFormDevice[1];
+                ResponseAwait = _configFromDevice[1];
                 Config910Series config = new Config910Series(byteArray[5]);
                 BitConfig[0] = config.Speed;
                 BitConfig[1] = config.Protocol;
@@ -380,8 +380,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 }
                 else
                 {
-                    TransmitEnableDelayUshort = _configFormDevice[4];
-                    TransmitDisableDelayUshort = _configFormDevice[3];
+                    TransmitEnableDelayUshort = _configFromDevice[3];
+                    TransmitDisableDelayUshort = _configFromDevice[4];
                 }
             }
             else

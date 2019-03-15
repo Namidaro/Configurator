@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using UniconGS.Interfaces;
 using UniconGS.Source;
 using UniconGS.Enums;
 using UniconGS.UI.Picon2;
 using System.Text;
+
 
 namespace UniconGS.UI.Journal
 {
@@ -22,6 +24,12 @@ namespace UniconGS.UI.Journal
         #region Events
         public delegate void ShowMessageEventHandler(string message, string caption, MessageBoxImage image);
         public event ShowMessageEventHandler ShowMessage;
+
+        public delegate void ClearInProgressEventHandler();
+        public event ClearInProgressEventHandler ClearInProcess;
+
+        public delegate void ClearCompletedEventHandler();
+        public event ClearCompletedEventHandler ClearCompleted;
 
         public delegate void StartWorkEventHandler();
         public delegate void StopWorkEventHandler();
@@ -45,11 +53,13 @@ namespace UniconGS.UI.Journal
         public void SetAutonomous()
         {
             this.uiImport.IsEnabled = false;
+            this.uiClear.IsEnabled = false;
         }
 
         public void DisableAutonomous()
         {
             this.uiImport.IsEnabled = true;
+            this.uiClear.IsEnabled = true;
         }
 
         public ObservableCollection<EventJournalItem> EventJournal
@@ -81,6 +91,9 @@ namespace UniconGS.UI.Journal
 
 
             InitializeComponent();
+
+
+
             if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiJournal.Visibility = Visibility.Collapsed;
@@ -134,7 +147,7 @@ namespace UniconGS.UI.Journal
             }
             else
             {
-                
+
                 await ReadJournalPicon2();
                 //ShowMessage("Функция не реализована!", "Внимание", MessageBoxImage.Information);
             }
@@ -161,12 +174,22 @@ namespace UniconGS.UI.Journal
 
         public async Task<ushort[]> ReadJournalValue()
         {
+            //List<ushort> ushorts = new List<ushort>();
+            //for (ushort i = 0; i < 3900; i += 100)
+            //{
+            //    ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + i), 100));
+            //}
+            //ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, 0x2001 + 3900, 10));
+
+            //return ushorts.ToArray();
+
             List<ushort> ushorts = new List<ushort>();
-            for (ushort i = 0; i < 3900; i += 100)
+            for (ushort i = 0; i < 5635; i += 92)
             {
-                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + i), 100));
+                ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + i), 92));
             }
-            ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, 0x2001 + 3900, 10));
+            ushorts.AddRange(await RTUConnectionGlobal.GetDataByAddress(1, (ushort)(0x2001 + 5704), 23));
+
 
             return ushorts.ToArray();
         }
@@ -180,7 +203,7 @@ namespace UniconGS.UI.Journal
                 /*Разделить строку на подстроки и составить список*/
                 List<EventJournalItem> tmp = new List<EventJournalItem>();
                 //var str = string.Empty;
-                for (int i = 0; i < 170; i++)
+                for (int i = 0; i < 249; i++)
                 {
                     tmp.Add(new EventJournalItem(new String(longMessage.GetRange(i * 46, 46).ToArray())));
                 }
@@ -197,7 +220,9 @@ namespace UniconGS.UI.Journal
                 });
                 foreach (var item in tmp)
                 {
-                    this.EventJournal.Add(item);
+                    //если из памяти читает нули - в eventmessage пишется "null", ее мы не выводим
+                    if (!item.EventMessage.Equals("null"))
+                        this.EventJournal.Add(item);
                 }
                 if (this.ShowMessage != null)
                 {
@@ -319,7 +344,7 @@ namespace UniconGS.UI.Journal
             {
                 try
                 {
-                    ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2001, 3910);
+                    ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x2001, 5727);
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         SetJournalValue(value);
@@ -346,6 +371,97 @@ namespace UniconGS.UI.Journal
 
         }
 
+        private void uiClear_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ClearJournal();
+            }
+            catch (Exception) { }
+            //ClearCompleted.Invoke();
+        }
+        private async void ClearJournal()
+        {
+            var win = new JournalPassword();
+            win.ShowDialog();
+
+            if (win.DialogResult == true)
+            {
+
+                ClearInProcess.Invoke();
+
+                if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
+                {
+                    await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x4000, new ushort[] { 0 });
+                    ClearCompleted.Invoke();
+                    MessageBox.Show("Журнал очищен", "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+                }
+                else if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON_GS)
+                {
+                    ClearPiconGSJournal();
+                }
+                else
+                {
+                    ClearRunoJournal();
+                }
+
+
+                //Application.Current.MainWindow.Cursor = Cursors.Arrow;
+            }
+            else
+            {
+                MessageBox.Show("Неверный пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+
+
+        }
+        private async void ClearRunoJournal()
+        {
+            uiClear.IsEnabled = false;
+            uiClear.Content = "Ожидайте";
+
+
+
+            await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x2000, new ushort[] { 1 });
+
+            ushort[] zeros = new ushort[92];
+            for (ushort i = 0; i < 5635; i += 92)
+            {
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(0x2001 + i), zeros);
+            }
+            await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(0x2001 + 5704), new ushort[23]);
+            MessageBox.Show("Журнал очищен", "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            uiClear.IsEnabled = true;
+            uiClear.Content = "Очистить";
+
+            ClearCompleted.Invoke();
+
+        }
+        private async void ClearPiconGSJournal()
+        {
+            uiClear.IsEnabled = false;
+            uiClear.Content = "Ожидайте";
+
+
+
+            await RTUConnectionGlobal.SendDataByAddressAsync(1, 0x2000, new ushort[] { 1 });
+
+            ushort[] zeros = new ushort[100];
+            for (ushort i = 0; i < 4600; i += 100)
+            {
+                await RTUConnectionGlobal.SendDataByAddressAsync(1, (ushort)(0x2001 + i), zeros);
+            }
+            MessageBox.Show("Журнал очищен", "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            uiClear.IsEnabled = true;
+            uiClear.Content = "Очистить";
+
+            ClearCompleted.Invoke();
+
+        }
     }
 
 }

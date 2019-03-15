@@ -50,10 +50,11 @@ namespace UniconGS.Source
          
            
             SerialPort serialPort = new SerialPort(portName, portSpeed, Parity.None, 8);
-            
-            SerialPortAdapter serialPortAdapter = new SerialPortAdapter(serialPort);
+
             serialPort.ReadTimeout = timeOut;
             serialPort.WriteTimeout = timeOut;
+
+            SerialPortAdapter serialPortAdapter = new SerialPortAdapter(serialPort);
             serialPort.Open();
             return serialPortAdapter;
          

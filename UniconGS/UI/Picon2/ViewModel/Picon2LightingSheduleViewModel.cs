@@ -1054,7 +1054,7 @@ namespace UniconGS.UI.Picon2.ViewModel
             {
                 int countMainWritePachage = 12;
                 ushort lenghtMainPackage = 0x40;
-                var tasks = new Task[countMainWritePachage + 1];
+                //var tasks = new Task[countMainWritePachage + 1];
 
 
                 byte[] initializingData = this.GetDeviceDataFromView();

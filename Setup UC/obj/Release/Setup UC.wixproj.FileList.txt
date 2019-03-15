@@ -9,3 +9,5 @@ obj\Release\Setup UC.wixproj.BindOutputsFileListru-ru.txt
 obj\Release\Setup UC.wixproj.BindBuiltOutputsFileListru-ru.txt
 D:\Work\#Git\Cfg_Ur\Setup UC\bin\Release\ru-ru\Setup_UC.msi
 D:\Work\#Git\Cfg_Ur\Setup UC\bin\Release\ru-ru\Setup_UC.wixpdb
+c:\#git\Configurator\Setup UC\bin\Release\ru-ru\Setup_UC.msi
+c:\#git\Configurator\Setup UC\bin\Release\ru-ru\Setup_UC.wixpdb

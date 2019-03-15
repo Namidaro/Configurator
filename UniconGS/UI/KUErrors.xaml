@@ -7,11 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Grid>
-
         <StackPanel
             x:Name="uiErrors"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center"
+            >
             <local:BitViewer
                 Margin="0,2"
                 Text="Нет питания"
@@ -32,7 +32,11 @@
                 Margin="0,2"
                 Text="Неисправность предохранителей"
                 d:LayoutOverrides="Height" />
+            
+            <local:BitViewer
+                Margin="0,2"
+                Text="Неисправность контроллера"
+                d:LayoutOverrides="Height" />
         </StackPanel>
-
     </Grid>
 </UserControl>

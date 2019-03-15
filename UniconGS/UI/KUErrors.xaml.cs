@@ -25,6 +25,14 @@ namespace UniconGS.UI
         public KUErrors()
         {
             InitializeComponent();
+            if(DeviceSelection.SelectedDevice==(byte)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                this.uiErrors.Children[5].Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.uiErrors.Children[5].Visibility = Visibility.Collapsed;
+            }
             //if (_semaphoreSlim.CurrentCount == 0)
             //    _semaphoreSlim.Release();
         }
@@ -44,6 +52,8 @@ namespace UniconGS.UI
                 (this.uiErrors.Children[2] as BitViewer).Value = tmp[2];//неисправность охраны
                 (this.uiErrors.Children[3] as BitViewer).Value = tmp[1];//неисправность управления
                 (this.uiErrors.Children[4] as BitViewer).Value = tmp[4];//неисправность предохранителей
+
+                (this.uiErrors.Children[5] as BitViewer).Value = tmp[7];//неисправность контроллера
 
             }
             else

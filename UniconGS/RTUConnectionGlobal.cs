@@ -36,6 +36,7 @@ namespace UniconGS
 
         public static void CloseConnection()
         {
+            
             _semaphoreSlim?.Dispose();
             _modbusMaster?.Dispose();
         }
@@ -50,11 +51,11 @@ namespace UniconGS
                     await _semaphoreSlim.WaitAsync();
                     OnWritingStartedAction?.Invoke();
                     await _modbusMaster.WriteMultipleRegistersAsync(numOfDevice, address, value);
-                    _semaphoreSlim.Release();
+                    _semaphoreSlim.Release(1);
                 }
                 catch (Exception e)
                 {
-                    _semaphoreSlim.Release();
+                    _semaphoreSlim.Release(1);
                     ConnectionLostAction?.Invoke();
                     throw;
                 }
@@ -84,12 +85,12 @@ namespace UniconGS
                 {
                     ushort[] result;
                     result = await _modbusMaster.ReadHoldingRegistersAsync(numOfDevice, address, value);
-                    _semaphoreSlim.Release();
+                    _semaphoreSlim.Release(1);
                     return result;
                                     }
                 catch (Exception e)
                 {
-                    _semaphoreSlim.Release();
+                    _semaphoreSlim.Release(1);
                     if (isQueryCritical)
                     {
                         ConnectionLostAction?.Invoke();
@@ -124,12 +125,12 @@ namespace UniconGS
                     throw new Exception();
                 }
                 resultBytes = receivedBytes.Skip(3).ToArray();
-                _semaphoreSlim.Release();
+                _semaphoreSlim.Release(1);
             }
             catch
                 (Exception j)
             {
-                _semaphoreSlim.Release();
+                _semaphoreSlim.Release(1);
                 //AddErrorInList(j, requestName);
                 //LastTransactionSucceed = false;
             }
@@ -146,17 +147,17 @@ namespace UniconGS
                 {
                     OnWritingStartedAction?.Invoke();
                     await _modbusMaster.WriteMultipleCoilsAsync(numOfDevice, address, data);
-                    _semaphoreSlim.Release();
+                    _semaphoreSlim.Release(1);
                 }
                 catch (Exception e)
                 {
-                    _semaphoreSlim.Release();
+                    _semaphoreSlim.Release(1);
                     ConnectionLostAction?.Invoke();
                     throw;
                 }
                 finally
                 {
-                    _semaphoreSlim.Release();
+                    //_semaphoreSlim.Release();
                     OnWritingCompleteAction?.Invoke();
                 }
             }
