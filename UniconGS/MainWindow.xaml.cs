@@ -59,7 +59,7 @@ namespace UniconGS
         private Thread _work;
         //private int _updateRate = 1;
         public static bool isAutonomus = false;
-        private SemaphoreSlim _semaphoreSlim;
+        private static SemaphoreSlim _semaphoreSlim;
         private bool _b;
         public bool ConnectionLost = false;
         #endregion
@@ -275,10 +275,10 @@ namespace UniconGS
             try
             {
 
-                //if (_semaphoreSlim.CurrentCount == 0)
-                //{
-                //    return;
-                //}
+                if (_semaphoreSlim.CurrentCount == 0)
+                {
+                    return;
+                }
                 //await _semaphoreSlim.WaitAsync();
                 var isDiagTabSelected = false;
                 Application.Current.Dispatcher.Invoke(() =>
@@ -288,22 +288,12 @@ namespace UniconGS
                 });
                 if (isDiagTabSelected)
                 {
+                    await _semaphoreSlim.WaitAsync();
                     if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                     {
-                        //await _semaphoreSlim.WaitAsync();
                         await uiPicon2DiagnosticsErrors.Update();
-                        //_semaphoreSlim.Release();
-
-                        //await uiPiconDiagnostics.Update();
-                        //await _semaphoreSlim.WaitAsync();
                         await uiTime.Update();
-                        //_semaphoreSlim.Release();
-
-                        //await _semaphoreSlim.WaitAsync();
                         await uiSignalGSMLevel.Update();
-                        //_semaphoreSlim.Release();
-                        //await uiRuno3Diagnostics.Update();
-                        //await uiDiagnosticsErrors.Update();
                     }
                     else
                     {
@@ -313,6 +303,7 @@ namespace UniconGS
                         await uiRuno3Diagnostics.Update();
                         await uiDiagnosticsErrors.Update();
                     }
+                    _semaphoreSlim.Release();
                 }
                 var isLogicTabSelected = false;
                 Application.Current.Dispatcher.Invoke(() =>
@@ -321,7 +312,7 @@ namespace UniconGS
                 });
                 if (isLogicTabSelected)
                 {
-                    //_semaphoreSlim.Release(1);
+                    await _semaphoreSlim.WaitAsync();
                     if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
                     {
                         await uiChannelsManagment.Update();
@@ -342,30 +333,13 @@ namespace UniconGS
                     }
                     if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
                     {
-                        //await _semaphoreSlim.WaitAsync();
                         await uiChannelsManagment.Update();
-                        //_semaphoreSlim.Release(1);
-
-                        //await _semaphoreSlim.WaitAsync();
                         await uiErrors.Update();
-                        //_semaphoreSlim.Release(1);
-
-                        //await uiFuseErrors.Update();
-                        //await uiTurnOnError.Update();
-
-
-                        //await _semaphoreSlim.WaitAsync();
                         await uiStates.Update();
-                        //_semaphoreSlim.Release(1);
-
-                        //await _semaphoreSlim.WaitAsync();
                         await uiMeter.Update();
-                        //_semaphoreSlim.Release(1);
-
-                        //await _semaphoreSlim.WaitAsync();
                         await uiPicon2ChannelManagement.Update();
-                        //_semaphoreSlim.Release(1);
                     }
+                    _semaphoreSlim.Release();
 
                 }
                 var isModuleRequestsTabSelected = false;
@@ -376,9 +350,10 @@ namespace UniconGS
                 });
                 if (isModuleRequestsTabSelected)
                 {
-                    //await _semaphoreSlim.WaitAsync();
+                    await _semaphoreSlim.WaitAsync();
                     await Picon2ModuleRequest.Update();
-                    //_semaphoreSlim.Release();
+                    _semaphoreSlim.Release();
+
                 }
                 //Application.Current.Dispatcher.Invoke(() =>
                 //{
@@ -522,9 +497,9 @@ namespace UniconGS
 
         private void uiExit_Click(object sender, RoutedEventArgs e)
         {
+            _semaphoreSlim.Dispose();
 
             this.Close();
-
         }
         #endregion
 
@@ -961,7 +936,9 @@ namespace UniconGS
                 }
                 else
                 {
+
                     this.Close();
+
                 }
             }
             else
@@ -1190,6 +1167,7 @@ namespace UniconGS
             this._shutDownEvent.Set();
             if (_work != null) this._work.Abort();
             this._work = null;
+            _semaphoreSlim.Dispose();
             RTUConnectionGlobal.CloseConnection();
 
             DataTransfer.UnInit();
@@ -1224,6 +1202,7 @@ namespace UniconGS
         {
             this._config.Save();
             this.uiDisconnectBtn_Click(this, new RoutedEventArgs());
+            _semaphoreSlim.Dispose();
 
             RTUConnectionGlobal.CloseConnection();
         }
@@ -1231,6 +1210,7 @@ namespace UniconGS
 
         private void uiDeviceSelection_Click(object sender, RoutedEventArgs e)
         {
+            _semaphoreSlim.Dispose();
             RTUConnectionGlobal.CloseConnection();
             this.Close();
         }
@@ -1274,6 +1254,9 @@ namespace UniconGS
                 if ((byte)ConnectionModuleId[0] != 0xE0 && (byte)ConnectionModuleId[0] != 0xE1)
                 {
                     ShowMessage("Неверный модуль связи", "Ошибка", MessageBoxImage.Error);
+                    this.uiSettings.uiPicon2ModuleInfo.IsEnabled = true;
+                    this.uiSettings.uiPicon2ModuleInfo.Content = "Инф. по модулю связи";
+                    return;
                 }
                 var data = await RTUConnectionGlobal.ExecuteFunction12Async(
                        (byte)ConnectionModuleId[0], "GetModuleFirmwareVersion", 0xF0);

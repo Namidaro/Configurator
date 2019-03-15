@@ -40,8 +40,8 @@
             <local:BitViewer
                 x:Name="uiLogicFail"
                 Margin="0,2"
-                Text="Нет команд управления" />
+                Text="Нет команд управления" 
+                Visibility="Collapsed"/>
         </StackPanel>
-
     </Grid>
 </UserControl>

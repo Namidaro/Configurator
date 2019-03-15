@@ -378,7 +378,7 @@ namespace UniconGS.UI.Journal
                 ClearJournal();
             }
             catch (Exception) { }
-            ClearCompleted.Invoke();
+            //ClearCompleted.Invoke();
         }
         private async void ClearJournal()
         {

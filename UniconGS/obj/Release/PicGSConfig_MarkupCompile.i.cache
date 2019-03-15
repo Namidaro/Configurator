@@ -8,7 +8,7 @@ c:\#git\Configurator\UniconGS\obj\Release\
 UniconGS
 none
 false
-TRACE
+DEBUG;TRACE
 c:\#git\Configurator\UniconGS\App.xaml
 491495997991
 

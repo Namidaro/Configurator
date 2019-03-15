@@ -36,6 +36,7 @@ namespace UniconGS
 
         public static void CloseConnection()
         {
+            
             _semaphoreSlim?.Dispose();
             _modbusMaster?.Dispose();
         }
