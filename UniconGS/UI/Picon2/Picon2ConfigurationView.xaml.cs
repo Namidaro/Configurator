@@ -33,6 +33,24 @@ namespace UniconGS.UI.Picon2
         {
             InitializeComponent();
         }
+
+        public byte[] GetConfig()
+        {
+            var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+            return vm.CreateDataPackage();
+        }
+
+        public void SetConfig(byte[] _config)
+        {
+            var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+            vm.InitializeFromSettings(_config);
+        }
+        public async Task GetAllConfig()
+        {
+            var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+            vm.GetConfiguration.Execute(null);
+        }
+
         //TODO: make updateState for picon2
         public async Task UpdateState()
         {
@@ -99,7 +117,8 @@ namespace UniconGS.UI.Picon2
                 {
                     if (vm.TempManagmentCollection[i] != vm.ManagementKuSelected[i])
                     {
-                        vm.ManagementKuSelected[i] = vm.TempManagmentCollection[i];
+                        //vm.ManagementKuSelected[i] = vm.TempManagmentCollection[i];
+                        vm.TempManagmentCollection[i] = vm.ManagementKuSelected[i];
                         return;
                     }
                 }
@@ -119,7 +138,9 @@ namespace UniconGS.UI.Picon2
                 {
                     if (vm.TempOutputKuSelected[i] != vm.OutputsKuSelected[i])
                     {
-                        vm.OutputsKuSelected[i] = vm.TempOutputKuSelected[i];
+                        //                        vm.OutputsKuSelected[i] = vm.TempOutputKuSelected[i];
+
+                        vm.TempOutputKuSelected[i] = vm.OutputsKuSelected[i];
                         return;
                     }
 
@@ -136,10 +157,45 @@ namespace UniconGS.UI.Picon2
                 {
                     if (vm.TempOutputKuSelectedInv[i] != vm.OutputsKuSelectedInv[i])
                     {
-                        vm.OutputsKuSelectedInv[i] = vm.TempOutputKuSelectedInv[i];
+                        //vm.OutputsKuSelectedInv[i] = vm.TempOutputKuSelectedInv[i];
+                        vm.TempOutputKuSelectedInv[i] = vm.OutputsKuSelectedInv[i];
+
                         return;
                     }
                 }
+            }
+        }
+
+        public void SetAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+                    vm.IsAutonomus = true;
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void DisableAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as PICON2ConfigurationModeViewModel;
+                    vm.IsAutonomus = false;
+                });
+
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }

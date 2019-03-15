@@ -240,7 +240,7 @@
                                         Margin="0,0,0,15.7"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom"
-                                        Text="г.Минск, 2018г"
+                                        Text="г.Минск, 2019г"
                                         TextWrapping="Wrap"
                                         d:LayoutOverrides="Width" />
                                 </Grid>
@@ -322,7 +322,7 @@
                                                                      Height="267" 
                                                                      />
                                     </ScrollViewer>
-                                    
+
                                     <uniconGsUi:Picon2DiagnosticsErrors
                                         x:Name="uiPicon2DiagnosticsErrors"
                                         Visibility="Collapsed"
@@ -333,8 +333,8 @@
                                         Grid.RowSpan="2"
                                         Margin="-4,0,395,0"
                                         />
-                                    
-                                    
+
+
 
                                     <uniconGsUi:DiagnosticsErrors
                                         x:Name="uiDiagnosticsErrors"
@@ -392,7 +392,7 @@
                             </GroupBox>
                         </Grid>
                     </TabItem>
-                    
+
 
                     <TabItem
                         Name="LogicTab"
@@ -403,9 +403,9 @@
                         SnapsToDevicePixels="True">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="165.04" />
-                                <RowDefinition Height="111" />
-                                <RowDefinition Height="99" />
+                                <RowDefinition Height="175" />
+                                <RowDefinition Height="110" />
+                                <RowDefinition Height="100" />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -427,6 +427,11 @@
                                 Grid.Column="0" />
                             <uniconGsUi:FuseErrors
                                 x:Name="uiFuseErrors"
+                                Grid.Row="1"
+                                Grid.RowSpan="2"
+                                Grid.Column="0" />
+                            <uniconGsUi:Picon2ChannelManagement
+                                x:Name="uiPicon2ChannelManagement"
                                 Grid.Row="1"
                                 Grid.RowSpan="2"
                                 Grid.Column="0" />
@@ -507,15 +512,15 @@
                     <TabItem x:Name="uiLogicConfigTab" 
                              Header="Конфигурация" 
                              IsEnabled="False">
-                        
-                            <configuration:LogicConfig
+
+                        <configuration:LogicConfig
                                 x:Name="uiLogicConfig"
                                 Margin="0"
                                 Grid.Column="0"
                                 />
 
 
-                        
+
                     </TabItem>
                     <TabItem x:Name="picon2ScheduleTab" Header="Графики" IsEnabled="False">
                         <picon2:Picon2LightingSheduleView x:Name="picon2LightingSheduleView"></picon2:Picon2LightingSheduleView>
@@ -523,12 +528,13 @@
                     <TabItem Header="График освещения" x:Name ="uiSheduleLightining" IsEnabled="False">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="197*" />
-                                <ColumnDefinition Width="763*" />
+                                <ColumnDefinition Width="205*" />
+                                <ColumnDefinition Width="256*" />
+                                <ColumnDefinition Width="539*"/>
                             </Grid.ColumnDefinitions>
                             <schedule:Schedule
                                 x:Name="uiLightingSchedule"
-                                Grid.ColumnSpan="2"
+                                Grid.ColumnSpan="3"
                                 Margin="0"
                                 HasEconomy="Visible" />
                         </Grid>

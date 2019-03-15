@@ -35,12 +35,15 @@ namespace UniconGS.UI.DiscretModules
         #region Globals
         private ushort[] _value;
         private delegate void ReadComplete(ushort[] res);
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         #endregion
 
         public AllStates()
         {
             InitializeComponent();
-
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
             //todo: переделеать это дерьмо на binding'и
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_RUNO)
             {
@@ -53,9 +56,9 @@ namespace UniconGS.UI.DiscretModules
             else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON_GS)
             {
                 uiGroupBox1.Visibility = Visibility.Visible;
-                uiGroupBox3.Visibility = Visibility.Collapsed;
-                uiGroupBox4.Visibility = Visibility.Collapsed;
-                uiGroupBox2.Visibility = Visibility.Collapsed;
+                uiGroupBox3.Visibility = Visibility.Visible;
+                uiGroupBox4.Visibility = Visibility.Visible;
+                uiGroupBox2.Visibility = Visibility.Visible;
             }
             else if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
@@ -133,6 +136,9 @@ namespace UniconGS.UI.DiscretModules
 
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
+
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 try
@@ -159,6 +165,11 @@ namespace UniconGS.UI.DiscretModules
                 catch (Exception ex)
                 { }
             }
+
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
 
         private void ReadCompleted(ushort[] res)

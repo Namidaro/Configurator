@@ -15,3 +15,9 @@ D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Release\BEMN.Errors.csproj.CoreCompileInputs
 D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Release\BEMN.Errors.dll
 D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Release\BEMN.Errors.pdb
 D:\Work\#Git\Cfg_Ur\BEMN.Errors\obj\Release\BEMN.Errors.csprojResolveAssemblyReference.cache
+c:\#git\Configurator\BEMN.Errors\bin\Release\BEMN.Errors.dll
+c:\#git\Configurator\BEMN.Errors\bin\Release\BEMN.Errors.pdb
+c:\#git\Configurator\BEMN.Errors\obj\Release\BEMN.Errors.csprojResolveAssemblyReference.cache
+c:\#git\Configurator\BEMN.Errors\obj\Release\BEMN.Errors.csproj.CoreCompileInputs.cache
+c:\#git\Configurator\BEMN.Errors\obj\Release\BEMN.Errors.dll
+c:\#git\Configurator\BEMN.Errors\obj\Release\BEMN.Errors.pdb

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UniconGS.UI.Picon2.ViewModel;
 
 namespace UniconGS.UI.Picon2
 {
@@ -23,6 +24,58 @@ namespace UniconGS.UI.Picon2
         public Picon2LightingSheduleView()
         {
             InitializeComponent();
+        }
+
+        public byte[] GetSchedule(string _name)
+        {
+            var vm = this.DataContext as Picon2LightingSheduleViewModel;
+            return vm.GetCachedSchedule(_name);
+        }
+
+        public void SetScheduleToCache(string _name,byte[] _schedule)
+        {
+            var vm = this.DataContext as Picon2LightingSheduleViewModel;
+            vm.SetCachedSchedule(_name, _schedule);
+        }
+
+        public async Task ReadAllSchedules()
+        {
+            var vm = this.DataContext as Picon2LightingSheduleViewModel;
+            vm.GetLightingShedule.Execute(null);
+            //await vm.ReadAllSchedules();
+
+        }
+        public void SetAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as Picon2LightingSheduleViewModel;
+                    vm.IsAutonomus=true;
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void DisableAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as Picon2LightingSheduleViewModel;
+                    vm.IsAutonomus = false;
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }

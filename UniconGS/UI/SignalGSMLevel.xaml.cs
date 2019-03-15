@@ -11,7 +11,10 @@ using System.Globalization;
 using System.Threading.Tasks;
 using UniconGS.Interfaces;
 using UniconGS.UI;
+using UniconGS.Enums;
+using UniconGS.UI.Picon2;
 using Brushes = System.Windows.Media.Brushes;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -22,11 +25,15 @@ namespace UniconGS.UI
     {
         private Slot _query;
         internal SignalGSMLevel.ShowMessageEventHandler ShowMessage;
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
 
         //private delegate void ReadComplete(ushort[] res);
         public SignalGSMLevel()
         {
             InitializeComponent();
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
         }
 
 
@@ -42,7 +49,7 @@ namespace UniconGS.UI
                 uiNoLevelLabel.Visibility = Visibility.Visible;
                 uiSignalGSM.Background = System.Windows.Media.Brushes.White;
             }
-            if (SignalValue >0 && SignalValue <= 10)
+            if (SignalValue > 0 && SignalValue <= 10)
             {
                 uiSignalGSM.Content = value[0];
                 uiSignalGSM.Background = System.Windows.Media.Brushes.Red;
@@ -77,24 +84,58 @@ namespace UniconGS.UI
         {
             this.SetGsm(this.UiSignalGSM, value, 1);
             this.SignalLevelMapping.UpdateState(value[0]);
-         
+
+        }
+
+        private void SetGsmPicon2(byte[] value)
+        {
+            ArrayExtension.SwapArrayItems(ref value);
+            ushort[] _val = ArrayExtension.ByteArrayToUshortArray(value);
+            this.SetGsm(this.UiSignalGSM, _val, 1);
+            this.SignalLevelMapping.UpdateState(_val[0]);
+
         }
 
         public async Task Update()
         {
-            ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x001F, 8);
-            Application.Current.Dispatcher.Invoke(() =>
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
+            if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                SetGsm(value);
-            });
+                ushort[] ConnectionModuleId;
+                {
+                    ConnectionModuleId = await RTUConnectionGlobal.GetDataByAddress(1, 0x3004, 1);
+                }
+                if ((byte)ConnectionModuleId[0] != 0xE0 && (byte)ConnectionModuleId[0] != 0xE1)
+                    return;
+                byte[] value = await RTUConnectionGlobal.ExecuteFunction12Async((byte)ConnectionModuleId[0], "Get Picon SignalLevel", 0x60);
+                if (value == null)
+                    return;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetGsmPicon2(value);
+                });
+            }
+            else
+            {
 
+                ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x001F, 8);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetGsm(value);
+                });
+            }
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
 
-     
+
 
         public void SetAutonomus()
         {
-            UiSignalGSM.Visibility = Visibility.Hidden;   
+            UiSignalGSM.Visibility = Visibility.Hidden;
             SignalLevelMapping.Visibility = Visibility.Hidden;
             this.uiLevelLabel.Visibility = Visibility.Hidden;
             uiNoLevelLabel.Visibility = Visibility.Visible;

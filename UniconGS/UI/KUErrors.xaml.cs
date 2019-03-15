@@ -5,6 +5,7 @@ using UniconGS.Interfaces;
 using UniconGS.Source;
 using System.Threading.Tasks;
 using UniconGS.Enums;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -14,6 +15,7 @@ namespace UniconGS.UI
     public partial class KUErrors : UserControl, IUpdatableControl
     {
         #region Globals
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
         private ushort[] _value;
         private Slot _query;
 
@@ -23,6 +25,16 @@ namespace UniconGS.UI
         public KUErrors()
         {
             InitializeComponent();
+            if(DeviceSelection.SelectedDevice==(byte)DeviceSelectionEnum.DEVICE_PICON2)
+            {
+                this.uiErrors.Children[5].Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.uiErrors.Children[5].Visibility = Visibility.Collapsed;
+            }
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
         }
 
         private void SetDefault()
@@ -40,6 +52,8 @@ namespace UniconGS.UI
                 (this.uiErrors.Children[2] as BitViewer).Value = tmp[2];//неисправность охраны
                 (this.uiErrors.Children[3] as BitViewer).Value = tmp[1];//неисправность управления
                 (this.uiErrors.Children[4] as BitViewer).Value = tmp[4];//неисправность предохранителей
+
+                (this.uiErrors.Children[5] as BitViewer).Value = tmp[7];//неисправность контроллера
 
             }
             else
@@ -88,6 +102,10 @@ namespace UniconGS.UI
         //}
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
+
+
             if (DeviceSelection.SelectedDevice == (byte)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 ushort[] value = await RTUConnectionGlobal.GetDataByAddress(1, 0x0004, 1);
@@ -109,6 +127,11 @@ namespace UniconGS.UI
                     SetErrors(value);
                 });
             }
+
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
         //public bool WriteContext()
         //{

@@ -9,6 +9,7 @@ using UniconGS.Source;
 using UniconGS.Enums;
 using System.Text;
 using UniconGS.UI.Picon2;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -22,12 +23,17 @@ namespace UniconGS.UI
         public delegate void StartWorkEventHandler();
         public delegate void StopWorkEventHandler();
         public delegate void ShowMessageEventHandler(string message, string caption, MessageBoxImage image);
+
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         #endregion
 
         public Meter()
         {
             InitializeComponent();
-            if(DeviceSelection.SelectedDevice==(int)DeviceSelectionEnum.DEVICE_PICON2)
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
+            if (DeviceSelection.SelectedDevice==(int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 uiEnergyM.Visibility = Visibility.Collapsed;
                 uiEnergyD.Visibility = Visibility.Collapsed;
@@ -175,6 +181,9 @@ namespace UniconGS.UI
 
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
+
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
                 try
@@ -206,6 +215,11 @@ namespace UniconGS.UI
 
                 }
             }
+
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
 
         }
 

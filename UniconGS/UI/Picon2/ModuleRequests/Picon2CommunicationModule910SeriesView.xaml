@@ -124,9 +124,10 @@
                                     HorizontalAlignment="Stretch"
                                     >
                                 <TextBlock x:Name="offText" 
-                                           Text="нет" 
+                                           Text="выделенная линия" 
                                            HorizontalAlignment="Center" 
                                            VerticalAlignment="Center"
+                                           TextWrapping="Wrap"
                                            />
                             </Border>
                         </Grid>
@@ -606,6 +607,7 @@
                               />
             <ToggleButton Name="RadioSelector"
                               Grid.Column="0"
+                              Grid.ColumnSpan="2"
                               Grid.Row="2"
                               IsChecked="{Binding IsRadio, Mode=TwoWay,Converter={StaticResource BoolReverseConverter}}"
                               IsThreeState="False"

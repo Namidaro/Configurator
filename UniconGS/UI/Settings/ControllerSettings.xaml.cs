@@ -33,13 +33,18 @@ namespace UniconGS.UI.Settings
         private delegate void ReadCompleteDelegate(ushort[] res);
         private delegate void WriteCompleteDelegate(bool res);
         public delegate Settings GetControlsValueDelegate();
+        public delegate Picon2Settings GetPicon2ControlsValueDelegate();
         public delegate void SetValueControlsDelegate(Settings settings);
+        public delegate void SetPicon2ValueControlsDelegate(Picon2Settings picon2settings);
         public delegate void GetPicon2ModuleInfoDelegate();
         object x;
         public event GetControlsValueDelegate GetControlsValue;
+        public event GetPicon2ControlsValueDelegate GetPicon2ControlsValue;
         public event SetValueControlsDelegate SetControlsValue;
+        public event SetPicon2ValueControlsDelegate SetPicon2ControlsValue;
         public event GetPicon2ModuleInfoDelegate GetPicon2ModuleInfo;
         private Settings _settings;
+        private Picon2Settings _picon2Settings;
         private bool _isWriteSettings;
         //private ushort[] _logicConfig;
         //private ushort[] _lightingSchedule;
@@ -63,7 +68,7 @@ namespace UniconGS.UI.Settings
                 uiSignature.Visibility = Visibility.Collapsed;
                 uiPicon2ModuleInfo.Visibility = Visibility.Visible;
                 uiWriteAll.IsEnabled = false;
-                uiReadAll.IsEnabled = false;
+                uiReadAll.IsEnabled = true;
                 IsPicon2 = true;
             }
             else
@@ -210,7 +215,7 @@ namespace UniconGS.UI.Settings
             //todo: deal with setting file in picon2
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);
+                SaveSettingsPicon2();
             }
             else
                 SaveSettings();
@@ -235,13 +240,35 @@ namespace UniconGS.UI.Settings
             }
             uiSaveSettings.IsEnabled = true;
         }
+        private void SaveSettingsPicon2()
+        {
+            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            sfd.InitialDirectory = this.Config.AllSettingsExportInitialFilePath;
+            sfd.Filter = "Файл настройки Пикон2|*.p2sset";
+            sfd.Title = "Сохранение настроек \"Пикон2\"";
+            sfd.FileName = "Настройки1";
+            if (sfd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            if (this.GetAllSettingsPicon2().Save(sfd.FileName))
+            {
+                this.Config.AllSettingsExportInitialFilePath = sfd.FileName;
+                ShowMessage("Файл сохранен успешно", "Сохранение настроек", MessageBoxImage.Information);
+            }
+            else
+            {
+                ShowMessage("Во время сохранения файла произошла ошибка", "Ошибка сохранения настроек",
+                    MessageBoxImage.Error);
+            }
+            uiSaveSettings.IsEnabled = true;
+        }
+
+        
 
         private void uiOpenSettings_Click(object sender, RoutedEventArgs e)
         {
             //todo:deal with settings file in picon 2
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
-                ShowMessage("Функция не реализована", "Внимание", MessageBoxImage.Information);
+                OpenSettingsPicon2();
             }
             else
                 OpenSettings();
@@ -279,12 +306,51 @@ namespace UniconGS.UI.Settings
             uiOpenSettings.IsEnabled = true;
         }
 
+        private void OpenSettingsPicon2()
+        {
+            var ofd = new System.Windows.Forms.OpenFileDialog
+            {
+                Filter = "Файл настройки Пикон2|*.p2sset",
+                Title = "Открытие файла настройки \"Пикон2\"",
+                InitialDirectory = this.Config.AllSettingsImportInitialFilePath
+            };
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            if (System.IO.File.Exists(ofd.FileName))
+            {
+                if (this.SetAllSettingsPicon2(Picon2Settings.Open(ofd.FileName)))
+                {
+                    this.Config.AllSettingsImportInitialFilePath = ofd.FileName;
+                    SetPicon2ControlsValue(_picon2Settings);
+                    ShowMessage("Файл открыт успешно", "Открытие настроек", MessageBoxImage.Information);
+                    //_isWriteSettings = true;
+                    //this.ApplySettings();
+                }
+                else
+                {
+                    ShowMessage("Во время открытия файла произошла ошибка", "Ошибка открытия настроек",
+                        MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                ShowMessage("Выбранный файл не существует", "Ошибка открытия настроек", MessageBoxImage.Error);
+            }
+            uiOpenSettings.IsEnabled = true;
+        }
+
         private Settings GetAllSettings()
         {
             //this.Dispatcher.Invoke(new Action(() => RefreshControls()));
             this._settings = this.GetControlsValue();
 
             return this._settings;
+        }
+        private Picon2Settings GetAllSettingsPicon2()
+        {
+            //this.Dispatcher.Invoke(new Action(() => RefreshControls()));
+            this._picon2Settings = this.GetPicon2ControlsValue();
+
+            return this._picon2Settings;
         }
 
         private bool SetAllSettings(Settings settings)
@@ -296,6 +362,18 @@ namespace UniconGS.UI.Settings
                 return false;
             }
             this._settings = settings;
+
+            return true;
+        }
+        private bool SetAllSettingsPicon2(Picon2Settings settings)
+        {
+
+            if (settings == null)
+            {
+
+                return false;
+            }
+            this._picon2Settings = settings;
 
             return true;
         }
@@ -386,8 +464,22 @@ namespace UniconGS.UI.Settings
         {
             this.uiPLCReset.IsEnabled = false;
             this.uiSignature.IsEnabled = false;
+            this.uiPicon2ModuleInfo.IsEnabled = false;
+            //            this.uiReadAll.IsEnabled = false;
+
             this.uiReadAll.IsEnabled = false;
             this.uiWriteAll.IsEnabled = false;
+        }
+
+        public void DisableAutonomus()
+        {
+            this.uiPLCReset.IsEnabled = true;
+            this.uiSignature.IsEnabled = true;
+            this.uiPicon2ModuleInfo.IsEnabled = true;
+            //            this.uiReadAll.IsEnabled = false;
+
+            this.uiReadAll.IsEnabled = true;
+            this.uiWriteAll.IsEnabled = true;
         }
 
         private void uiPicon2ModuleInfo_Click(object sender, RoutedEventArgs e)

@@ -312,7 +312,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             IsLuxmetr = false;
             ModbusSpeedList = new List<long>();
             InitializeModbusSpeedList();
-            SelectedSpeed = ModbusSpeedList.First();
+            //SelectedSpeed = ModbusSpeedList.First();
+            SelectedSpeed = 0;
             ResponseAwait = 0;
             BitValues = false;
             ParityOdd = false;

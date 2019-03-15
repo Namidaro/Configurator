@@ -242,7 +242,7 @@ namespace UniconGS.UI.Schedule
         {
             this.uiExport.IsEnabled = true;
             this.uiImport.IsEnabled = true;
-            uiClearAll.IsEnabled = true;
+            this.uiClearAll.IsEnabled = true;
         }
 
         private async void uiImport_Click(object sender, RoutedEventArgs e)

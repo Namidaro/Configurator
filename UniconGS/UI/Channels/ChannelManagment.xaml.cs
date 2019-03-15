@@ -17,7 +17,13 @@ namespace UniconGS.UI.Channels
             this.uiFixControl.Value = null;
             this.uiChecker.Value = null;
         }
-
+        public void DisableAutonomus()
+        {
+            this.uiManualControl.Value = new bool?();
+            this.uiCommand.Value = new bool?();
+            this.uiFixControl.Value = new bool?();
+            this.uiChecker.Value = new bool?();
+        }
         #region Globals
         /* убрано нажатие на кнопки, потому что КН не дает записывать команды */
         public delegate void WriteValueEventHandler(object sender, List<bool> value);

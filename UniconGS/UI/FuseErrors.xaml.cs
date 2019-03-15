@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using UniconGS.Interfaces;
 using UniconGS.Source;
 using UniconGS.Enums;
+using System.Threading;
 
 namespace UniconGS.UI
 {
@@ -32,6 +33,7 @@ namespace UniconGS.UI
         #region Globals
         private ushort[] _value;
 
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
         private delegate void ReadComplete(ushort[] res);
         #endregion
@@ -88,6 +90,8 @@ namespace UniconGS.UI
 
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
             if (DeviceSelection.SelectedDevice == (int)DeviceSelectionEnum.DEVICE_PICON2)
             {
 
@@ -106,7 +110,10 @@ namespace UniconGS.UI
                     SetAllFlags(value[0]);
                 });
             }
-
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
 
         }
         #endregion

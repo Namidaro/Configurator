@@ -63,7 +63,8 @@ namespace UniconGS
                 this.uiYear.Text = _dt.Year.ToString();
                 this.uiMonth.SelectedIndex = _dt.Month - 1;
                 this.uiDay.SelectedIndex = _dt.Day - 1;
-                this.uiHour.SelectedIndex = _dt.Hour +1;
+                //час+1
+                this.uiHour.SelectedIndex = _dt.Hour;
                 this.uiMinute.SelectedIndex = _dt.Minute;
                 this.uiSecond.SelectedIndex = _dt.Second;
             }

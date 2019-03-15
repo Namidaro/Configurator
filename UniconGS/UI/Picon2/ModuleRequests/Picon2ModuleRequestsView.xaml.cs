@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,9 +23,14 @@ namespace UniconGS.UI.Picon2.ModuleRequests
     /// </summary>
     public partial class Picon2ModuleRequestsView : UserControl
     {
+        //private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
+
         public Picon2ModuleRequestsView()
         {
             InitializeComponent();
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //    _semaphoreSlim.Release();
         }
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -86,6 +92,8 @@ namespace UniconGS.UI.Picon2.ModuleRequests
         }
         public async Task Update()
         {
+            //if (_semaphoreSlim.CurrentCount == 0) return;
+            //await _semaphoreSlim.WaitAsync();
             try
             {
                 Application.Current.Dispatcher.Invoke(() =>
@@ -99,6 +107,10 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             {
 
             }
+            //if (_semaphoreSlim.CurrentCount == 0)
+            //{
+            //    _semaphoreSlim.Release();
+            //}
         }
         public void SetAutonomus()
         {
@@ -108,6 +120,23 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 {
                     var vm = this.DataContext as Picon2ModuleRequestsViewModel;
                     vm.SetAutonomus();
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public void DisableAutonomus()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = this.DataContext as Picon2ModuleRequestsViewModel;
+                    vm.IsAutonomus = false;
                 });
 
             }

@@ -678,7 +678,6 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UniconGS.csproj.CoreCompileInputs.cache
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UniconGS.csproj.CopyComplete
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\PicGSConfig.exe
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\PicGSConfig.pdb
-D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.pdb
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2\ModuleRequests\Picon2ModuleRequestsView.baml
@@ -695,6 +694,9 @@ D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ModuleErrors.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ModuleErrors.baml
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.g.cs
 D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\DiscretModules\Picon2States.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ChannelManagement.g.cs
+D:\Work\#Git\Cfg_Ur\UniconGS\obj\Debug\UI\Picon2ChannelManagement.baml
+D:\Work\#Git\Cfg_Ur\UniconGS\bin\Debug\NModbus4.Serial.pdb
 c:\#git\Configurator\UniconGS\bin\Debug\PicGSConfig.exe.config
 c:\#git\Configurator\UniconGS\bin\Debug\PicGSConfig.exe
 c:\#git\Configurator\UniconGS\bin\Debug\PicGSConfig.pdb
@@ -788,6 +790,7 @@ c:\#git\Configurator\UniconGS\obj\Debug\UI\Spinner\Spinner.g.cs
 c:\#git\Configurator\UniconGS\obj\Debug\UI\DiscretModules\States.g.cs
 c:\#git\Configurator\UniconGS\obj\Debug\UI\Journal\SystemJournal.g.cs
 c:\#git\Configurator\UniconGS\obj\Debug\UI\Time\Time.g.cs
+c:\#git\Configurator\UniconGS\obj\Debug\UI\Picon2ChannelManagement.g.cs
 c:\#git\Configurator\UniconGS\obj\Debug\UI\TurnOnError.g.cs
 c:\#git\Configurator\UniconGS\obj\Debug\MainWindow.g.cs
 c:\#git\Configurator\UniconGS\obj\Debug\App.g.cs
@@ -824,6 +827,7 @@ c:\#git\Configurator\UniconGS\obj\Debug\UI\SignalGSMLevel.baml
 c:\#git\Configurator\UniconGS\obj\Debug\UI\SignalLevelMapping.baml
 c:\#git\Configurator\UniconGS\obj\Debug\UI\Spinner\Spinner.baml
 c:\#git\Configurator\UniconGS\obj\Debug\UI\DiscretModules\States.baml
+c:\#git\Configurator\UniconGS\obj\Debug\UI\Picon2ChannelManagement.baml
 c:\#git\Configurator\UniconGS\obj\Debug\UI\TurnOnError.baml
 c:\#git\Configurator\UniconGS\obj\Debug\MainWindow.baml
 c:\#git\Configurator\UniconGS\obj\Debug\PicGSConfig.g.resources
@@ -833,3 +837,5 @@ c:\#git\Configurator\UniconGS\obj\Debug\UniconGS.csproj.CoreCompileInputs.cache
 c:\#git\Configurator\UniconGS\obj\Debug\UniconGS.csproj.CopyComplete
 c:\#git\Configurator\UniconGS\obj\Debug\PicGSConfig.exe
 c:\#git\Configurator\UniconGS\obj\Debug\PicGSConfig.pdb
+c:\#git\Configurator\UniconGS\obj\Debug\UI\Journal\JournalPassword.g.cs
+c:\#git\Configurator\UniconGS\obj\Debug\UI\Journal\JournalPassword.baml

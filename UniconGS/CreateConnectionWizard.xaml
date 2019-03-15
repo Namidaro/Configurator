@@ -93,19 +93,41 @@
                                 <ComboBoxItem Content="460800" />
                                 <ComboBoxItem Content="921600" />
                             </ComboBox>
-                            <Label Content="Время ожидания ответа" />
+                            <Label Content="Время ожидания ответа, мс" />
                             <TextBox
                                 x:Name="uiTimeout"
-                                Text="2000"
+                                Text="1000"
+                                TextWrapping="Wrap" />
+                            <Label Content="Номер устройства" />
+                            <TextBox
+                                x:Name="uiDeviceNumber"
+                                Text="1"
                                 TextWrapping="Wrap" />
                         </StackPanel>
                         <StackPanel Margin="5">
                             <!--<Label Content="Номер КН"/>
                             <TextBox x:Name="uiKNNumber" Text="0" TextWrapping="Wrap"/>-->
-                            <Label Content="Номер устройства" />
+                            <Label Content="Ожидание чтения, мс"/>
                             <TextBox
-                                x:Name="uiDeviceNumber"
-                                Text="1"
+                                x:Name="uiReadTimeout"
+                                Text="500"
+                                TextWrapping="Wrap" />
+                            <Label Content="Ожидание записи, мс"/>
+                            <TextBox
+                                x:Name="uiWriteTimeout"
+                                Text="500"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <Label Content="Повторов"/>
+                            <TextBox
+                                x:Name="uiRetries"
+                                Text="3"
+                                TextWrapping="Wrap" />
+                            <Label Content="Задержка повтора, мс"/>
+                            <TextBox
+                                x:Name="uiWaitUntilRetry"
+                                Text="250"
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </StackPanel>

@@ -44,31 +44,60 @@ namespace UniconGS
             else
                 try
                 {
+                    //идиотизм, но переделывать лень
                     if (!Validator.ValidateTextBox(uiDeviceNumber, 1, 255))
                     {
                         MessageBox.Show("Не верно задан намер устройства", "Ошибка", MessageBoxButton.OK,
                             MessageBoxImage.Error);
+                        throw new ArgumentException();
                     }
-                    else
+                    if (!Validator.ValidateTextBox(uiTimeout, 1, 10000))
                     {
-                        if (!Validator.ValidateTextBox(uiTimeout, 1, 10000))
-                        {
-                            MessageBox.Show("Не верно задано время ожидания", "Ошибка", MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                        }
-                        else
-                        {
-                            //  this.ResultDialog.KNNumber = int.Parse(this.uiKNNumber.Text);
-                            DeviceConnected = 1;
-                            ResultDialog.DeviceNumber = int.Parse(uiDeviceNumber.Text);
-                            ResultDialog.PortSpeed =
-                                int.Parse((uiSpeed.SelectedItem as ComboBoxItem).Content.ToString());
-                            ResultDialog.Timeout = int.Parse(uiTimeout.Text);
-                            DialogResult = true;
-                            MainWindow.isAutonomus = false;
-                            Close();
-                        }
+                        MessageBox.Show("Не верно задано время ожидания", "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        throw new ArgumentException();
                     }
+                    if (!Validator.ValidateTextBox(uiReadTimeout, 1, 10000))
+                    {
+                        MessageBox.Show("Не верно задано время ожидания чтения", "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        throw new ArgumentException();
+                    }
+                    if (!Validator.ValidateTextBox(uiWriteTimeout, 1, 10000))
+                    {
+                        MessageBox.Show("Не верно задано время ожидания записи", "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        throw new ArgumentException();
+                    }
+                    if (!Validator.ValidateTextBox(uiRetries, 0, 5))
+                    {
+                        MessageBox.Show("Не верно задано значение повторов", "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        throw new ArgumentException();
+                    }
+                    if (!Validator.ValidateTextBox(uiWaitUntilRetry, 0, 1000))
+                    {
+                        MessageBox.Show("Не верно задано значение задержки повторов", "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        throw new ArgumentException();
+                    }
+
+                    //  this.ResultDialog.KNNumber = int.Parse(this.uiKNNumber.Text);
+                    DeviceConnected = 1;
+                    ResultDialog.DeviceNumber = int.Parse(uiDeviceNumber.Text);
+                    ResultDialog.PortSpeed =
+                        int.Parse((uiSpeed.SelectedItem as ComboBoxItem).Content.ToString());
+                    ResultDialog.Timeout = int.Parse(uiTimeout.Text);
+
+                    ResultDialog.ModbusReadTimeout = int.Parse(uiReadTimeout.Text);
+                    ResultDialog.ModbusWriteTimeout = int.Parse(uiWriteTimeout.Text);
+                    ResultDialog.ModbusRetries = int.Parse(uiRetries.Text);
+                    ResultDialog.ModbusWaitUntilRetry = int.Parse(uiWaitUntilRetry.Text);
+
+                    DialogResult = true;
+                    MainWindow.isAutonomus = false;
+                    Close();
+
                 }
                 catch (ArgumentException)
                 {
@@ -148,13 +177,18 @@ namespace UniconGS
 
         public class Result
         {
-            public Result(string portName, int knNumber, int deviceNumber, int portSpeed, int timeout)
+            public Result(string portName, int knNumber, int deviceNumber, int portSpeed, int timeout, int mbReadTimeout, int mbWriteTimeout, int mbRetries, int mbWaitUntilRetry)
             {
                 KNNumber = knNumber;
                 DeviceNumber = deviceNumber;
                 PortName = portName;
                 PortSpeed = portSpeed;
                 Timeout = timeout;
+
+                ModbusReadTimeout = mbReadTimeout;
+                ModbusWriteTimeout = mbWriteTimeout;
+                ModbusRetries = mbRetries;
+                ModbusWaitUntilRetry = mbWaitUntilRetry;
             }
 
             public Result()
@@ -164,6 +198,11 @@ namespace UniconGS
                 PortName = string.Empty;
                 PortSpeed = 0;
                 Timeout = -1;
+
+                ModbusReadTimeout = 0;
+                ModbusWriteTimeout = 0;
+                ModbusRetries = 0;
+                ModbusWaitUntilRetry = 0;
             }
 
             public string PortName { get; set; }
@@ -171,6 +210,11 @@ namespace UniconGS
             public int PortSpeed { get; set; }
             public int Timeout { get; set; }
             public int KNNumber { get; set; }
+
+            public int ModbusReadTimeout { get; set; }
+            public int ModbusWriteTimeout { get; set; }
+            public int ModbusRetries { get; set; }
+            public int ModbusWaitUntilRetry { get; set; }
         }
     }
 }

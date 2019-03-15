@@ -4,6 +4,7 @@ Fc:\#git\Configurator\UniconGS\GSMConnection.xaml;;
 Fc:\#git\Configurator\UniconGS\Luxmetr.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\Configuration\ErrorMaskMark.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\DiscretModules\Picon2States.xaml;;
+Fc:\#git\Configurator\UniconGS\UI\Journal\JournalPassword.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\Picon2ModuleErrors.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\Picon2DiagnosticsErrors.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\FuseErrors.xaml;;
@@ -30,6 +31,7 @@ Fc:\#git\Configurator\UniconGS\UI\SignalGSMLevel.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\SignalLevelMapping.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\Spinner\Spinner.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\DiscretModules\States.xaml;;
+Fc:\#git\Configurator\UniconGS\UI\Picon2ChannelManagement.xaml;;
 Fc:\#git\Configurator\UniconGS\UI\TurnOnError.xaml;;
 Fc:\#git\Configurator\UniconGS\MainWindow.xaml;;
 
