@@ -423,7 +423,6 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             }
             ImageSRCList.Add(GetImageSRC((byte)ModuleSelectionEnum.MODULE_SERVICE_POWERSUPPLY));
             ImageSRCList.Add(GetImageSRC((byte)ModuleSelectionEnum.MODULE_SERVICE_CPU));
-
         }
         /// <summary>
         ///  Получить численное значение типа модуля по его имени, см ModuleSelectionEnum
@@ -484,7 +483,6 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             {
                 ShowMessage("Ошибка чтения состояния модулей", "Ошибка", MessageBoxImage.Error);
             }
-
         }
 
         public void SetAutonomus()
@@ -518,6 +516,9 @@ namespace UniconGS.UI.Picon2.ModuleRequests
             {
                 this.RequestsFromDevice.Clear();
                 this.ModuleRequestsForUIList.Clear();
+                //почистим картинки
+                this.ImageSRCList.Clear();
+                InitializeImageList();
                 // число запросов к модулям хранится по адресу 0х300Е, читаем 1 слово(2 байта)
                 ushort[] RC = await RTUConnectionGlobal.GetDataByAddress(1, REQUEST_COUNT_ADDRESS, 1);
                 RequestCountFromDevice = RC[0];
@@ -619,7 +620,6 @@ namespace UniconGS.UI.Picon2.ModuleRequests
                 this.ModuleListForUI[RequestsFromDevice[i].CrateAddress - _firstModulePos] = GetModuleNameFromType(RequestsFromDevice[i].Type, RequestsFromDevice[i].ParameterCount);
             }
             ///верх
-
 
             ///низ
 

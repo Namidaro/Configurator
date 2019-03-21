@@ -32,11 +32,13 @@
             <local:BitViewer
                 x:Name="uiSlaveConnectionFail"
                 Margin="0,2"
-                Text="Отказ связи с подчиненным" />
+                Text="Отказ связи с подчиненным" 
+                />
             <local:BitViewer
                 x:Name="uiSlaveRequestFail"
                 Margin="0,2"
-                Text="Отказ запросов к подчиненному" />
+                Text="Отказ запросов к подчиненному" 
+                />
             <local:BitViewer
                 x:Name="uiLogicFail"
                 Margin="0,2"

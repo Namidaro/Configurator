@@ -480,7 +480,13 @@
                     </Grid.RowDefinitions>
                     <TextBlock HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" Foreground="Black" Text="Время" TextWrapping="Wrap"/>
                     <StackPanel x:Name="PART_TURNOFFDATE" DataContext="{Binding}" Margin="0" Grid.Row="1" Orientation="Horizontal" d:LayoutOverrides="GridBox" VerticalAlignment="Center">
-                        <Label Margin="4,0,11,0" VerticalAlignment="Center" Width="31" Height="22" Content="Вкл." HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left"/>
+                        <Label Margin="4,0,11,0" 
+                               VerticalAlignment="Center" 
+                               Width="31" Height="22" 
+                               Content="Вкл." 
+                               HorizontalContentAlignment="Left" 
+                               VerticalContentAlignment="Center" 
+                               HorizontalAlignment="Left"/>
 
                         <ComboBox x:Name="uiTurnOffDay" Style="{DynamicResource ComboBoxStyle}" Margin="0,0,0,0" Height="22"
     						HorizontalAlignment="Left" Width="45.334"
@@ -638,13 +644,33 @@
                             <ComboBoxItem Content="59"/>
                         </ComboBox>
                     </StackPanel>
-                    <TextBlock Margin="0" Foreground="Black" Text="Дата" TextWrapping="Wrap" HorizontalAlignment="Center" d:LayoutOverrides="Height"/>
+                    <TextBlock Margin="0" 
+                               Foreground="Black" 
+                               Text="Дата" 
+                               TextWrapping="Wrap" 
+                               HorizontalAlignment="Center" 
+                               d:LayoutOverrides="Height"
+                               />
 
-                    <StackPanel x:Name="PART_TURNONDATE" Margin="0" Grid.Row="2" Orientation="Horizontal" DataContext="{Binding}" VerticalAlignment="Center">
-                        <Label Margin="4,0,2,0" VerticalAlignment="Center" Width="40" Height="22" Content="Выкл." HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left"/>
+                    <StackPanel x:Name="PART_TURNONDATE" 
+                                Margin="0" Grid.Row="2" 
+                                Orientation="Horizontal" 
+                                DataContext="{Binding}" 
+                                VerticalAlignment="Center">
+                        <Label Margin="4,0,2,0" 
+                               VerticalAlignment="Center" 
+                               Width="40" Height="22" 
+                               Content="Выкл." 
+                               HorizontalContentAlignment="Left" 
+                               VerticalContentAlignment="Center" 
+                               HorizontalAlignment="Left"/>
 
-                        <ComboBox x:Name="uiTurnOnDay" Style="{DynamicResource ComboBoxStyle}" Margin="0,0,0,0" Height="22"
-    						HorizontalAlignment="Left" Width="45.334"
+                        <ComboBox x:Name="uiTurnOnDay" 
+                                  Style="{DynamicResource ComboBoxStyle}" 
+                                  Margin="0,0,0,0" 
+                                  Height="22"
+    						      HorizontalAlignment="Left" 
+                                  Width="45.334"
     						SelectedIndex="{Binding TurnOnDay, Mode=TwoWay, Converter={StaticResource IndexToValueConverter}}" MaxDropDownHeight="150">
                             <ComboBoxItem Content="01"/>
                             <ComboBoxItem Content="02"/>
