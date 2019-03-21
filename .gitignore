@@ -21,6 +21,16 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+NModbus4/NModbus4/bin/
+NModbus4/NModbus4/obj/
+NModbus4/NModbus4.Serial/bin/
+NModbus4/NModbus4.Serial/obj/
+BEMN.Errors/bin/
+BEMN.Errors/obj/
+UniconSG/bin/
+UniconSG/obj/
+Unicon2.Infrastructure/bin/
+Unicon2.Infrastructure/obj/
 
 # Visual Studio 2015 cache/options directory
 .vs/
