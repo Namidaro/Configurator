@@ -64,35 +64,9 @@
                     Margin="3"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Text="Включение" />
-                <ComboBox
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="3"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    ItemStringFormat="00"
-                    ItemsSource="{Binding RangeHour}"
-                    SelectedItem="{Binding StartHour, Mode=TwoWay}" />
-                <ComboBox
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Margin="3"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    ItemStringFormat="00"
-                    ItemsSource="{Binding RangeMinute}"
-                    SelectedItem="{Binding StartMinute, Mode=TwoWay}" />
-
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="3"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Text="Отключение" />
                 <ComboBox
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="1"
                     Margin="3"
                     HorizontalAlignment="Stretch"
@@ -101,7 +75,7 @@
                     ItemsSource="{Binding RangeHour}"
                     SelectedItem="{Binding StopHour, Mode=TwoWay}" />
                 <ComboBox
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="2"
                     Margin="3"
                     HorizontalAlignment="Stretch"
@@ -109,6 +83,32 @@
                     ItemStringFormat="00"
                     ItemsSource="{Binding RangeMinute}"
                     SelectedItem="{Binding StopMinute, Mode=TwoWay}" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="Включение" />
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="3"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    ItemStringFormat="00"
+                    ItemsSource="{Binding RangeHour}"
+                    SelectedItem="{Binding StartHour, Mode=TwoWay}" />
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Margin="3"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    ItemStringFormat="00"
+                    ItemsSource="{Binding RangeMinute}"
+                    SelectedItem="{Binding StartMinute, Mode=TwoWay}" />
             </Grid>
         </GroupBox>
     </Grid>

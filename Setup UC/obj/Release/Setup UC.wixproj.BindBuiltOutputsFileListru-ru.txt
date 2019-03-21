@@ -1,2 +1,0 @@
-c:\#git\Configurator\Setup UC\bin\Release\ru-ru\Setup_UC.msi
-c:\#git\Configurator\Setup UC\bin\Release\ru-ru\Setup_UC.wixpdb
